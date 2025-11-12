@@ -23,7 +23,7 @@
         color: #e0e0e0;
       }
       .sidebar {
-        background-color: #1a1a1a; /* FINAL ADJUSTMENT: Matches content background for unified look */
+        background-color: #f8f8f8; /* REVERTED: Light mode color in dark mode */
         border-right-color: #444;
       }
       .search-box {
@@ -47,17 +47,17 @@
         border-left-color: #666;
       }
       .notes-section {
-        background-color: #2a2a2a;
+        background-color: #f8f8f8; /* REVERTED: Light mode color in dark mode */
       }
       .home-text .recipe-title {
         color: #e0e0e0; /* Dark mode title color */
       }
-      /* Ensures non-active titles are fully visible */
+      /* Ensure text is dark on the light sidebar/notes section */
       .recipe-name {
-        color: #ffffff; /* Bright white for maximum contrast on dark background */
+        color: #434343; /* Dark text for light sidebar */
       }
       .recipe-item.active .recipe-name {
-        color: #f8f8f8; 
+        color: #ffffff; /* Active item text remains white on red background */
       }
     }
 
