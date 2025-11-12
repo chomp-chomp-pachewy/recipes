@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>recipes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #fdfdfd;
+      color: #434343;
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+      }
+      .sidebar {
+        background-color: #2a2a2a;
+        border-right-color: #444;
+      }
+      .search-box {
+        background-color: #333;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+      .recipe-item {
+        border-bottom-color: #444;
+      }
+      .recipe-item:hover {
+        background-color: #333;
+      }
+      .recipe-item.active {
+        background-color: #fe0032;
+      }
+      .recipe-content {
+        background-color: #1a1a1a;
+      }
+      .ingredient-item {
+        border-left-color: #666;
+      }
+    }
+
+    .sidebar {
+      width: 300px;
+      background-color: #f8f8f8;
+      border-right: 1px solid #e0e0e0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 30px 20px 20px 20px;
+      text-align: center;
+    }
+
+    .sidebar-title {
+      font-size: 1.8em;
+      font-weight: 300;
+      color: #fe0032;
+      text-transform: lowercase;
+    }
+
+    .search-box {
+      width: calc(100% - 40px);
+      margin: 0 20px 20px 20px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: 'Roboto', sans-serif;
+      border: 1px solid #434343;
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: #434343;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #fe0032;
+    }
+
+    .recipe-list {
+      list-style: none;
+    }
+
+    .recipe-item {
+      padding: 16px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background-color 0.2s;
+    }
+
+    .recipe-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .recipe-item.active {
+      background-color: #fe0032;
+      color: #ffffff;
+    }
+
+    .recipe-name {
+      font-weight: 400;
+      font-size: 1em;
+    }
+
+    .recipe-time {
+      font-size: 0.85em;
+      color: #666666;
+      margin-top: 4px;
+    }
+
+    .recipe-item.active .recipe-time {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .recipe-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px 60px;
+      max-width: 900px;
+    }
+
+    .recipe-header {
+      margin-bottom: 30px;
+    }
+
+    .recipe-title {
+      font-size: 2.5em;
+      font-weight: 300;
+      color: #fe0032;
+      margin-bottom: 10px;
+    }
+
+    .recipe-meta {
+      color: #666666;
+      font-size: 0.95em;
+    }
+
+    .recipe-meta span {
+      margin-right: 20px;
+    }
+
+    .recipe-description {
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      font-size: 1em;
+    }
+
+    .recipe-image {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: #fe0032;
+      font-size: 1.3em;
+      font-weight: 700;
+      margin: 30px 0 15px 0;
+      text-transform: lowercase;
+    }
+
+    .ingredients-list {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .ingredient-item {
+      padding: 8px 0 8px 16px;
+      border-left: 3px solid #fe0032;
+      margin-bottom: 8px;
+      font-weight: 300;
+    }
+
+    .instructions-list {
+      list-style: none;
+      counter-reset: step-counter;
+    }
+
+    .instruction-item {
+      counter-increment: step-counter;
+      margin-bottom: 20px;
+      padding-left: 40px;
+      position: relative;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .instruction-item::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      background-color: #fe0032;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 400;
+      font-size: 0.9em;
+    }
+
+    .notes-section {
+      background-color: #f8f8f8;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .no-recipe {
+      text-align: center;
+      color: #666666;
+      margin-top: 100px;
+      font-size: 1.1em;
+    }
+
+    .no-results {
+      padding: 20px;
+      text-align: center;
+      color: #666666;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        max-height: 40vh;
+      }
+      .recipe-content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">chomp recipes</div>
+    </div>
+    <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
+    <ul class="recipe-list" id="recipeList"></ul>
+    <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
+  </div>
+
+  <div class="recipe-content" id="recipeContent">
+    <div class="no-recipe">select a recipe to view</div>
+  </div>
+
+  <script>
+    let recipes = [];
+    let currentRecipe = null;
+
+    // Load recipes from JSON file
+    async function loadRecipes() {
+      try {
+        const response = await fetch('recipes.json');
+        recipes = await response.json();
+        displayRecipeList(recipes);
+      } catch (error) {
+        console.error('Error loading recipes:', error);
+      }
+    }
+
+    // Display recipe list in sidebar
+    function displayRecipeList(recipesToShow) {
+      const recipeList = document.getElementById('recipeList');
+      const noResults = document.getElementById('noResults');
+      
+      recipeList.innerHTML = '';
+      
+      if (recipesToShow.length === 0) {
+        noResults.style.display = 'block';
+        return;
+      }
+      
+      noResults.style.display = 'none';
+      
+      recipesToShow.forEach((recipe, index) => {
+        const li = document.createElement('li');
+        li.className = 'recipe-item';
+        li.onclick = () => selectRecipe(recipe, li);
+        
+        let timeInfo = '';
+        if (recipe.prepTime || recipe.cookTime || recipe.totalTime) {
+          const times = [];
+          if (recipe.totalTime) times.push(recipe.totalTime);
+          else {
+            if (recipe.prepTime) times.push(recipe.prepTime);
+            if (recipe.cookTime) times.push(recipe.cookTime);
+          }
+          timeInfo = `<div class="recipe-time">${times.join(' • ')}</div>`;
+        }
+        
+        li.innerHTML = `
+          <div class="recipe-name">${recipe.title}</div>
+          ${timeInfo}
+        `;
+        
+        recipeList.appendChild(li);
+      });
+    }
+
+    // Select and display a recipe
+    function selectRecipe(recipe, element) {
+      currentRecipe = recipe;
+      
+      // Update active state
+      document.querySelectorAll('.recipe-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+      
+      // Display recipe content
+      const content = document.getElementById('recipeContent');
+      
+      let metaInfo = [];
+      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
+      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
+      
+      let imageHTML = '';
+      if (recipe.image) {
+        imageHTML = `<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`;
+      }
+      
+      let descriptionHTML = '';
+      if (recipe.description) {
+        descriptionHTML = `<div class="recipe-description">${recipe.description}</div>`;
+      }
+      
+      let sourceHTML = '';
+      if (recipe.source) {
+        metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      }
+      
+      const ingredientsHTML = recipe.ingredients.map(ing => 
+        `<li class="ingredient-item">${ing}</li>`
+      ).join('');
+      
+      const instructionsHTML = recipe.instructions.map(inst => 
+        `<li class="instruction-item">${inst}</li>`
+      ).join('');
+      
+      let notesHTML = '';
+      if (recipe.notes) {
+        notesHTML = `
+          <div class="section-title">notes</div>
+          <div class="notes-section">${recipe.notes}</div>
+        `;
+      }
+      
+      content.innerHTML = `
+        <div class="recipe-header">
+          <h1 class="recipe-title">${recipe.title}</h1>
+          <div class="recipe-meta">${metaInfo.join('')}</div>
+        </div>
+        
+        ${descriptionHTML}
+        ${imageHTML}
+        
+        <div class="section-title">ingredients</div>
+        <ul class="ingredients-list">
+          ${ingredientsHTML}
+        </ul>
+        
+        <div class="section-title">instructions</div>
+        <ol class="instructions-list">
+          ${instructionsHTML}
+        </ol>
+        
+        ${notesHTML}
+      `;
+    }
+
+    // Search functionality
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = recipes.filter(recipe => 
+        recipe.title.toLowerCase().includes(searchTerm) ||
+        (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
+        recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
+      );
+      displayRecipeList(filtered);
+    });
+
+    // Load recipes on page load
+    loadRecipes();
+  </script>
+</body>
+</html>
