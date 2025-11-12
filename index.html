@@ -48,6 +48,7 @@
       }
       .notes-section {
         background-color: #f8f8f8; /* REVERTED: Light mode color in dark mode */
+        color: #666666; /* NEW: Notes section text color for dark mode */
       }
       .home-text .recipe-title {
         color: #e0e0e0; /* Dark mode title color */
@@ -58,6 +59,20 @@
       }
       .recipe-item.active .recipe-name {
         color: #ffffff; /* Active item text remains white on red background */
+      }
+      /* Dark mode styles for filter */
+      .filter-dropdown-btn {
+          background-color: #333;
+          border-color: #555;
+          color: #e0e0e0;
+      }
+      .filter-dropdown-btn:hover {
+          background-color: #444;
+      }
+      .category-checkboxes-content {
+          background-color: #2a2a2a;
+          border-color: #444;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
       }
     }
 
@@ -71,7 +86,51 @@
       flex-direction: column; /* Stack children vertically */
     }
 
-    /* NEW: Container for the scrollable list */
+    /* NEW: Styles for Category Filter */
+    .category-filter-container {
+        padding: 0 20px 10px 20px;
+        position: relative; 
+        flex-shrink: 0;
+    }
+
+    .filter-dropdown-btn {
+        width: 100%;
+        padding: 8px 16px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 500;
+        color: #434343;
+        transition: background-color 0.2s;
+    }
+
+    .filter-dropdown-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    .category-checkboxes-content {
+        position: absolute;
+        z-index: 10;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-top: 5px;
+        padding: 10px;
+        width: calc(100% - 40px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-checkboxes-content label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    /* END NEW: Styles for Category Filter */
+
     .recipe-list-container {
       position: relative; 
       /* Calculate max height to reserve space for header/search */
@@ -174,14 +233,14 @@
       margin-bottom: 10px;
     }
     
-    .home-text { /* New style for the welcome text container */
+    .home-text { 
       text-align: center;
       padding: 50px 0;
       max-width: 600px;
       margin: 0 auto;
     }
     
-    .home-text .recipe-title { /* Style for title in home view */
+    .home-text .recipe-title { 
       color: #434343; 
     }
 
@@ -208,7 +267,7 @@
       width: auto; 
       height: auto;
       border-radius: 8px;
-      margin: 0 auto 15px auto; /* Centered horizontally, 15px bottom margin */
+      margin: 0 auto 15px auto; 
     }
 
     .print-button {
@@ -283,7 +342,6 @@
       border-radius: 8px;
       margin-top: 30px;
       font-weight: 300;
-      line-height: 1.8;
     }
 
     .no-recipe {
@@ -316,8 +374,9 @@
       /* Hide elements not needed for printing */
       .sidebar, 
       .search-box, 
-      .print-button, /* Hides the print button itself */
+      .print-button, 
       .sidebar-header,
+      .category-filter-container, /* HIDE FILTER */
       .recipe-list-container {
         display: none !important;
       }
@@ -326,7 +385,7 @@
       body {
         display: block; 
         min-height: auto;
-        color: #000000; /* Ensure black text for printing */
+        color: #000000; 
       }
       
       .recipe-content {
@@ -338,7 +397,7 @@
 
       /* Optimize text and elements for print readability/ink saving */
       .recipe-title {
-        color: #000000 !important; /* Force black title */
+        color: #000000 !important; 
         -webkit-print-color-adjust: exact; 
         print-color-adjust: exact;
       }
@@ -362,7 +421,7 @@
       
       /* Instruction step circles should also be print-friendly */
       .instruction-item::before {
-        background-color: #000000 !important; /* Black circle for print */
+        background-color: #000000 !important; 
         -webkit-print-color-adjust: exact; 
         print-color-adjust: exact;
       }
@@ -377,6 +436,20 @@
     </div>
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
     
+    <div class="category-filter-container">
+        <button id="categoryDropdownBtn" class="filter-dropdown-btn">Filter Categories</button>
+        <div id="categoryCheckboxes" class="category-checkboxes-content" style="display: none;">
+            <label>
+                <input type="checkbox" name="categoryFilter" value="chomp chomp" checked> chomp chomp
+            </label>
+            <label>
+                <input type="checkbox" name="categoryFilter" value="experience" checked> experience
+            </label>
+            <label>
+                <input type="checkbox" name="categoryFilter" value="null" checked> other
+            </label>
+        </div>
+    </div>
     <div class="recipe-list-container">
         <ul class="recipe-list" id="recipeList"></ul>
         <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
@@ -393,24 +466,69 @@
     function printRecipe() {
       window.print();
     }
+    
+    // Function to show/hide the category dropdown
+    function toggleDropdown() {
+      const checkboxes = document.getElementById('categoryCheckboxes');
+      checkboxes.style.display = checkboxes.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Function to retrieve the current filter state (search term and active categories)
+    function getFilterData() {
+        const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+        const checkedBoxes = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categoryFilter"]:checked'));
+        const activeCategories = checkedBoxes.map(cb => cb.value);
+
+        return { searchTerm, activeCategories };
+    }
+
+    // Function to apply both search and category filters
+    function applyFilters() {
+      const { searchTerm, activeCategories } = getFilterData();
+      
+      const filtered = recipes.filter(recipe => {
+        // 1. Search Filter
+        const matchesSearch = 
+          recipe.title.toLowerCase().includes(searchTerm) ||
+          (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
+          recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm));
+
+        if (!matchesSearch) return false;
+
+        // 2. Category Filter
+        // Use 'null' string if the category property is missing or truly null/undefined
+        const recipeCategory = recipe.category || 'null';
+        return activeCategories.includes(recipeCategory);
+      });
+
+      displayRecipeList(filtered);
+    }
+
+    // Function to setup filter listeners after DOM is loaded
+    function setupFilterListeners() {
+        document.getElementById('categoryDropdownBtn').addEventListener('click', toggleDropdown);
+        
+        // Add change listeners to all checkboxes to re-filter immediately
+        document.querySelectorAll('#categoryCheckboxes input[name="categoryFilter"]').forEach(checkbox => {
+            checkbox.addEventListener('change', applyFilters);
+        });
+    }
 
     // Defines the home content in one place (for easier maintenance)
     const HOME_CONTENT_HTML = `
       <div class="home-text">
           <h1 class="recipe-title">Welcome to Chomp Recipes!</h1>
-          <p class="recipe-description">We've curated a delicious collection of recipes from around the world. To get started, simply **select a recipe from the list on the left** to view its ingredients, instructions, and notes. Enjoy cooking!</p>
-          <p class="recipe-meta">Use the search box to filter by title, ingredient, or description.</p>
+          <p class="recipe-description">We've curated a delicious collection of recipes from around the world. To get started, simply **select a recipe from the list on the left** to view its ingredients, instructions, and notes.</p>
+          <p class="recipe-meta">Use the search box and the **Filter Categories** dropdown to find recipes.</p>
       </div>
     `;
 
     // Function to reset the content view to the home text
     function resetRecipeView() {
-        // Remove active state from all list items
         document.querySelectorAll('.recipe-item').forEach(item => {
             item.classList.remove('active');
         });
 
-        // Set the content back to the home page view
         const content = document.getElementById('recipeContent');
         content.innerHTML = HOME_CONTENT_HTML; 
         currentRecipe = null;
@@ -423,12 +541,12 @@
         const titleB = b.title.toLowerCase();
 
         if (titleA < titleB) {
-          return -1; // a comes before b
+          return -1; 
         }
         if (titleA > titleB) {
-          return 1;  // a comes after b
+          return 1;  
         }
-        return 0; // titles are equal
+        return 0; 
       });
     }
 
@@ -438,13 +556,13 @@
         const response = await fetch('recipes.json');
         recipes = await response.json();
         
-        // Sort the recipes alphabetically by title
         sortRecipesAlphabetically();
         
-        displayRecipeList(recipes);
+        // Use applyFilters instead of displayRecipeList to show initial list
+        applyFilters(); 
         
-        // Display the home screen after everything is loaded
         resetRecipeView();
+        setupFilterListeners(); // Set up the filter listeners after all DOM elements are present
       } catch (error) {
         console.error('Error loading recipes:', error);
       }
@@ -468,8 +586,6 @@
         const li = document.createElement('li');
         li.className = 'recipe-item';
         li.onclick = () => selectRecipe(recipe, li);
-        
-        // Time info generation removed here
         
         li.innerHTML = `
           <div class="recipe-name">${recipe.title}</div>
@@ -508,9 +624,14 @@
         descriptionHTML = `<div class="recipe-description">${recipe.description}</div>`;
       }
       
-      let sourceHTML = '';
+      // Source
       if (recipe.source) {
         metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      }
+
+      // Category display after source
+      if (recipe.category && recipe.category !== 'null') {
+        metaInfo.push(`<span>category: ${recipe.category}</span>`);
       }
       
       const ingredientsHTML = recipe.ingredients.map(ing => 
@@ -554,16 +675,8 @@
       `;
     }
 
-    // Search functionality
-    document.getElementById('searchBox').addEventListener('input', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      const filtered = recipes.filter(recipe => 
-        recipe.title.toLowerCase().includes(searchTerm) ||
-        (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
-        recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
-      );
-      displayRecipeList(filtered);
-    });
+    // Search functionality update: now calls applyFilters
+    document.getElementById('searchBox').addEventListener('input', applyFilters);
 
     // Load recipes on page load
     loadRecipes();
