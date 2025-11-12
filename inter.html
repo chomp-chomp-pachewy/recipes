@@ -15,7 +15,7 @@
        FONT SYSTEM
        ====================================================== */
 
-    /* Default uses Inter (recipes, UI, headings) */
+    /* Inter everywhere by default (UI + recipes) */
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #fdfdfd;
@@ -25,7 +25,7 @@
       min-height: 100vh;
     }
 
-    /* Manifesto text uses Source Sans 3 */
+    /* Source Sans 3 only for the manifesto block */
     .home-text,
     .home-text p,
     .home-text .recipe-description {
@@ -35,7 +35,7 @@
       font-size: 1.05em;
     }
 
-    /* Manifesto headings still use Inter for harmony */
+    /* Manifesto headings stay in Inter so the system stays harmonious */
     .home-text h1,
     .home-text h2 {
       font-family: 'Inter', sans-serif !important;
@@ -44,44 +44,46 @@
     }
 
     /* ======================================================
-       DARK MODE
+       DARK MODE FIXES
        ====================================================== */
 
     @media (prefers-color-scheme: dark) {
       body { background-color: #1a1a1a; color: #e0e0e0; }
-
-      .sidebar {
-        background-color: #f8f8f8;
-        border-right-color: #444;
-      }
-
-      .search-box {
-        background-color: #333;
-        border-color: #555;
-        color: #e0e0e0;
-      }
-
-      .recipe-item {
-        border-bottom-color: #444;
-      }
-
+      .sidebar { background-color: #f8f8f8; border-right-color: #444; }
+      .search-box { background-color: #333; border-color: #555; color: #e0e0e0; }
+      .recipe-item { border-bottom-color: #444; }
       .recipe-item:hover { background-color: #333; }
-      .recipe-item.active { background-color: #fe0032; }
-
       .recipe-content { background-color: #1a1a1a; }
-      .ingredient-item { border-left-color: #666; }
-
-      .notes-section {
-        background-color: #f8f8f8;
-        color: #434343;
-      }
-
-      .home-text .recipe-title {
-        color: #e0e0e0;
-      }
-
+      .notes-section { background-color: #f8f8f8; color: #434343; }
+      .home-text .recipe-title { color: #e0e0e0; }
       .recipe-name { color: #434343; }
-      .recipe-item.active .recipe-name { color: #ffffff; }
+      .recipe-item.active .recipe-name { color: white; }
+    }
+
+    /* ======================================================
+       HOMEPAGE INTROS (FIXED)
+       ====================================================== */
+
+    .home-text {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 50px 20px;
+      text-align: left;
+    }
+
+    .home-image {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      margin: 0 auto 30px auto;
+      border-radius: 8px;
+    }
+
+    .home-text p {
+      margin-left: auto;
+      margin-right: auto;
+      max-width: 100%;
     }
 
     /* ======================================================
@@ -117,22 +119,14 @@
       width: calc(100% - 40px);
       margin: 0 20px 20px;
       padding: 12px 16px;
-      font-size: 15px;
       border: 1px solid #434343;
       border-radius: 8px;
       background-color: #fff;
       color: #434343;
-      font-family: 'Inter', sans-serif;
+      font-family: inherit;
     }
 
-    .search-box:focus {
-      border-color: #fe0032;
-      outline: none;
-    }
-
-    /* ======================================================
-       RECIPE LIST
-       ====================================================== */
+    .search-box:focus { outline: none; border-color: #fe0032; }
 
     .recipe-list-container {
       position: relative;
@@ -155,7 +149,7 @@
     .recipe-name { font-size: 1em; font-weight: 400; }
 
     /* ======================================================
-       RECIPE CONTENT AREA
+       RECIPE CONTENT
        ====================================================== */
 
     .recipe-content {
@@ -166,15 +160,12 @@
       font-family: 'Inter', sans-serif;
     }
 
-    .recipe-header { margin-bottom: 30px; }
-
     .recipe-title {
       font-size: 2em;
       font-weight: 300;
       color: #fe0032;
       letter-spacing: -0.01em;
       margin-bottom: 15px;
-      font-family: 'Inter', sans-serif;
     }
 
     .section-title {
@@ -183,12 +174,12 @@
       font-weight: 600;
       margin: 35px 0 15px;
       text-transform: lowercase;
-      font-family: 'Inter', sans-serif;
     }
 
     .recipe-image {
       display: block;
       max-width: 50%;
+      width: auto;
       border-radius: 8px;
       margin: 0 auto 20px;
     }
@@ -201,29 +192,19 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-family: inherit;
       transition: 0.2s;
-      font-family: 'Inter', sans-serif;
     }
 
     .print-button:hover { background-color: #c90028; }
-
-    /* ======================================================
-       INGREDIENTS, INSTRUCTIONS
-       ====================================================== */
 
     .ingredient-item {
       padding: 8px 0 8px 16px;
       border-left: 3px solid #fe0032;
       margin-bottom: 8px;
-      font-family: 'Inter', sans-serif;
     }
 
-    .instructions-list {
-      list-style: none;
-      counter-reset: step-counter;
-      font-family: 'Inter', sans-serif;
-    }
-
+    .instructions-list { counter-reset: step-counter; list-style: none; }
     .instruction-item {
       counter-increment: step-counter;
       margin-bottom: 20px;
@@ -231,7 +212,6 @@
       position: relative;
       line-height: 1.75;
     }
-
     .instruction-item::before {
       content: counter(step-counter);
       position: absolute;
@@ -239,13 +219,12 @@
       top: 0;
       width: 28px;
       height: 28px;
-      background-color: #fe0032;
       color: white;
+      background: #fe0032;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Inter', sans-serif;
     }
 
     .notes-section {
@@ -253,7 +232,6 @@
       padding: 20px;
       border-radius: 8px;
       margin-top: 30px;
-      font-family: 'Inter', sans-serif;
     }
 
     .email-link {
@@ -261,10 +239,6 @@
       font-weight: 700;
       text-decoration: none;
     }
-
-    /* ======================================================
-       RESPONSIVE
-       ====================================================== */
 
     @media (max-width: 768px) {
       body { flex-direction: column; }
@@ -307,9 +281,6 @@
 
     function printRecipe() { window.print(); }
 
-    /* ======================================================
-       HOME CONTENT (MANIFESTO)
-       ====================================================== */
     const HOME_CONTENT_HTML = `
       <div class="home-text">
           <img src="images/Chomp Chomp logos.jpeg" class="home-image">
@@ -318,29 +289,36 @@
           <h2 class="section-title" style="font-size:1.2em;">Ritual and rebellion</h2>
 
           <p class="recipe-description">
-          Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. When we <span style="color:#fe0032;">Ritual</span>, we engage in an act that attempts to suspend the chaos of the world through an illusion of control.
+          Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. 
+          When we <span style="color:#fe0032;">Ritual</span>, we suspend the chaos of the world through an illusion of control.
           </p>
 
           <p class="recipe-description">
-          In the gap between intention and outcome lies the <span style="color:#fe0032;">zen of baking</span>. The transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>.
+          In the gap between intention and outcome lies the <span style="color:#fe0032;">zen of baking</span>. 
+          The transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>.
           </p>
 
           <p class="recipe-description">
-          Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> bread, cake, or cookie forms a <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
+          Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> creates a 
+          <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
           </p>
 
           <p class="recipe-description">
-          You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#fe0032;">community</span>. You are <span style="color:#fe0032;">striving toward transcendence</span>.
+          You are reenacting an ancient dialectic between chaos and order, solitude and 
+          <span style="color:#fe0032;">community</span> — 
+          <span style="color:#fe0032;">striving toward transcendence</span>.
           </p>
 
           <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
 
           <p class="recipe-description">
-          Of course, the search itself may be more revealing than the finding — the keyword is merely <span style="color:#fe0032;">the symptom of desire</span>.
+          The search itself may be more revealing than the finding — the keyword is merely 
+          <span style="color:#fe0032;">the symptom of desire</span>.
           </p>
 
           <p class="recipe-description">
-          If you have a recipe — your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> take on the cookie — send it to me. I’ll add it to our <span style="color:#fe0032;">collective archive</span>.
+          Send your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> cookie, or any recipe 
+          you cherish. I’ll add it to our <span style="color:#fe0032;">collective archive</span>.
           </p>
 
           <p class="recipe-description">
@@ -350,7 +328,7 @@
     `;
 
     function resetRecipeView() {
-      document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
+      document.querySelectorAll('.recipe-item').forEach(i => i.classList.remove('active'));
       document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
       currentRecipe = null;
     }
@@ -393,6 +371,7 @@
 
     function selectRecipe(recipe, element) {
       currentRecipe = recipe;
+
       document.querySelectorAll('.recipe-item').forEach(i => i.classList.remove('active'));
       element.classList.add('active');
 
