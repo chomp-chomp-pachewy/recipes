@@ -5,14 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>chomp recipes</title>
 
-  <!-- INTER FONT -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- INTER + SOURCE SANS 3 -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+
+    /* ======================================================
+       FONT SYSTEM
+       ====================================================== */
+
+    /* Default uses Inter (recipes, UI, headings) */
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #fdfdfd;
       color: #434343;
       line-height: 1.75;
@@ -20,20 +25,68 @@
       min-height: 100vh;
     }
 
+    /* Manifesto text uses Source Sans 3 */
+    .home-text,
+    .home-text p,
+    .home-text .recipe-description {
+      font-family: 'Source Sans 3', sans-serif !important;
+      line-height: 1.8;
+      font-weight: 300;
+      font-size: 1.05em;
+    }
+
+    /* Manifesto headings still use Inter for harmony */
+    .home-text h1,
+    .home-text h2 {
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    /* ======================================================
+       DARK MODE
+       ====================================================== */
+
     @media (prefers-color-scheme: dark) {
       body { background-color: #1a1a1a; color: #e0e0e0; }
-      .sidebar { background-color: #f8f8f8; border-right-color: #444; }
-      .search-box { background-color: #333; border-color: #555; color: #e0e0e0; }
-      .recipe-item { border-bottom-color: #444; }
+
+      .sidebar {
+        background-color: #f8f8f8;
+        border-right-color: #444;
+      }
+
+      .search-box {
+        background-color: #333;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      .recipe-item {
+        border-bottom-color: #444;
+      }
+
       .recipe-item:hover { background-color: #333; }
       .recipe-item.active { background-color: #fe0032; }
+
       .recipe-content { background-color: #1a1a1a; }
       .ingredient-item { border-left-color: #666; }
-      .notes-section { background-color: #f8f8f8; color: #434343; }
-      .home-text .recipe-title { color: #e0e0e0; }
+
+      .notes-section {
+        background-color: #f8f8f8;
+        color: #434343;
+      }
+
+      .home-text .recipe-title {
+        color: #e0e0e0;
+      }
+
       .recipe-name { color: #434343; }
       .recipe-item.active .recipe-name { color: #ffffff; }
     }
+
+    /* ======================================================
+       SIDEBAR
+       ====================================================== */
 
     .sidebar {
       width: 300px;
@@ -43,7 +96,43 @@
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
+      font-family: 'Inter', sans-serif;
     }
+
+    .sidebar-header {
+      padding: 30px 20px 20px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .sidebar-title {
+      font-size: 1.6em;
+      font-weight: 300;
+      color: #fe0032;
+      text-transform: lowercase;
+      letter-spacing: -0.01em;
+    }
+
+    .search-box {
+      width: calc(100% - 40px);
+      margin: 0 20px 20px;
+      padding: 12px 16px;
+      font-size: 15px;
+      border: 1px solid #434343;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #434343;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .search-box:focus {
+      border-color: #fe0032;
+      outline: none;
+    }
+
+    /* ======================================================
+       RECIPE LIST
+       ====================================================== */
 
     .recipe-list-container {
       position: relative;
@@ -54,36 +143,6 @@
       -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
     }
 
-    .sidebar-header {
-      padding: 30px 20px 20px 20px;
-      text-align: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .sidebar-title {
-      font-size: 1.6em;
-      font-weight: 300;
-      color: #fe0032;
-      text-transform: lowercase;
-    }
-
-    .search-box {
-      width: calc(100% - 40px);
-      margin: 0 20px 20px 20px;
-      padding: 12px 16px;
-      font-size: 15px;
-      font-family: inherit;
-      border: 1px solid #434343;
-      border-radius: 8px;
-      background-color: #ffffff;
-      color: #434343;
-    }
-
-    .search-box:focus { border-color: #fe0032; outline: none; }
-
-    .recipe-list { list-style: none; }
-
     .recipe-item {
       padding: 16px 20px;
       cursor: pointer;
@@ -92,15 +151,19 @@
     }
 
     .recipe-item:hover { background-color: #f0f0f0; }
-    .recipe-item.active { background-color: #fe0032; color: #fff; }
-
+    .recipe-item.active { background-color: #fe0032; color: white; }
     .recipe-name { font-size: 1em; font-weight: 400; }
+
+    /* ======================================================
+       RECIPE CONTENT AREA
+       ====================================================== */
 
     .recipe-content {
       flex: 1;
       overflow-y: auto;
       padding: 40px 60px;
       max-width: 900px;
+      font-family: 'Inter', sans-serif;
     }
 
     .recipe-header { margin-bottom: 30px; }
@@ -111,47 +174,54 @@
       color: #fe0032;
       letter-spacing: -0.01em;
       margin-bottom: 15px;
+      font-family: 'Inter', sans-serif;
     }
-
-    .home-text {
-      text-align: left;
-      padding: 50px 0;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .home-image {
-      max-width: 300px;
-      display: block;
-      margin: 0 auto 30px auto;
-      border-radius: 8px;
-    }
-
-    .recipe-meta { color: #666; font-size: 0.95em; margin-bottom: 20px; }
-
-    .recipe-description { margin-bottom: 25px; }
 
     .section-title {
       color: #fe0032;
       font-size: 1.2em;
       font-weight: 600;
-      margin: 35px 0 15px 0;
+      margin: 35px 0 15px;
       text-transform: lowercase;
+      font-family: 'Inter', sans-serif;
     }
 
-    a.email-link { color: #fe0032; font-weight: 700; text-decoration: none; }
+    .recipe-image {
+      display: block;
+      max-width: 50%;
+      border-radius: 8px;
+      margin: 0 auto 20px;
+    }
 
-    /* Ingredients, instructions, notes kept as-is */
-    .ingredients-list { list-style: none; margin-bottom: 30px; }
+    .print-button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #fe0032;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .print-button:hover { background-color: #c90028; }
+
+    /* ======================================================
+       INGREDIENTS, INSTRUCTIONS
+       ====================================================== */
+
     .ingredient-item {
       padding: 8px 0 8px 16px;
       border-left: 3px solid #fe0032;
       margin-bottom: 8px;
+      font-family: 'Inter', sans-serif;
     }
 
     .instructions-list {
       list-style: none;
       counter-reset: step-counter;
+      font-family: 'Inter', sans-serif;
     }
 
     .instruction-item {
@@ -170,11 +240,12 @@
       width: 28px;
       height: 28px;
       background-color: #fe0032;
-      color: #fff;
+      color: white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: 'Inter', sans-serif;
     }
 
     .notes-section {
@@ -182,84 +253,110 @@
       padding: 20px;
       border-radius: 8px;
       margin-top: 30px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .email-link {
+      color: #fe0032;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* ======================================================
+       RESPONSIVE
+       ====================================================== */
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; max-height: 40vh; border-right: none; border-bottom: 1px solid #e0e0e0; }
+      .recipe-content { padding: 20px; }
+      .recipe-image { max-width: 80%; }
     }
   </style>
 </head>
 
 <body>
+
+  <!-- ======================================================
+       SIDEBAR
+       ====================================================== -->
   <div class="sidebar">
-    <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
+    <div class="sidebar-header" onclick="resetRecipeView()">
       <div class="sidebar-title">Rituals</div>
     </div>
+
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
-    
+
     <div class="recipe-list-container">
-        <ul class="recipe-list" id="recipeList"></ul>
-        <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
+      <ul class="recipe-list" id="recipeList"></ul>
+      <div class="no-results" id="noResults" style="display:none;">no recipes found</div>
     </div>
   </div>
 
+  <!-- ======================================================
+       MAIN CONTENT
+       ====================================================== -->
   <div class="recipe-content" id="recipeContent"></div>
 
+  <!-- ======================================================
+       SCRIPT
+       ====================================================== -->
   <script>
     let recipes = [];
     let currentRecipe = null;
-    
+
     function printRecipe() { window.print(); }
 
-    
-const HOME_CONTENT_HTML = `
-  <div class="home-text">
-      <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-      <h1 class="recipe-title" style="font-size:2em;">Chomp Chomp's Baking Manifesto</h1>
-      <h2 class="section-title" style="font-size:1.2em;">Ritual and rebellion</h2>
+    /* ======================================================
+       HOME CONTENT (MANIFESTO)
+       ====================================================== */
+    const HOME_CONTENT_HTML = `
+      <div class="home-text">
+          <img src="images/Chomp Chomp logos.jpeg" class="home-image">
 
-      <p class="recipe-description">
-      Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. When we <span style="color:#fe0032;">Ritual</span>, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
-      </p>
+          <h1 class="recipe-title" style="font-size:2em;">Chomp Chomp's Baking Manifesto</h1>
+          <h2 class="section-title" style="font-size:1.2em;">Ritual and rebellion</h2>
 
-      <p class="recipe-description">
-      But in this gap (between intention and outcome) lies the <span style="color:#fe0032;">zen of baking</span>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>. Is this not, in a way, an allegory of all human creation? We impose form upon chaos, and call it dessert.
-      </p>
+          <p class="recipe-description">
+          Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. When we <span style="color:#fe0032;">Ritual</span>, we engage in an act that attempts to suspend the chaos of the world through an illusion of control.
+          </p>
 
-      <p class="recipe-description">
-      Culturally, baking binds us in a way that predates language. Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
-      </p>
+          <p class="recipe-description">
+          In the gap between intention and outcome lies the <span style="color:#fe0032;">zen of baking</span>. The transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>.
+          </p>
 
-      <p class="recipe-description">
-      So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#fe0032;">community</span>, scarcity and indulgence. You are, in the truest sense, baking the <span style="color:#fe0032;">striving toward transcendence</span>.
-      </p>
+          <p class="recipe-description">
+          Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> bread, cake, or cookie forms a <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
+          </p>
 
-      <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
+          <p class="recipe-description">
+          You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#fe0032;">community</span>. You are <span style="color:#fe0032;">striving toward transcendence</span>.
+          </p>
 
-      <p class="recipe-description">
-      Scroll through the recipes, or search by keyword.
-      </p>
+          <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
 
-      <p class="recipe-description">
-      Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#fe0032;">the symptom of desire</span>!
-      </p>
+          <p class="recipe-description">
+          Of course, the search itself may be more revealing than the finding — the keyword is merely <span style="color:#fe0032;">the symptom of desire</span>.
+          </p>
 
-      <p class="recipe-description">
-      Because baking, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our <span style="color:#fe0032;">collective archive</span> of baked transcendence may continue to grow.
-      </p>
+          <p class="recipe-description">
+          If you have a recipe — your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> take on the cookie — send it to me. I’ll add it to our <span style="color:#fe0032;">collective archive</span>.
+          </p>
 
-      <p class="recipe-description">
-      <a href="mailto:baking@chomp.ltd" style="color:#fe0032; font-weight:bold;">baking@chomp.ltd</a>
-      </p>
-  </div>
-`;
-
-
+          <p class="recipe-description">
+          <a href="mailto:baking@chomp.ltd" class="email-link">baking@chomp.ltd</a>
+          </p>
+      </div>
+    `;
 
     function resetRecipeView() {
-        document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
-        document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
-        currentRecipe = null;
+      document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
+      document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
+      currentRecipe = null;
     }
 
     function sortRecipesAlphabetically() {
-      recipes.sort((a,b)=>a.title.toLowerCase()<b.title.toLowerCase()?-1:a.title.toLowerCase()>b.title.toLowerCase()?1:0);
+      recipes.sort((a, b) => a.title.localeCompare(b.title));
     }
 
     async function loadRecipes() {
@@ -267,18 +364,25 @@ const HOME_CONTENT_HTML = `
         const response = await fetch('recipes.json');
         recipes = await response.json();
         sortRecipesAlphabetically();
-        displayRecipeList(recipes); 
+        displayRecipeList(recipes);
         resetRecipeView();
-      } catch (error) { console.error('Error loading recipes:', error); }
+      } catch (err) { console.error(err); }
     }
 
-    function displayRecipeList(recipesToShow) {
+    function displayRecipeList(list) {
       const recipeList = document.getElementById('recipeList');
       const noResults = document.getElementById('noResults');
+
       recipeList.innerHTML = '';
-      if (!recipesToShow.length) { noResults.style.display = 'block'; return; }
+
+      if (list.length === 0) {
+        noResults.style.display = 'block';
+        return;
+      }
+
       noResults.style.display = 'none';
-      recipesToShow.forEach(recipe => {
+
+      list.forEach(recipe => {
         const li = document.createElement('li');
         li.className = 'recipe-item';
         li.onclick = () => selectRecipe(recipe, li);
@@ -289,192 +393,62 @@ const HOME_CONTENT_HTML = `
 
     function selectRecipe(recipe, element) {
       currentRecipe = recipe;
-      document.querySelectorAll('.recipe-item').forEach(item=>item.classList.remove('active'));
+      document.querySelectorAll('.recipe-item').forEach(i => i.classList.remove('active'));
       element.classList.add('active');
+
       const content = document.getElementById('recipeContent');
 
-      let metaInfo = [];
-      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
-      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
-      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
-      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
-      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
-      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
+      let meta = [];
+      if (recipe.prepTime) meta.push(`<span>prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) meta.push(`<span>cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime) meta.push(`<span>total: ${recipe.totalTime}</span>`);
+      if (recipe.servings) meta.push(`<span>servings: ${recipe.servings}</span>`);
+      if (recipe.source) meta.push(`<span>source: ${recipe.source}</span>`);
+      if (recipe.category) meta.push(`<span>category: ${recipe.category}</span>`);
 
-      let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
-      let descriptionHTML = recipe.description?`<div class="recipe-description">${recipe.description}</div>`:'';
-      const ingredientsHTML = recipe.ingredients.map(i=>`<li class="ingredient-item">${i}</li>`).join('');
-      const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${i}</li>`).join('');
-      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>`:'';
+      const imageHTML = recipe.image ? `<img src="${recipe.image}" class="recipe-image" />` : '';
+      const descHTML = recipe.description ? `<div class="recipe-description">${recipe.description}</div>` : '';
+
+      const ingredientsHTML = recipe.ingredients.map(i => `<li class="ingredient-item">${i}</li>`).join('');
+      const instructionsHTML = recipe.instructions.map(i => `<li class="instruction-item">${i}</li>`).join('');
+
+      const notesHTML = recipe.notes ? `
+        <div class="section-title">notes</div>
+        <div class="notes-section">${recipe.notes}</div>
+      ` : '';
 
       content.innerHTML = `
         <div class="recipe-header">
           <h1 class="recipe-title">${recipe.title}</h1>
-          <div class="recipe-meta">${metaInfo.join('')}</div>
+          <div class="recipe-meta">${meta.join('')}</div>
           <button onclick="printRecipe()" class="print-button">Print Recipe</button>
         </div>
-        ${descriptionHTML}${imageHTML}
+
+        ${descHTML}
+        ${imageHTML}
+
         <div class="section-title">ingredients</div>
         <ul class="ingredients-list">${ingredientsHTML}</ul>
+
         <div class="section-title">instructions</div>
         <ol class="instructions-list">${instructionsHTML}</ol>
+
         ${notesHTML}
       `;
     }
 
-    document.getElementById('searchBox').addEventListener('input', e=>{
-      const searchTerm = e.target.value.toLowerCase();
-      const filtered = recipes.filter(r=>r.title.toLowerCase().includes(searchTerm)||(r.description&&r.description.toLowerCase().includes(searchTerm))||r.ingredients.some(i=>i.toLowerCase().includes(searchTerm)));
+    document.getElementById('searchBox').addEventListener('input', e => {
+      const term = e.target.value.toLowerCase();
+      const filtered = recipes.filter(r =>
+        r.title.toLowerCase().includes(term) ||
+        (r.description && r.description.toLowerCase().includes(term)) ||
+        r.ingredients.some(i => i.toLowerCase().includes(term))
+      );
       displayRecipeList(filtered);
     });
 
     loadRecipes();
   </script>
-</body>
-</html>
-<body>
-  <div class="sidebar">
-    <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
-      <div class="sidebar-title">Rituals</div>
-    </div>
-    <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
-    
-    <div class="recipe-list-container">
-        <ul class="recipe-list" id="recipeList"></ul>
-        <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
-    </div>
-  </div>
 
-  <div class="recipe-content" id="recipeContent"></div>
-
-  <script>
-    let recipes = [];
-    let currentRecipe = null;
-    
-    function printRecipe() { window.print(); }
-
-    
-const HOME_CONTENT_HTML = `
-  <div class="home-text">
-      <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-      <h1 class="recipe-title" style="font-size:2em;">Chomp Chomp's Baking Manifesto</h1>
-      <h2 class="section-title" style="font-size:1.2em;">Ritual and rebellion</h2>
-
-      <p class="recipe-description">
-      Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. When we <span style="color:#fe0032;">Ritual</span>, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
-      </p>
-
-      <p class="recipe-description">
-      But in this gap (between intention and outcome) lies the <span style="color:#fe0032;">zen of baking</span>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>. Is this not, in a way, an allegory of all human creation? We impose form upon chaos, and call it dessert.
-      </p>
-
-      <p class="recipe-description">
-      Culturally, baking binds us in a way that predates language. Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
-      </p>
-
-      <p class="recipe-description">
-      So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#fe0032;">community</span>, scarcity and indulgence. You are, in the truest sense, baking the <span style="color:#fe0032;">striving toward transcendence</span>.
-      </p>
-
-      <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
-
-      <p class="recipe-description">
-      Scroll through the recipes, or search by keyword.
-      </p>
-
-      <p class="recipe-description">
-      Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#fe0032;">the symptom of desire</span>!
-      </p>
-
-      <p class="recipe-description">
-      Because baking, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our <span style="color:#fe0032;">collective archive</span> of baked transcendence may continue to grow.
-      </p>
-
-      <p class="recipe-description">
-      <a href="mailto:baking@chomp.ltd" style="color:#fe0032; font-weight:bold;">baking@chomp.ltd</a>
-      </p>
-  </div>
-`;
-
-
-
-    function resetRecipeView() {
-        document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
-        document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
-        currentRecipe = null;
-    }
-
-    function sortRecipesAlphabetically() {
-      recipes.sort((a,b)=>a.title.toLowerCase()<b.title.toLowerCase()?-1:a.title.toLowerCase()>b.title.toLowerCase()?1:0);
-    }
-
-    async function loadRecipes() {
-      try {
-        const response = await fetch('recipes.json');
-        recipes = await response.json();
-        sortRecipesAlphabetically();
-        displayRecipeList(recipes); 
-        resetRecipeView();
-      } catch (error) { console.error('Error loading recipes:', error); }
-    }
-
-    function displayRecipeList(recipesToShow) {
-      const recipeList = document.getElementById('recipeList');
-      const noResults = document.getElementById('noResults');
-      recipeList.innerHTML = '';
-      if (!recipesToShow.length) { noResults.style.display = 'block'; return; }
-      noResults.style.display = 'none';
-      recipesToShow.forEach(recipe => {
-        const li = document.createElement('li');
-        li.className = 'recipe-item';
-        li.onclick = () => selectRecipe(recipe, li);
-        li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
-        recipeList.appendChild(li);
-      });
-    }
-
-    function selectRecipe(recipe, element) {
-      currentRecipe = recipe;
-      document.querySelectorAll('.recipe-item').forEach(item=>item.classList.remove('active'));
-      element.classList.add('active');
-      const content = document.getElementById('recipeContent');
-
-      let metaInfo = [];
-      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
-      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
-      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
-      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
-      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
-      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
-
-      let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
-      let descriptionHTML = recipe.description?`<div class="recipe-description">${recipe.description}</div>`:'';
-      const ingredientsHTML = recipe.ingredients.map(i=>`<li class="ingredient-item">${i}</li>`).join('');
-      const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${i}</li>`).join('');
-      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>`:'';
-
-      content.innerHTML = `
-        <div class="recipe-header">
-          <h1 class="recipe-title">${recipe.title}</h1>
-          <div class="recipe-meta">${metaInfo.join('')}</div>
-          <button onclick="printRecipe()" class="print-button">Print Recipe</button>
-        </div>
-        ${descriptionHTML}${imageHTML}
-        <div class="section-title">ingredients</div>
-        <ul class="ingredients-list">${ingredientsHTML}</ul>
-        <div class="section-title">instructions</div>
-        <ol class="instructions-list">${instructionsHTML}</ol>
-        ${notesHTML}
-      `;
-    }
-
-    document.getElementById('searchBox').addEventListener('input', e=>{
-      const searchTerm = e.target.value.toLowerCase();
-      const filtered = recipes.filter(r=>r.title.toLowerCase().includes(searchTerm)||(r.description&&r.description.toLowerCase().includes(searchTerm))||r.ingredients.some(i=>i.toLowerCase().includes(searchTerm)));
-      displayRecipeList(filtered);
-    });
-
-    loadRecipes();
-  </script>
 </body>
 </html>
