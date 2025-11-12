@@ -441,7 +441,7 @@
           </p>
           
           <p class="recipe-description" style="font-weight: 700; margin-bottom: 0;">
-            <a href="mailto:baking@chomp.ltd">baking@chomp.ltd</a>
+            baking@chomp.ltd
           </p>
       </div>
     `;
@@ -460,3 +460,155 @@
     // Function to sort the recipes array alphabetically by title
     function sortRecipesAlphabetically() {
       recipes.sort((a, b) => {
+        const titleA = a.title.toLowerCase();
+        const titleB = b.title.toLowerCase();
+
+        if (titleA < titleB) {
+          return -1; 
+        }
+        if (titleA > titleB) {
+          return 1;  
+        }
+        return 0; 
+      });
+    }
+
+    // Load recipes from JSON file
+    async function loadRecipes() {
+      try {
+        const response = await fetch('recipes.json');
+        recipes = await response.json();
+        
+        sortRecipesAlphabetically();
+        
+        displayRecipeList(recipes); 
+        
+        resetRecipeView();
+      } catch (error) {
+        console.error('Error loading recipes:', error);
+      }
+    }
+
+    // Display recipe list in sidebar
+    function displayRecipeList(recipesToShow) {
+      const recipeList = document.getElementById('recipeList');
+      const noResults = document.getElementById('noResults');
+      
+      recipeList.innerHTML = '';
+      
+      if (recipesToShow.length === 0) {
+        noResults.style.display = 'block';
+        return;
+      }
+      
+      noResults.style.display = 'none';
+      
+      recipesToShow.forEach((recipe, index) => {
+        const li = document.createElement('li');
+        li.className = 'recipe-item';
+        li.onclick = () => selectRecipe(recipe, li);
+        
+        li.innerHTML = `
+          <div class="recipe-name">${recipe.title}</div>
+          `;
+        
+        recipeList.appendChild(li);
+      });
+    }
+
+    // Select and display a recipe
+    function selectRecipe(recipe, element) {
+      currentRecipe = recipe;
+      
+      // Update active state
+      document.querySelectorAll('.recipe-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      element.classList.add('active');
+      
+      // Display recipe content
+      const content = document.getElementById('recipeContent');
+      
+      let metaInfo = [];
+      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
+      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
+      
+      let imageHTML = '';
+      if (recipe.image) {
+        imageHTML = `<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`;
+      }
+      
+      let descriptionHTML = '';
+      if (recipe.description) {
+        descriptionHTML = `<div class="recipe-description">${recipe.description}</div>`;
+      }
+      
+      // Source
+      if (recipe.source) {
+        metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      }
+
+      // Category display (restored to original state without filter logic dependency)
+      if (recipe.category && recipe.category !== 'null') {
+        metaInfo.push(`<span>category: ${recipe.category}</span>`);
+      }
+      
+      const ingredientsHTML = recipe.ingredients.map(ing => 
+        `<li class="ingredient-item">${ing}</li>`
+      ).join('');
+      
+      const instructionsHTML = recipe.instructions.map(inst => 
+        `<li class="instruction-item">${inst}</li>`
+      ).join('');
+      
+      let notesHTML = '';
+      if (recipe.notes) {
+        notesHTML = `
+          <div class="section-title">notes</div>
+          <div class="notes-section">${recipe.notes}</div>
+        `;
+      }
+      
+      content.innerHTML = `
+        <div class="recipe-header">
+          <h1 class="recipe-title">${recipe.title}</h1>
+          <div class="recipe-meta">${metaInfo.join('')}</div>
+          
+          <button onclick="printRecipe()" class="print-button">Print Recipe</button>
+          </div>
+        
+        ${descriptionHTML}
+        ${imageHTML}
+        
+        <div class="section-title">ingredients</div>
+        <ul class="ingredients-list">
+          ${ingredientsHTML}
+        </ul>
+        
+        <div class="section-title">instructions</div>
+        <ol class="instructions-list">
+          ${instructionsHTML}
+        </ol>
+        
+        ${notesHTML}
+      `;
+    }
+
+    // Search functionality restored to original simple logic
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = recipes.filter(recipe => 
+        recipe.title.toLowerCase().includes(searchTerm) ||
+        (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
+        recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
+      );
+      displayRecipeList(filtered);
+    });
+
+    // Load recipes on page load
+    loadRecipes();
+  </script>
+</body>
+</html>
