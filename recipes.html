@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>recipes</title>
+  <title>chomp recipes</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,6 +46,12 @@
       .ingredient-item {
         border-left-color: #666;
       }
+      .notes-section {
+        background-color: #2a2a2a;
+      }
+      .home-text .recipe-title {
+        color: #e0e0e0; /* Dark mode title color */
+      }
     }
 
     .sidebar {
@@ -59,6 +65,7 @@
     .sidebar-header {
       padding: 30px 20px 20px 20px;
       text-align: center;
+      cursor: pointer; /* Added for home functionality */
     }
 
     .sidebar-title {
@@ -136,6 +143,17 @@
       font-weight: 300;
       color: #fe0032;
       margin-bottom: 10px;
+    }
+    
+    .home-text { /* New style for the welcome text container */
+      text-align: center;
+      padding: 50px 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .home-text .recipe-title { /* Style for title in home view */
+      color: #434343; 
     }
 
     .recipe-meta {
@@ -254,7 +272,7 @@
 </head>
 <body>
   <div class="sidebar">
-    <div class="sidebar-header">
+    <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
       <div class="sidebar-title">chomp recipes</div>
     </div>
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
@@ -263,14 +281,35 @@
   </div>
 
   <div class="recipe-content" id="recipeContent">
-    <div class="no-recipe">select a recipe to view</div>
-  </div>
+    </div>
 
-<script>
+  <script>
     let recipes = [];
     let currentRecipe = null;
 
-    // Function to sort the recipes array alphabetically by title
+    // Defines the home content in one place (for easier maintenance)
+    const HOME_CONTENT_HTML = `
+      <div class="home-text">
+          <h1 class="recipe-title">Welcome to Chomp Recipes!</h1>
+          <p class="recipe-description">We've curated a delicious collection of recipes from around the world. To get started, simply **select a recipe from the list on the left** to view its ingredients, instructions, and notes. Enjoy cooking!</p>
+          <p class="recipe-meta">Use the search box to filter by title, ingredient, or description.</p>
+      </div>
+    `;
+
+    // New: Function to reset the content view to the home text
+    function resetRecipeView() {
+        // Remove active state from all list items
+        document.querySelectorAll('.recipe-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Set the content back to the home page view
+        const content = document.getElementById('recipeContent');
+        content.innerHTML = HOME_CONTENT_HTML; 
+        currentRecipe = null;
+    }
+
+    // New: Function to sort the recipes array alphabetically by title
     function sortRecipesAlphabetically() {
       recipes.sort((a, b) => {
         const titleA = a.title.toLowerCase();
@@ -292,10 +331,13 @@
         const response = await fetch('recipes.json');
         recipes = await response.json();
         
-        // **NEW: Sort the recipes alphabetically by title**
+        // Sort the recipes alphabetically by title
         sortRecipesAlphabetically();
         
         displayRecipeList(recipes);
+        
+        // Display the home screen after everything is loaded
+        resetRecipeView();
       } catch (error) {
         console.error('Error loading recipes:', error);
       }
@@ -318,10 +360,6 @@
       recipesToShow.forEach((recipe, index) => {
         const li = document.createElement('li');
         li.className = 'recipe-item';
-        // The original code passed 'recipe' and 'li', we need to find the correct
-        // element later, or pass the index of the original recipe in the sorted array.
-        // For simplicity and correct active state handling, we'll keep the current approach
-        // where the `selectRecipe` function handles the active class update based on the element passed.
         li.onclick = () => selectRecipe(recipe, li);
         
         let timeInfo = '';
@@ -417,7 +455,7 @@
       `;
     }
 
-    // Search functionality - **Note**: This will now search the already sorted `recipes` array
+    // Search functionality
     document.getElementById('searchBox').addEventListener('input', (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const filtered = recipes.filter(recipe => 
@@ -425,13 +463,11 @@
         (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
         recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
       );
-      // The filtered list will inherently maintain the alphabetical order from the `recipes` array.
       displayRecipeList(filtered);
     });
 
     // Load recipes on page load
     loadRecipes();
   </script>
-  
 </body>
 </html>
