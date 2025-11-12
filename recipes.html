@@ -266,15 +266,35 @@
     <div class="no-recipe">select a recipe to view</div>
   </div>
 
-  <script>
+<script>
     let recipes = [];
     let currentRecipe = null;
+
+    // Function to sort the recipes array alphabetically by title
+    function sortRecipesAlphabetically() {
+      recipes.sort((a, b) => {
+        const titleA = a.title.toLowerCase();
+        const titleB = b.title.toLowerCase();
+
+        if (titleA < titleB) {
+          return -1; // a comes before b
+        }
+        if (titleA > titleB) {
+          return 1;  // a comes after b
+        }
+        return 0; // titles are equal
+      });
+    }
 
     // Load recipes from JSON file
     async function loadRecipes() {
       try {
         const response = await fetch('recipes.json');
         recipes = await response.json();
+        
+        // **NEW: Sort the recipes alphabetically by title**
+        sortRecipesAlphabetically();
+        
         displayRecipeList(recipes);
       } catch (error) {
         console.error('Error loading recipes:', error);
@@ -298,6 +318,10 @@
       recipesToShow.forEach((recipe, index) => {
         const li = document.createElement('li');
         li.className = 'recipe-item';
+        // The original code passed 'recipe' and 'li', we need to find the correct
+        // element later, or pass the index of the original recipe in the sorted array.
+        // For simplicity and correct active state handling, we'll keep the current approach
+        // where the `selectRecipe` function handles the active class update based on the element passed.
         li.onclick = () => selectRecipe(recipe, li);
         
         let timeInfo = '';
@@ -393,7 +417,7 @@
       `;
     }
 
-    // Search functionality
+    // Search functionality - **Note**: This will now search the already sorted `recipes` array
     document.getElementById('searchBox').addEventListener('input', (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const filtered = recipes.filter(recipe => 
@@ -401,11 +425,13 @@
         (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
         recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
       );
+      // The filtered list will inherently maintain the alphabetical order from the `recipes` array.
       displayRecipeList(filtered);
     });
 
     // Load recipes on page load
     loadRecipes();
   </script>
+  
 </body>
 </html>
