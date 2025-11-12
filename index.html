@@ -23,7 +23,7 @@
         color: #e0e0e0;
       }
       .sidebar {
-        background-color: #2a2a2a;
+        background-color: #212121; /* UPDATED: Slightly darker gray */
         border-right-color: #444;
       }
       .search-box {
@@ -51,6 +51,13 @@
       }
       .home-text .recipe-title {
         color: #e0e0e0; /* Dark mode title color */
+      }
+      /* NEW/UPDATED: Sidebar recipe text color in dark mode */
+      .recipe-name {
+        color: inherit; 
+      }
+      .recipe-item.active .recipe-name {
+        color: #f8f8f8; /* Ensures the active text is visible */
       }
     }
 
@@ -117,11 +124,7 @@
       font-size: 1em;
     }
 
-    .recipe-time {
-      font-size: 0.85em;
-      color: #666666;
-      margin-top: 4px;
-    }
+    /* .recipe-time class removed as content is removed from JS */
 
     .recipe-item.active .recipe-time {
       color: rgba(255, 255, 255, 0.8);
@@ -173,10 +176,10 @@
     }
 
     .recipe-image {
-      /* Adjusted styles below */
-      display: block; /* Important for margin: auto to work */
-      max-width: 50%; /* Image will be max 50% of its container */
-      width: auto; /* Ensures image scales down correctly */
+      /* Adjusted styles */
+      display: block; 
+      max-width: 50%; 
+      width: auto; 
       height: auto;
       border-radius: 8px;
       margin: 0 auto 15px auto; /* Centered horizontally, 15px bottom margin */
@@ -289,7 +292,7 @@
       }
     }
     
-    /* === NEW: PRINT STYLES === */
+    /* === PRINT STYLES === */
     @media print {
       /* Hide elements not needed for printing */
       .sidebar, 
@@ -345,7 +348,7 @@
         print-color-adjust: exact;
       }
     }
-    /* === END NEW: PRINT STYLES === */
+    /* === END PRINT STYLES === */
   </style>
 </head>
 <body>
@@ -365,11 +368,9 @@
     let recipes = [];
     let currentRecipe = null;
     
-    // NEW: Function to trigger the browser's print dialog
     function printRecipe() {
       window.print();
     }
-    // END NEW
 
     // Defines the home content in one place (for easier maintenance)
     const HOME_CONTENT_HTML = `
@@ -380,7 +381,7 @@
       </div>
     `;
 
-    // New: Function to reset the content view to the home text
+    // Function to reset the content view to the home text
     function resetRecipeView() {
         // Remove active state from all list items
         document.querySelectorAll('.recipe-item').forEach(item => {
@@ -393,7 +394,7 @@
         currentRecipe = null;
     }
 
-    // New: Function to sort the recipes array alphabetically by title
+    // Function to sort the recipes array alphabetically by title
     function sortRecipesAlphabetically() {
       recipes.sort((a, b) => {
         const titleA = a.title.toLowerCase();
@@ -446,21 +447,11 @@
         li.className = 'recipe-item';
         li.onclick = () => selectRecipe(recipe, li);
         
-        let timeInfo = '';
-        if (recipe.prepTime || recipe.cookTime || recipe.totalTime) {
-          const times = [];
-          if (recipe.totalTime) times.push(recipe.totalTime);
-          else {
-            if (recipe.prepTime) times.push(recipe.prepTime);
-            if (recipe.cookTime) times.push(recipe.cookTime);
-          }
-          timeInfo = `<div class="recipe-time">${times.join(' • ')}</div>`;
-        }
+        // Time info generation removed here
         
         li.innerHTML = `
           <div class="recipe-name">${recipe.title}</div>
-          ${timeInfo}
-        `;
+          `;
         
         recipeList.appendChild(li);
       });
