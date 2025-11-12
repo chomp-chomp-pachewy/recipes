@@ -23,11 +23,15 @@
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        .input-section, .output-section {
+        .input-section, .output-section, .md-converter {
             padding: 15px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .md-converter {
+            grid-column: 1 / -1; /* Spans both columns */
+            margin-bottom: 20px;
         }
         label {
             display: block;
@@ -87,13 +91,27 @@
         .array-field-group label {
             margin-bottom: 10px;
         }
+        .md-button {
+            background-color: #28a745;
+        }
+        .md-button:hover {
+            background-color: #1e7e34;
+        }
     </style>
 </head>
 <body>
     <h1>🍲 Recipe to JSON Converter</h1>
+    
+    <div class="md-converter">
+        <h2>Markdown File Parser</h2>
+        <div class="hint">Paste the entire content of your Markdown (.md) recipe file below. This will automatically fill out the fields in the 'Recipe Details' section on the right.</div>
+        <textarea id="markdownInput" rows="10" placeholder="# Recipe Title&#10;&#10;Description paragraph.&#10;&#10;Servings: 6&#10;Prep: 15 minutes&#10;Category: Dinner&#10;&#10;## Ingredients&#10;- ingredient 1&#10;- ingredient 2&#10;&#10;## Instructions&#10;1. Step one&#10;2. Step two&#10;&#10;## Notes&#10;Any notes here"></textarea>
+        <button type="button" class="md-button" onclick="parseMarkdown()">Parse Markdown & Fill Fields</button>
+    </div>
+
     <div class="container">
         <div class="input-section">
-            <h2>Recipe Details (Input)</h2>
+            <h2>Recipe Details (Fields)</h2>
             <form id="recipeForm">
                 <label for="title">Title <span style="color:red">*</span></label>
                 <input type="text" id="title" required>
@@ -155,6 +173,8 @@
     </div>
 
     <script>
+        // --- Conversion Helper Functions ---
+
         // Helper function to convert a newline-separated string to a JSON array of strings.
         function toArray(text) {
             if (!text) return [];
@@ -164,11 +184,126 @@
                        .filter(line => line.length > 0);
         }
 
+        // Helper to normalize keys (e.g., 'Prep Time' -> 'prepTime')
+        function normalizeKey(key) {
+            if (!key) return null;
+            const map = {
+                'servings': 'servings',
+                'prep': 'prepTime',
+                'preptime': 'prepTime',
+                'cook': 'cookTime',
+                'cooktime': 'cookTime',
+                'total': 'totalTime',
+                'totaltime': 'totalTime',
+                'source': 'source',
+                'image': 'image',
+                'category': 'category'
+            };
+            const normalized = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return map[normalized] || null;
+        }
+
+        // --- Main Markdown Parsing Logic ---
+
+        function parseMarkdown() {
+            const mdText = document.getElementById('markdownInput').value;
+            if (!mdText) {
+                alert("Please paste your Markdown recipe content first.");
+                return;
+            }
+
+            const lines = mdText.split('\n');
+            let section = 'title';
+            let description = [];
+            let metadata = {};
+            let ingredients = [];
+            let instructions = [];
+            let notes = [];
+            let title = '';
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+
+                // 1. Check for Section Headers
+                if (trimmedLine.startsWith('# ')) {
+                    // This is the Title
+                    title = trimmedLine.substring(2).trim();
+                    section = 'description';
+                    continue;
+                } else if (trimmedLine.startsWith('## Ingredients')) {
+                    section = 'ingredients';
+                    continue;
+                } else if (trimmedLine.startsWith('## Instructions')) {
+                    section = 'instructions';
+                    continue;
+                } else if (trimmedLine.startsWith('## Notes')) {
+                    section = 'notes';
+                    continue;
+                }
+
+                if (trimmedLine === '') {
+                    // Skip empty lines, but allow section flow
+                    continue;
+                }
+
+                // 2. Process content based on the current section
+                if (section === 'description') {
+                    // Check for metadata first (e.g., "Servings: 6")
+                    const metaMatch = trimmedLine.match(/^([A-Za-z\s]+):(.+)$/);
+                    if (metaMatch) {
+                        const key = normalizeKey(metaMatch[1].trim());
+                        const value = metaMatch[2].trim();
+                        if (key) {
+                            metadata[key] = value;
+                        }
+                    } else {
+                        // Assume it's part of the description if not metadata
+                        description.push(trimmedLine);
+                    }
+
+                } else if (section === 'ingredients') {
+                    // Remove Markdown list markers (-, *, or 1. etc)
+                    ingredients.push(trimmedLine.replace(/^[\*\-\d\.]+\s*/, '').trim());
+
+                } else if (section === 'instructions') {
+                    // Remove Markdown list markers (-, *, or 1. etc)
+                    instructions.push(trimmedLine.replace(/^[\*\-\d\.]+\s*/, '').trim());
+                
+                } else if (section === 'notes') {
+                    notes.push(trimmedLine);
+                }
+            }
+            
+            // 3. Populate Form Fields
+            document.getElementById('title').value = title || '';
+            document.getElementById('description').value = description.join('\n').trim() || '';
+            document.getElementById('servings').value = metadata.servings || '';
+            document.getElementById('prepTime').value = metadata.prepTime || '';
+            document.getElementById('cookTime').value = metadata.cookTime || '';
+            document.getElementById('totalTime').value = metadata.totalTime || '';
+            document.getElementById('source').value = metadata.source || '';
+            document.getElementById('image').value = metadata.image || '';
+            document.getElementById('category').value = metadata.category || '';
+            
+            // Join array fields with newlines
+            document.getElementById('ingredients').value = ingredients.join('\n');
+            document.getElementById('instructions').value = instructions.join('\n');
+            document.getElementById('notes').value = notes.join('\n').trim() || '';
+            
+            // Automatically generate the JSON after parsing
+            generateJson();
+
+            alert("Markdown successfully parsed and fields filled! Review the details, then copy the JSON output.");
+        }
+
+
+        // --- Main JSON Generation Logic ---
+        
         // Main function to read form data and generate JSON.
         function generateJson() {
             const form = document.getElementById('recipeForm');
             if (!form.checkValidity()) {
-                alert("Please fill out all required fields (Title, Ingredients, Instructions).");
+                document.getElementById('jsonOutput').textContent = "ERROR: Missing required fields (Title, Ingredients, Instructions).";
                 return;
             }
 
@@ -181,7 +316,7 @@
                 "totalTime": document.getElementById('totalTime').value.trim() || null,
                 "source": document.getElementById('source').value.trim() || null,
                 "image": document.getElementById('image').value.trim() || null,
-                "category": document.getElementById('category').value.trim() || null, // NEW FIELD
+                "category": document.getElementById('category').value.trim() || null, 
                 "ingredients": toArray(document.getElementById('ingredients').value),
                 "instructions": toArray(document.getElementById('instructions').value),
                 "notes": document.getElementById('notes').value.trim() || null
