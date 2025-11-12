@@ -23,7 +23,7 @@
         color: #e0e0e0;
       }
       .sidebar {
-        background-color: #f8f8f8; /* Light mode color in dark mode */
+        background-color: #f8f8f8;
         border-right-color: #444;
       }
       .search-box {
@@ -47,20 +47,18 @@
         border-left-color: #666;
       }
       .notes-section {
-        background-color: #f8f8f8; /* Light mode color in dark mode */
-        color: #434343; /* UPDATED: Dark text for light notes section in dark mode */
+        background-color: #f8f8f8;
+        color: #434343;
       }
       .home-text .recipe-title {
-        color: #e0e0e0; /* Dark mode title color */
+        color: #e0e0e0;
       }
-      /* Ensure text is dark on the light sidebar */
       .recipe-name {
-        color: #434343; /* Dark text for light sidebar */
+        color: #434343;
       }
       .recipe-item.active .recipe-name {
-        color: #ffffff; /* Active item text remains white on red background */
+        color: #ffffff;
       }
-      /* Dark mode styles for filter (REMOVED) */
     }
 
     .sidebar {
@@ -73,18 +71,13 @@
       flex-direction: column; 
     }
 
-    /* Scroll container CSS simplified as filter is removed */
     .recipe-list-container {
       position: relative; 
       max-height: calc(100vh - 120px); 
       overflow-y: auto;
       flex-grow: 1; 
-      mask-image: linear-gradient(to bottom, 
-          black 95%, 
-          transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, 
-          black 95%, 
-          transparent 100%);
+      mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
     }
 
     .sidebar-header {
@@ -174,22 +167,26 @@
     }
     
     .home-text { 
-      text-align: center;
+      text-align: left;
       padding: 50px 0;
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
     }
     
-    .home-text .home-image { /* Style for the welcome image */
+    .home-text .home-image {
         width: 100%;
         max-width: 300px;
         height: auto;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .recipe-meta {
       color: #666666;
       font-size: 0.95em;
+      margin-bottom: 20px;
     }
 
     .recipe-meta span {
@@ -199,18 +196,17 @@
     .recipe-description {
       font-weight: 300;
       line-height: 1.8;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       font-size: 1em;
     }
 
     .recipe-image {
-      /* Adjusted styles */
       display: block; 
       max-width: 50%; 
       width: auto; 
       height: auto;
       border-radius: 8px;
-      margin: 0 auto 15px auto; 
+      margin: 0 auto 20px auto; 
     }
 
     .print-button {
@@ -230,9 +226,9 @@
 
     .section-title {
       color: #fe0032;
-      font-size: 1.3em;
+      font-size: 1.5em;
       font-weight: 700;
-      margin: 30px 0 15px 0;
+      margin: 40px 0 20px 0;
       text-transform: lowercase;
     }
 
@@ -307,14 +303,12 @@
       .recipe-content {
         padding: 20px;
       }
-      .recipe-image { /* On smaller screens, allow images to be larger if needed */
-        max-width: 80%; /* Adjust as per desired responsiveness */
+      .recipe-image {
+        max-width: 80%;
       }
     }
     
-    /* === PRINT STYLES === */
     @media print {
-      /* Hide elements not needed for printing */
       .sidebar, 
       .search-box, 
       .print-button, 
@@ -323,7 +317,6 @@
         display: none !important;
       }
 
-      /* Make the recipe content take up the full screen width */
       body {
         display: block; 
         min-height: auto;
@@ -337,7 +330,6 @@
         padding: 0; 
       }
 
-      /* Optimize text and elements for print readability/ink saving */
       .recipe-title {
         color: #000000 !important; 
         -webkit-print-color-adjust: exact; 
@@ -361,20 +353,18 @@
         border-left-color: #cccccc !important; 
       }
       
-      /* Instruction step circles should also be print-friendly */
       .instruction-item::before {
         background-color: #000000 !important; 
         -webkit-print-color-adjust: exact; 
         print-color-adjust: exact;
       }
     }
-    /* === END PRINT STYLES === */
   </style>
 </head>
 <body>
   <div class="sidebar">
     <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
-      <div class="sidebar-title">chomp recipes</div>
+      <div class="sidebar-title">Rituals</div>
     </div>
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
     
@@ -382,10 +372,9 @@
         <ul class="recipe-list" id="recipeList"></ul>
         <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
     </div>
-    </div>
+  </div>
 
-  <div class="recipe-content" id="recipeContent">
-    </div>
+  <div class="recipe-content" id="recipeContent"></div>
 
   <script>
     let recipes = [];
@@ -395,166 +384,135 @@
       window.print();
     }
     
-    // Defines the home content in one place (for easier maintenance)
     const HOME_CONTENT_HTML = `
       <div class="home-text">
           <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-          <p class="recipe-description">We've curated a delicious collection of recipes from around the world. To get started, simply **select a recipe from the list on the left** to view its ingredients, instructions, and notes.</p>
-          <p class="recipe-meta">Use the search box to filter by title, ingredient, or description.</p>
+
+          <h1 class="recipe-title">Chomp Chomp's Baking Manifesto</h1>
+          <h2 class="section-title">Ritual and rebellion</h2>
+
+          <p class="recipe-description">
+          Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. Baking is the materialization of the <em>ideological fantasy</em> of comfort itself. When we bake, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
+          </p>
+
+          <p class="recipe-description">
+          But in this gap (between intention and outcome) lies the <em>zen of baking</em>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, shareable. Is this not, in a way, an allegory of all human creation? We impose form upon chaos, and call it dessert.
+          </p>
+
+          <p class="recipe-description">
+          Culturally, baking binds us in a way that predates language. Across centuries and continents, the act of sharing bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a network of borrowed gestures and shared desires.
+          </p>
+
+          <p class="recipe-description">
+          So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient dialectic between chaos and order, solitude and community, scarcity and indulgence. You are, in the truest sense, baking the symptom of being human.
+          </p>
+
+          <h2 class="section-title">Bake first, theorize later</h2>
+
+          <p class="recipe-description">
+          Scroll through the recipes, or search by keyword.
+          </p>
+
+          <p class="recipe-description">
+          Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely the symptom of desire!
+          </p>
+
+          <p class="recipe-description">
+          Because baking, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own subversive take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our collective archive of baked transcendence may continue to grow.
+          </p>
+
+          <p class="recipe-description">
+          <a href="mailto:baking@chomp.ltd">baking@chomp.ltd</a>
+          </p>
       </div>
     `;
 
-    // Function to reset the content view to the home text
     function resetRecipeView() {
         document.querySelectorAll('.recipe-item').forEach(item => {
             item.classList.remove('active');
         });
-
         const content = document.getElementById('recipeContent');
         content.innerHTML = HOME_CONTENT_HTML; 
         currentRecipe = null;
     }
 
-    // Function to sort the recipes array alphabetically by title
     function sortRecipesAlphabetically() {
       recipes.sort((a, b) => {
         const titleA = a.title.toLowerCase();
         const titleB = b.title.toLowerCase();
-
-        if (titleA < titleB) {
-          return -1; 
-        }
-        if (titleA > titleB) {
-          return 1;  
-        }
+        if (titleA < titleB) return -1; 
+        if (titleA > titleB) return 1;  
         return 0; 
       });
     }
 
-    // Load recipes from JSON file
     async function loadRecipes() {
       try {
         const response = await fetch('recipes.json');
         recipes = await response.json();
-        
         sortRecipesAlphabetically();
-        
         displayRecipeList(recipes); 
-        
         resetRecipeView();
       } catch (error) {
         console.error('Error loading recipes:', error);
       }
     }
 
-    // Display recipe list in sidebar
     function displayRecipeList(recipesToShow) {
       const recipeList = document.getElementById('recipeList');
       const noResults = document.getElementById('noResults');
-      
       recipeList.innerHTML = '';
-      
       if (recipesToShow.length === 0) {
         noResults.style.display = 'block';
         return;
       }
-      
       noResults.style.display = 'none';
-      
       recipesToShow.forEach((recipe, index) => {
         const li = document.createElement('li');
         li.className = 'recipe-item';
         li.onclick = () => selectRecipe(recipe, li);
-        
-        li.innerHTML = `
-          <div class="recipe-name">${recipe.title}</div>
-          `;
-        
+        li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
         recipeList.appendChild(li);
       });
     }
 
-    // Select and display a recipe
     function selectRecipe(recipe, element) {
       currentRecipe = recipe;
-      
-      // Update active state
       document.querySelectorAll('.recipe-item').forEach(item => {
         item.classList.remove('active');
       });
       element.classList.add('active');
-      
-      // Display recipe content
       const content = document.getElementById('recipeContent');
-      
       let metaInfo = [];
       if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
       if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
       if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
       if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
-      
-      let imageHTML = '';
-      if (recipe.image) {
-        imageHTML = `<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`;
-      }
-      
-      let descriptionHTML = '';
-      if (recipe.description) {
-        descriptionHTML = `<div class="recipe-description">${recipe.description}</div>`;
-      }
-      
-      // Source
-      if (recipe.source) {
-        metaInfo.push(`<span>source: ${recipe.source}</span>`);
-      }
+      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
 
-      // Category display (restored to original state without filter logic dependency)
-      if (recipe.category && recipe.category !== 'null') {
-        metaInfo.push(`<span>category: ${recipe.category}</span>`);
-      }
-      
-      const ingredientsHTML = recipe.ingredients.map(ing => 
-        `<li class="ingredient-item">${ing}</li>`
-      ).join('');
-      
-      const instructionsHTML = recipe.instructions.map(inst => 
-        `<li class="instruction-item">${inst}</li>`
-      ).join('');
-      
-      let notesHTML = '';
-      if (recipe.notes) {
-        notesHTML = `
-          <div class="section-title">notes</div>
-          <div class="notes-section">${recipe.notes}</div>
-        `;
-      }
-      
+      let imageHTML = recipe.image ? `<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">` : '';
+      let descriptionHTML = recipe.description ? `<div class="recipe-description">${recipe.description}</div>` : '';
+      const ingredientsHTML = recipe.ingredients.map(ing => `<li class="ingredient-item">${ing}</li>`).join('');
+      const instructionsHTML = recipe.instructions.map(inst => `<li class="instruction-item">${inst}</li>`).join('');
+      let notesHTML = recipe.notes ? `<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>` : '';
+
       content.innerHTML = `
         <div class="recipe-header">
           <h1 class="recipe-title">${recipe.title}</h1>
           <div class="recipe-meta">${metaInfo.join('')}</div>
-          
           <button onclick="printRecipe()" class="print-button">Print Recipe</button>
-          </div>
-        
+        </div>
         ${descriptionHTML}
         ${imageHTML}
-        
         <div class="section-title">ingredients</div>
-        <ul class="ingredients-list">
-          ${ingredientsHTML}
-        </ul>
-        
+        <ul class="ingredients-list">${ingredientsHTML}</ul>
         <div class="section-title">instructions</div>
-        <ol class="instructions-list">
-          ${instructionsHTML}
-        </ol>
-        
+        <ol class="instructions-list">${instructionsHTML}</ol>
         ${notesHTML}
       `;
     }
 
-    // Search functionality restored to original simple logic
     document.getElementById('searchBox').addEventListener('input', (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const filtered = recipes.filter(recipe => 
@@ -565,7 +523,6 @@
       displayRecipeList(filtered);
     });
 
-    // Load recipes on page load
     loadRecipes();
   </script>
 </body>
