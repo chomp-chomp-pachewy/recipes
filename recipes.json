@@ -1,38 +1,5 @@
 [
   {
-    "title": "Ube Brûlée",
-    "description": "This is a variation on the crème brûlée, Krümel's signature cookie, which features a brûléed top and vanilla cream filling. This cookie doesn't have a filling, but if you want to add one then you can, using a piping tube filled with something tasty like vanilla cream once you have finished baking. The ube is a purple sweet potato that originally hails from the Philippines and is used in desserts and baked goods. Apart from its beautiful purple colour, it also has a nutty taste rather like vanilla. After baking, sprinkle sugar over the cookies and burn it off just like you do with a crème brûlée.",
-    "servings": "12 cookies",
-    "prepTime": null,
-    "cookTime": "11-12 minutes",
-    "totalTime": null,
-    "source": null,
-    "image": null,
-    "ingredients": [
-      "150g (5½oz/⅔ cup) butter",
-      "80g (2¾oz/⅓ cup plus 1 Tbsp) light muscovado sugar",
-      "120g (4¼oz/½ cup plus 1½ Tbsp) caster (granulated) sugar, plus extra for burning",
-      "1 egg",
-      "½-¾ tsp liquid ube extract (purple sweet potato)",
-      "240g (8½oz/1¾ cups) plain (all-purpose) flour",
-      "3g (1 tsp) baking powder",
-      "3g (1 tsp) bicarbonate of soda (baking soda)",
-      "2g (⅓ tsp) salt",
-      "15g (½oz/1 Tbsp) ube powder (purple sweet potato powder)",
-      "70g (2½oz) white chocolate or caramelized white chocolate, roughly chopped"
-    ],
-    "instructions": [
-      "Add the butter to your food processor or to the bowl of a stand mixer fitted with a paddle attachment and mix on a medium speed for 20 seconds until the butter starts to get creamy. Add both types of sugar and mix for 1½-2 minutes until the sugar is well mixed into the butter. Scrape the butter down from the sides of the bowl at 30-second intervals. The mixture should be fairly light in colour and with no visible sugar crystals.",
-      "Add the egg and ube extract and mix for 20 seconds until they are just combined. Make sure you don't mix for too long - it's fine if it's still a little unmixed.",
-      "Combine the flour, baking powder, bicarbonate of soda, salt and ube powder in a separate bowl. Add the dry ingredients to the butter mixture in two batches, mixing for 15 seconds between each batch until everything is just combined. Scrape the bowl between mixing. Add the white chocolate and mix briefly.",
-      "Scoop 65g (2¼oz) balls of dough using an ice cream scoop, or roll balls using 2 tablespoons of dough. (Size 24 scoop is good.) There should be enough to make about 12 cookies. Place the dough balls in a container with a lid or on a tray that you then cover with cling film (plastic wrap). Leave to rest in the refrigerator for at least 3 hours - preferably overnight.",
-      "Preheat the oven to 160°C fan (180°C/350°F/gas 4).",
-      "Place the dough balls approximately 5cm (2in) apart on baking trays lined with baking parchment. Bake in the middle of the oven for 11-12 minutes. Bake one sheet at a time if not using a fan oven. The cookies should have expanded a bit, risen and begun to develop a firm but slightly glistening surface and should not have cracked.",
-      "Remove the trays of cookies from the oven and leave to cool for 5 minutes. Transfer them to a cooling rack and leave to cool for at least another 10-15 minutes. Sprinkle a thin layer of sugar over the cookies and burn it using a kitchen blow torch. Allow to cool."
-    ],
-    "notes": null
-  },
-  {
     "title": "Apple Rose Pie",
     "description": "Before vanilla extract was widely available, the most popular flavoring in America was rose water. This recipe brings the lovely taste of rose water back to apple pie. The traditional pie spices cinnamon and nutmeg marry well with the less-traditional cardamom, and serving this pie with a rose water-scented Chantilly cream makes it special enough for any occasion.",
     "servings": "8",
@@ -75,5 +42,107 @@
       "The pie can be stored, covered, in the refrigerator for 2 to 3 days."
     ],
     "notes": "Note that the apples for the filling must be macerated for at least 4 hours, or, preferably, overnight. Tip: You can freeze whole fruit-filled pies or galettes to bake whenever you are ready. Cut small steam vents in the top crust of a pie before you freeze it, but wait until you are ready to bake it before you brush the pie with the egg wash. Be sure to use a metal pie dish that can go from the freezer to the hot oven."
+  },
+  {
+    "title": "Honey-Ricotta Black & Whites",
+    "description": "The black and white cookie must be the official cookie of NYC. This recipe infuses the zingy lemon cookie base with ricotta and honey for extra sweetness and moisture. Black and whites have always been more cake than cookie, so it only makes sense to swap the pourable glaze or sticky fondant for a rich, spreadable frosting.",
+    "servings": "15 large cookies",
+    "prepTime": null,
+    "cookTime": "20 to 25 minutes",
+    "totalTime": null,
+    "source": "Dolci!",
+    "image": null,
+    "ingredients": [
+      "FOR THE COOKIES",
+      "All-purpose flour 425 grams (3 cups)",
+      "Baking powder 10 grams (2 teaspoons)",
+      "Fine sea salt 4 grams (1 teaspoon)",
+      "Unsalted butter, at room temperature 115 grams (8 tablespoons)",
+      "Granulated sugar 400 grams (2 cups)",
+      "Grated lemon zest (from 1 lemon) 4 grams (2 teaspoons)",
+      "Large eggs, at room temperature 2",
+      "Ricotta cheese 425 grams (1¾ cups)",
+      "Wildflower honey 20 grams (1 tablespoon)",
+      "Fresh lemon juice (from 1 to 2 lemons) 45 grams (3 tablespoons)",
+      "FOR THE FROSTING",
+      "Light corn syrup, plus more if needed 80 grams (¼ cup)",
+      "Heavy cream 155 grams plus 30 grams (⅔ cup plus 2 tablespoons)",
+      "Pure vanilla extract 5 grams (1 teaspoon)",
+      "Powdered sugar, sifted 660 grams (5½ cups)",
+      "Cocoa powder, sifted 25 grams (¼ cup)"
+    ],
+    "instructions": [
+      "Make the cookies",
+      "Preheat the oven to 325°F (160°C) and set racks in the upper and lower thirds. Line two baking sheets with parchment paper.",
+      "In a medium bowl, whisk the flour, baking powder, and salt. In a stand mixer fitted with the paddle, combine the butter, sugar, and lemon zest. Beat on medium-high speed until the butter is smooth and the mixture resembles wet sand, about 5 minutes. Add the eggs, one at a time, scraping down the sides as needed. Continue beating on medium-high for 1 minute until the batter is light and fluffy. Add the ricotta, honey, and lemon juice. Beat on low until combined, scraping down the sides as needed. The mixture will look curdled, but don't worry!",
+      "Add the flour mixture in two parts and mix on low until combined, scraping down the sides after each addition. Increase the speed to medium-high and beat for 30 seconds to make sure the batter is mixed.",
+      "Use a 6-tablespoon cookie scoop (⅓ Cup or 2.7 ounces) to portion generous scoops of batter onto the lined baking sheets 3 inches (8 cm) apart (these cookies will spread, so give them space). Bake until the cookies are firm to the touch in the center and slightly golden on the edges, 20 to 25 minutes, switching racks and rotating halfway through. Transfer to a wire rack to cool completely before frosting.",
+      "Make the frosting",
+      "In a large bowl, combine the corn syrup, 155 grams (⅔ cup) of the heavy cream, and the vanilla. Add the powdered sugar and whisk until the frosting is smooth and very thick.",
+      "Divide the frosting between two bowls. To one bowl, add the cocoa powder and the remaining heavy cream. Use a rubber spatula to mix until smooth and thick. Add more corn syrup to each bowl, a teaspoon at a time, for a glossy and spreadable consistency, if needed.",
+      "Flip each cookie, flat side up. Starting with the vanilla frosting, use an offset spatula to generously frost half of each cookie, making a distinct line down the center. Clean the offset spatula, then generously frost the other half of each cookie with chocolate, maintaining a clear center line. Return to the wire rack and let set for 1 hour before serving. The frosting will become shinier as it sets.",
+      "The black and white cookies can be refrigerated in an airtight container for up to 3 days."
+    ],
+    "notes": null
+  },
+  {
+    "title": "Italian Pastry Cream - Crema Pasticcera",
+    "description": "How to make Italian Pastry Cream (Crema Pasticcera) from scratch in only 10 minutes. This smooth and creamy vanilla pastry cream can be used for so many delicious desserts from Italian doughnuts, pastries, cakes or tarts, the list is endless!",
+    "servings": "15 servings (around 700g)",
+    "prepTime": "5min",
+    "cookTime": "10min",
+    "totalTime": "15min",
+    "source": "insidetherustickitchen.com",
+    "image": null,
+    "ingredients": [
+      "5 egg yolks, ((large eggs))",
+      "⅓ cup sugar, ((70g))",
+      "¼ cup cornstarch, (Cornflour in the UK (30g))",
+      "2.5 cups full-fat milk, ((590ml))",
+      "½ tsp vanilla paste, (* see notes)"
+    ],
+    "instructions": [
+      "Warm the milk and vanilla in a saucepan then set aside.",
+      "Mix the egg yolks and sugar together until combined then add the cornstarch and mix it thoroughly.",
+      "Slowly pour the warm milk into the egg mixture whilst whisking constantly to avoid any lumps.",
+      "Once incorporated, pour the egg and milk mixture back into the saucepan and heat it on a medium-low heat.",
+      "Stir the mixture constantly with a wooden spoon until the mixture is very thick in consistency (about 10 minutes). If you find it isn't thickening turn the heat up but keep stirring to avoid scrambling the eggs (use a whisk to get rid of any small lumps if needed).",
+      "Once thickened, pour the pastry cream into a clean bowl and place plastic wrap directly on top to stop a skin forming.",
+      "Let the mixture cool then place in the fridge until ready to use."
+    ],
+    "notes": "Instead of vanilla paste, you can use 1 whole vanilla pod with the inside scraped out and added to the milk (remove the pod when adding the milk to the egg) or 1 tsp of vanilla extract. Make sure the milk is not too hot when you mix it with the eggs it should be just warm to avoid scrambling the eggs. Keep the saucepan on a low heat to thicken the mixture if you turn the heat up the eggs will scramble. If you notice any unwanted lumps in your mixture whisk it using a hand whisk to smoothen it out. Use full-fat milk for best results. If you do use semi-skimmed milk it will still work but will take longer to thicken (around 15 minutes). Make sure to cover the Crema Pasticcera with plastic wrap as it cools to avoid a skin forming. Once cooled completely place it in the fridge until ready to use. The pastry cream will keep well for around 4-5 days in the fridge. I do not recommend freezing as pastry cream can split when frozen."
+  },
+  {
+    "title": "Ube Brûlée",
+    "description": "This is a variation on the crème brûlée, Krümel's signature cookie, which features a brûléed top and vanilla cream filling. This cookie doesn't have a filling, but if you want to add one then you can, using a piping tube filled with something tasty like vanilla cream once you have finished baking. The ube is a purple sweet potato that originally hails from the Philippines and is used in desserts and baked goods. Apart from its beautiful purple colour, it also has a nutty taste rather like vanilla. After baking, sprinkle sugar over the cookies and burn it off just like you do with a crème brûlée.",
+    "servings": "12 cookies",
+    "prepTime": null,
+    "cookTime": "11-12 minutes",
+    "totalTime": null,
+    "source": null,
+    "image": null,
+    "ingredients": [
+      "150g (5½oz/⅔ cup) butter",
+      "80g (2¾oz/⅓ cup plus 1 Tbsp) light muscovado sugar",
+      "120g (4¼oz/½ cup plus 1½ Tbsp) caster (granulated) sugar, plus extra for burning",
+      "1 egg",
+      "½-¾ tsp liquid ube extract (purple sweet potato)",
+      "240g (8½oz/1¾ cups) plain (all-purpose) flour",
+      "3g (1 tsp) baking powder",
+      "3g (1 tsp) bicarbonate of soda (baking soda)",
+      "2g (⅓ tsp) salt",
+      "15g (½oz/1 Tbsp) ube powder (purple sweet potato powder)",
+      "70g (2½oz) white chocolate or caramelized white chocolate, roughly chopped"
+    ],
+    "instructions": [
+      "Add the butter to your food processor or to the bowl of a stand mixer fitted with a paddle attachment and mix on a medium speed for 20 seconds until the butter starts to get creamy. Add both types of sugar and mix for 1½-2 minutes until the sugar is well mixed into the butter. Scrape the butter down from the sides of the bowl at 30-second intervals. The mixture should be fairly light in colour and with no visible sugar crystals.",
+      "Add the egg and ube extract and mix for 20 seconds until they are just combined. Make sure you don't mix for too long - it's fine if it's still a little unmixed.",
+      "Combine the flour, baking powder, bicarbonate of soda, salt and ube powder in a separate bowl. Add the dry ingredients to the butter mixture in two batches, mixing for 15 seconds between each batch until everything is just combined. Scrape the bowl between mixing. Add the white chocolate and mix briefly.",
+      "Scoop 65g (2¼oz) balls of dough using an ice cream scoop, or roll balls using 2 tablespoons of dough. (Size 24 scoop is good.) There should be enough to make about 12 cookies. Place the dough balls in a container with a lid or on a tray that you then cover with cling film (plastic wrap). Leave to rest in the refrigerator for at least 3 hours - preferably overnight.",
+      "Preheat the oven to 160°C fan (180°C/350°F/gas 4).",
+      "Place the dough balls approximately 5cm (2in) apart on baking trays lined with baking parchment. Bake in the middle of the oven for 11-12 minutes. Bake one sheet at a time if not using a fan oven. The cookies should have expanded a bit, risen and begun to develop a firm but slightly glistening surface and should not have cracked.",
+      "Remove the trays of cookies from the oven and leave to cool for 5 minutes. Transfer them to a cooling rack and leave to cool for at least another 10-15 minutes. Sprinkle a thin layer of sugar over the cookies and burn it using a kitchen blow torch. Allow to cool."
+    ],
+    "notes": null
   }
 ]
