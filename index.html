@@ -109,48 +109,50 @@
     let currentRecipe = null;
     
     function printRecipe() { window.print(); }
+
     
 const HOME_CONTENT_HTML = `
   <div class="home-text">
       <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-      <h1 class="recipe-title">Chomp Chomp's Baking Manifesto</h1>
-      <h2 class="section-title">Ritual and rebellion</h2>
+      <h1 class="recipe-title" style="font-size:2em;">Chomp Chomp's Baking Manifesto</h1>
+      <h2 class="section-title" style="font-size:1.2em;">Ritual and rebellion</h2>
 
       <p class="recipe-description">
-      <span style="color:#fe0032;">Baking</span>. What is <span style="color:#fe0032;">baking</span>, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. <span style="color:#fe0032;">Baking</span> is the materialization of the <em>ideological fantasy</em> of comfort itself. When we <span style="color:#fe0032;">bake</span>, we engage in a ritual that attempts to suspend the <span style="color:#fe0032;">chaos</span> of the world through the <span style="color:#fe0032;">illusion</span> of <span style="color:#fe0032;">control</span>: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this <span style="color:#fe0032;">control</span> is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
+      Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. When we <span style="color:#fe0032;">Ritual</span>, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
       </p>
 
       <p class="recipe-description">
-      But in this gap (between intention and outcome) lies the <span style="color:#fe0032;">zen</span> of <span style="color:#fe0032;">baking</span>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In <span style="color:#fe0032;">baking</span>, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>. Is this not, in a way, an allegory of all human creation? We impose form upon <span style="color:#fe0032;">chaos</span>, and call it dessert.
+      But in this gap (between intention and outcome) lies the <span style="color:#fe0032;">zen of baking</span>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>. Is this not, in a way, an allegory of all human creation? We impose form upon chaos, and call it dessert.
       </p>
 
       <p class="recipe-description">
-      Culturally, <span style="color:#fe0032;">baking</span> binds us in a way that predates language. Across centuries and continents, the act of sharing bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a network of borrowed gestures and shared <span style="color:#fe0032;">desire</span> and <span style="color:#fe0032;">community</span>.
+      Culturally, baking binds us in a way that predates language. Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
       </p>
 
       <p class="recipe-description">
-      So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient <span style="color:#fe0032;">dialectic</span> between <span style="color:#fe0032;">chaos</span> and <span style="color:#fe0032;">order</span>, solitude and <span style="color:#fe0032;">community</span>, scarcity and indulgence. You are, in the truest sense, <span style="color:#fe0032;">baking</span> the symptom of being human, striving toward <span style="color:#fe0032;">transcendence</span>.
+      So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#fe0032;">community</span>, scarcity and indulgence. You are, in the truest sense, baking the <span style="color:#fe0032;">striving toward transcendence</span>.
       </p>
 
-      <h2 class="section-title">Bake first, theorize later</h2>
+      <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
 
       <p class="recipe-description">
       Scroll through the recipes, or search by keyword.
       </p>
 
       <p class="recipe-description">
-      Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely the symptom of <span style="color:#fe0032;">desire</span>!
+      Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#fe0032;">the symptom of desire</span>!
       </p>
 
       <p class="recipe-description">
-      Because <span style="color:#fe0032;">baking</span>, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own subversive take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our collective archive of baked <span style="color:#fe0032;">transcendence</span> may continue to grow.
+      Because baking, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our <span style="color:#fe0032;">collective archive</span> of baked transcendence may continue to grow.
       </p>
 
       <p class="recipe-description">
-      <a href="mailto:baking@chomp.ltd" class="email-link">baking@chomp.ltd</a>
+      <a href="mailto:baking@chomp.ltd" style="color:#fe0032; font-weight:bold;">baking@chomp.ltd</a>
       </p>
   </div>
 `;
+
 
 
     function resetRecipeView() {
