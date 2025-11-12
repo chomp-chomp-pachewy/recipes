@@ -173,14 +173,15 @@
     }
 
     .recipe-image {
-      width: 100%;
-      max-width: 600px;
+      /* Adjusted styles below */
+      display: block; /* Important for margin: auto to work */
+      max-width: 50%; /* Image will be max 50% of its container */
+      width: auto; /* Ensures image scales down correctly */
       height: auto;
       border-radius: 8px;
-      margin-bottom: 30px;
+      margin: 0 auto 15px auto; /* Centered horizontally, 15px bottom margin */
     }
-    
-    /* New style for the print button */
+
     .print-button {
       padding: 10px 15px;
       font-size: 16px;
@@ -195,7 +196,6 @@
     .print-button:hover {
         background-color: #c90028;
     }
-    /* End New style for the print button */
 
     .section-title {
       color: #fe0032;
@@ -283,6 +283,9 @@
       }
       .recipe-content {
         padding: 20px;
+      }
+      .recipe-image { /* On smaller screens, allow images to be larger if needed */
+        max-width: 80%; /* Adjust as per desired responsiveness */
       }
     }
     
