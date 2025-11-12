@@ -23,7 +23,7 @@
         color: #e0e0e0;
       }
       .sidebar {
-        background-color: #f8f8f8; /* REVERTED: Light mode color in dark mode */
+        background-color: #f8f8f8; /* Light mode color in dark mode */
         border-right-color: #444;
       }
       .search-box {
@@ -47,33 +47,20 @@
         border-left-color: #666;
       }
       .notes-section {
-        background-color: #f8f8f8; /* REVERTED: Light mode color in dark mode */
-        color: #666666; /* NEW: Notes section text color for dark mode */
+        background-color: #f8f8f8; /* Light mode color in dark mode */
+        color: #434343; /* UPDATED: Dark text for light notes section in dark mode */
       }
       .home-text .recipe-title {
         color: #e0e0e0; /* Dark mode title color */
       }
-      /* Ensure text is dark on the light sidebar/notes section */
+      /* Ensure text is dark on the light sidebar */
       .recipe-name {
         color: #434343; /* Dark text for light sidebar */
       }
       .recipe-item.active .recipe-name {
         color: #ffffff; /* Active item text remains white on red background */
       }
-      /* Dark mode styles for filter */
-      .filter-dropdown-btn {
-          background-color: #333;
-          border-color: #555;
-          color: #e0e0e0;
-      }
-      .filter-dropdown-btn:hover {
-          background-color: #444;
-      }
-      .category-checkboxes-content {
-          background-color: #2a2a2a;
-          border-color: #444;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-      }
+      /* Dark mode styles for filter (REMOVED) */
     }
 
     .sidebar {
@@ -82,62 +69,16 @@
       border-right: 1px solid #e0e0e0;
       overflow-y: auto;
       flex-shrink: 0;
-      display: flex; /* Make sidebar a flex container */
-      flex-direction: column; /* Stack children vertically */
+      display: flex; 
+      flex-direction: column; 
     }
 
-    /* NEW: Styles for Category Filter */
-    .category-filter-container {
-        padding: 0 20px 10px 20px;
-        position: relative; 
-        flex-shrink: 0;
-    }
-
-    .filter-dropdown-btn {
-        width: 100%;
-        padding: 8px 16px;
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        cursor: pointer;
-        text-align: left;
-        font-size: 14px;
-        font-weight: 500;
-        color: #434343;
-        transition: background-color 0.2s;
-    }
-
-    .filter-dropdown-btn:hover {
-        background-color: #e0e0e0;
-    }
-
-    .category-checkboxes-content {
-        position: absolute;
-        z-index: 10;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        margin-top: 5px;
-        padding: 10px;
-        width: calc(100% - 40px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .category-checkboxes-content label {
-        display: block;
-        margin-bottom: 5px;
-        font-size: 14px;
-        cursor: pointer;
-    }
-    /* END NEW: Styles for Category Filter */
-
+    /* Scroll container CSS simplified as filter is removed */
     .recipe-list-container {
       position: relative; 
-      /* Calculate max height to reserve space for header/search */
       max-height: calc(100vh - 120px); 
       overflow-y: auto;
-      flex-grow: 1; /* Allows the container to fill available vertical space */
-      /* Creates a visual fade at the bottom to indicate scrollability */
+      flex-grow: 1; 
       mask-image: linear-gradient(to bottom, 
           black 95%, 
           transparent 100%);
@@ -150,7 +91,7 @@
       padding: 30px 20px 20px 20px;
       text-align: center;
       cursor: pointer; 
-      flex-shrink: 0; /* Prevents shrinking */
+      flex-shrink: 0; 
     }
 
     .sidebar-title {
@@ -158,7 +99,7 @@
       font-weight: 300;
       color: #fe0032;
       text-transform: lowercase;
-      flex-shrink: 0; /* Prevents shrinking */
+      flex-shrink: 0; 
     }
 
     .search-box {
@@ -171,7 +112,7 @@
       border-radius: 8px;
       background-color: #ffffff;
       color: #434343;
-      flex-shrink: 0; /* Prevents shrinking */
+      flex-shrink: 0; 
     }
 
     .search-box:focus {
@@ -181,7 +122,6 @@
 
     .recipe-list {
       list-style: none;
-      /* Remove padding/margin that might interfere with container */
       padding: 0;
       margin: 0;
     }
@@ -194,7 +134,7 @@
     }
 
     .recipe-item:last-child {
-        border-bottom: none; /* Clean up last border */
+        border-bottom: none; 
     }
 
     .recipe-item:hover {
@@ -240,8 +180,11 @@
       margin: 0 auto;
     }
     
-    .home-text .recipe-title { 
-      color: #434343; 
+    .home-text .home-image { /* Style for the welcome image */
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        margin-bottom: 20px;
     }
 
     .recipe-meta {
@@ -376,7 +319,6 @@
       .search-box, 
       .print-button, 
       .sidebar-header,
-      .category-filter-container, /* HIDE FILTER */
       .recipe-list-container {
         display: none !important;
       }
@@ -436,20 +378,6 @@
     </div>
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
     
-    <div class="category-filter-container">
-        <button id="categoryDropdownBtn" class="filter-dropdown-btn">Filter Categories</button>
-        <div id="categoryCheckboxes" class="category-checkboxes-content" style="display: none;">
-            <label>
-                <input type="checkbox" name="categoryFilter" value="chomp chomp" checked> chomp chomp
-            </label>
-            <label>
-                <input type="checkbox" name="categoryFilter" value="experience" checked> experience
-            </label>
-            <label>
-                <input type="checkbox" name="categoryFilter" value="null" checked> other
-            </label>
-        </div>
-    </div>
     <div class="recipe-list-container">
         <ul class="recipe-list" id="recipeList"></ul>
         <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
@@ -467,59 +395,12 @@
       window.print();
     }
     
-    // Function to show/hide the category dropdown
-    function toggleDropdown() {
-      const checkboxes = document.getElementById('categoryCheckboxes');
-      checkboxes.style.display = checkboxes.style.display === 'block' ? 'none' : 'block';
-    }
-
-    // Function to retrieve the current filter state (search term and active categories)
-    function getFilterData() {
-        const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-        const checkedBoxes = Array.from(document.querySelectorAll('#categoryCheckboxes input[name="categoryFilter"]:checked'));
-        const activeCategories = checkedBoxes.map(cb => cb.value);
-
-        return { searchTerm, activeCategories };
-    }
-
-    // Function to apply both search and category filters
-    function applyFilters() {
-      const { searchTerm, activeCategories } = getFilterData();
-      
-      const filtered = recipes.filter(recipe => {
-        // 1. Search Filter
-        const matchesSearch = 
-          recipe.title.toLowerCase().includes(searchTerm) ||
-          (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
-          recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm));
-
-        if (!matchesSearch) return false;
-
-        // 2. Category Filter
-        // Use 'null' string if the category property is missing or truly null/undefined
-        const recipeCategory = recipe.category || 'null';
-        return activeCategories.includes(recipeCategory);
-      });
-
-      displayRecipeList(filtered);
-    }
-
-    // Function to setup filter listeners after DOM is loaded
-    function setupFilterListeners() {
-        document.getElementById('categoryDropdownBtn').addEventListener('click', toggleDropdown);
-        
-        // Add change listeners to all checkboxes to re-filter immediately
-        document.querySelectorAll('#categoryCheckboxes input[name="categoryFilter"]').forEach(checkbox => {
-            checkbox.addEventListener('change', applyFilters);
-        });
-    }
-
     // Defines the home content in one place (for easier maintenance)
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <h1 class="recipe-title">Welcome to Chomp Recipes!</h1>
+          <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
           <p class="recipe-description">We've curated a delicious collection of recipes from around the world. To get started, simply **select a recipe from the list on the left** to view its ingredients, instructions, and notes.</p>
-          <p class="recipe-meta">Use the search box and the **Filter Categories** dropdown to find recipes.</p>
+          <p class="recipe-meta">Use the search box to filter by title, ingredient, or description.</p>
       </div>
     `;
 
@@ -558,11 +439,9 @@
         
         sortRecipesAlphabetically();
         
-        // Use applyFilters instead of displayRecipeList to show initial list
-        applyFilters(); 
+        displayRecipeList(recipes); 
         
         resetRecipeView();
-        setupFilterListeners(); // Set up the filter listeners after all DOM elements are present
       } catch (error) {
         console.error('Error loading recipes:', error);
       }
@@ -629,7 +508,7 @@
         metaInfo.push(`<span>source: ${recipe.source}</span>`);
       }
 
-      // Category display after source
+      // Category display (restored to original state without filter logic dependency)
       if (recipe.category && recipe.category !== 'null') {
         metaInfo.push(`<span>category: ${recipe.category}</span>`);
       }
@@ -675,8 +554,16 @@
       `;
     }
 
-    // Search functionality update: now calls applyFilters
-    document.getElementById('searchBox').addEventListener('input', applyFilters);
+    // Search functionality restored to original simple logic
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = recipes.filter(recipe => 
+        recipe.title.toLowerCase().includes(searchTerm) ||
+        (recipe.description && recipe.description.toLowerCase().includes(searchTerm)) ||
+        recipe.ingredients.some(ing => ing.toLowerCase().includes(searchTerm))
+      );
+      displayRecipeList(filtered);
+    });
 
     // Load recipes on page load
     loadRecipes();
