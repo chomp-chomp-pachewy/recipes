@@ -23,7 +23,7 @@
         color: #e0e0e0;
       }
       .sidebar {
-        background-color: #212121; /* UPDATED: Slightly darker gray */
+        background-color: #2a2a2a; /* Reverted to ensure proper contrast with white text */
         border-right-color: #444;
       }
       .search-box {
@@ -52,12 +52,12 @@
       .home-text .recipe-title {
         color: #e0e0e0; /* Dark mode title color */
       }
-      /* NEW/UPDATED: Sidebar recipe text color in dark mode */
+      /* FINAL UPDATE: Ensures non-active titles are fully visible */
       .recipe-name {
-        color: inherit; 
+        color: #ffffff; /* Bright white for maximum contrast on dark background */
       }
       .recipe-item.active .recipe-name {
-        color: #f8f8f8; /* Ensures the active text is visible */
+        color: #f8f8f8; 
       }
     }
 
@@ -123,8 +123,6 @@
       font-weight: 400;
       font-size: 1em;
     }
-
-    /* .recipe-time class removed as content is removed from JS */
 
     .recipe-item.active .recipe-time {
       color: rgba(255, 255, 255, 0.8);
