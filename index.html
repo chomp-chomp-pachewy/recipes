@@ -179,6 +179,23 @@
       border-radius: 8px;
       margin-bottom: 30px;
     }
+    
+    /* New style for the print button */
+    .print-button {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #fe0032;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background-color 0.2s;
+    }
+    .print-button:hover {
+        background-color: #c90028;
+    }
+    /* End New style for the print button */
 
     .section-title {
       color: #fe0032;
@@ -268,6 +285,64 @@
         padding: 20px;
       }
     }
+    
+    /* === NEW: PRINT STYLES === */
+    @media print {
+      /* Hide elements not needed for printing */
+      .sidebar, 
+      .search-box, 
+      .print-button, /* Hides the print button itself */
+      .sidebar-header,
+      .no-results {
+        display: none !important;
+      }
+
+      /* Make the recipe content take up the full screen width */
+      body {
+        display: block; 
+        min-height: auto;
+        color: #000000; /* Ensure black text for printing */
+      }
+      
+      .recipe-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0; 
+      }
+
+      /* Optimize text and elements for print readability/ink saving */
+      .recipe-title {
+        color: #000000 !important; /* Force black title */
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+      }
+      
+      .recipe-meta, .recipe-description {
+          color: #333333;
+      }
+      
+      .section-title {
+          color: #333333 !important;
+      }
+
+      .notes-section {
+        background-color: transparent;
+        border: 1px dashed #cccccc;
+      }
+
+      .ingredient-item {
+        border-left-color: #cccccc !important; 
+      }
+      
+      /* Instruction step circles should also be print-friendly */
+      .instruction-item::before {
+        background-color: #000000 !important; /* Black circle for print */
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+      }
+    }
+    /* === END NEW: PRINT STYLES === */
   </style>
 </head>
 <body>
@@ -286,6 +361,12 @@
   <script>
     let recipes = [];
     let currentRecipe = null;
+    
+    // NEW: Function to trigger the browser's print dialog
+    function printRecipe() {
+      window.print();
+    }
+    // END NEW
 
     // Defines the home content in one place (for easier maintenance)
     const HOME_CONTENT_HTML = `
@@ -436,7 +517,9 @@
         <div class="recipe-header">
           <h1 class="recipe-title">${recipe.title}</h1>
           <div class="recipe-meta">${metaInfo.join('')}</div>
-        </div>
+          
+          <button onclick="printRecipe()" class="print-button">Print Recipe</button>
+          </div>
         
         ${descriptionHTML}
         ${imageHTML}
