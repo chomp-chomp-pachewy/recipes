@@ -48,9 +48,6 @@
     }
 
     .recipe-list-container {
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-
       position: relative;
       max-height: calc(100vh - 120px);
       overflow-y: auto;
@@ -522,7 +519,7 @@
       let target = null;
 
       if (slugParam && slugParam.trim() !== '') {
-        target = recipes.find(r => r.slug === slugParam);
+        target = recipes.find(r => r.slug === slugParam.trim());
       } else if (titleParam) {
         const lower = titleParam.toLowerCase();
         target = recipes.find(r => r.title.toLowerCase() === lower);
@@ -581,8 +578,6 @@
     }
 
     
-function }
-
 
 
     function selectRecipe(recipe, element) {
