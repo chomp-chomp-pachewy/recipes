@@ -429,6 +429,92 @@
   }
 }
 
+/* === Dark mode palette overrides (v13) === */
+@media (prefers-color-scheme: dark) {
+  /* Softer dark background + warm body text */
+  body {
+    background-color: #2a2a2a;
+    color: #E6E1DD;
+  }
+
+  .recipe-content {
+    background-color: #2a2a2a;
+  }
+
+  /* Manifesto / home text body copy */
+  .home-text,
+  .home-text .recipe-description {
+    color: #E6E1DD !important;
+  }
+
+  /* Generic recipe text */
+  .recipe-description {
+    color: #E6E1DD;
+  }
+
+  /* Metadata row: prep / cook / total / servings / source / category */
+  .recipe-meta {
+    color: #C7D2E0;
+  }
+
+  /* Softer brand red for headings & links */
+  .recipe-title,
+  .section-title,
+  .sidebar-title,
+  .email-link {
+    color: #ff4f6b !important;
+  }
+
+  /* Manifesto titles specifically */
+  .home-text .recipe-title,
+  .home-text .section-title {
+    color: #ff4f6b !important;
+  }
+
+  /* Accent red for ingredients and step bubbles */
+  .ingredient-item {
+    border-left-color: #ff4f6b;
+  }
+
+  .instruction-item::before {
+    background-color: #ff4f6b;
+  }
+
+  /* Action buttons: Print / Permalink */
+  .recipe-action-button {
+    border-color: #ff4f6b;
+    color: #ff4f6b;
+  }
+
+  .recipe-action-button:hover {
+    background-color: #ff4f6b;
+    color: #ffffff;
+  }
+
+  /* Sticky "scroll for more" indicator */
+  .sticky-indicator {
+    background: #d6d6d6;
+    color: #2a2a2a;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Top shadow above the list, tuned to new dark background */
+  .top-shadow {
+    background:
+      linear-gradient(to bottom,
+        rgba(42,42,42,1) 0%,
+        rgba(42,42,42,0) 90%),
+      linear-gradient(to bottom,
+        rgba(0,0,0,0.35),
+        rgba(0,0,0,0));
+  }
+
+  /* Soften the inline manifesto red spans (#fe0032) in dark mode */
+  .home-text .recipe-description span[style*="#fe0032"] {
+    color: #ff4f6b !important;
+  }
+}
+
 </style>
 </head>
 <body>
