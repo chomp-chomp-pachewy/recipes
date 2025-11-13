@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe to JSON Converter</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: block;
+        }
+        .input-section, .output-section, .md-converter {
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .md-converter {
+            grid-column: 1 / -1; /* Spans both columns */
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #jsonOutput {
+            background-color: #eee;
+            border: 1px dashed #aaa;
+            padding: 10px;
+            min-height: 250px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            color: #2b2b2b;
+            border-radius: 4px;
+        }
+        .hint {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        /* Style for the Instructions and Ingredients areas */
+        .array-field-group {
+            border: 1px solid #e0e0e0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .array-field-group label {
+            margin-bottom: 10px;
+        }
+        .md-button {
+            background-color: #28a745;
+        }
+        .md-button:hover {
+            background-color: #1e7e34;
+        }
+
+        .preview-section {
+            margin-top: 20px;
+        }
+        .preview-section h2 {
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        .preview-block {
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #fafafa;
+            font-size: 0.9em;
+        }
+        .preview-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .preview-meta {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .preview-section-title {
+            font-weight: 600;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+        }
+        .preview-list {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .preview-list li {
+            margin-bottom: 2px;
+        }
+        .preview-notes {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 0.85em;
+        }
+        .preview-placeholder {
+            font-size: 0.85em;
+            color: #777;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>🍲 Recipe to JSON Converter</h1>
+    
+    <div class="md-converter">
+        <h2>Markdown File Parser</h2>
+        <div class="hint">Paste the entire content of your Markdown (.md) recipe file below. This will automatically fill out the fields in the 'Recipe Details' section on the right.</div>
+        <textarea id="markdownInput" rows="10" placeholder="# Recipe Title&#10;&#10;Description paragraph.&#10;&#10;Servings: 6&#10;Prep: 15 minutes&#10;Category: Dinner&#10;&#10;## Ingredients&#10;- ingredient 1&#10;- ingredient 2&#10;&#10;## Instructions&#10;1. Step one&#10;2. Step two&#10;&#10;## Notes&#10;Any notes here"></textarea>
+        <button type="button" class="md-button" onclick="parseMarkdown()">Parse Markdown & Fill Fields</button>
+    </div>
+
+    <div class="container">
+        <div class="input-section">
+            <h2>Recipe Details (Fields)</h2>
+            <form id="recipeForm">
+                <label for="title">Title <span style="color:red">*</span></label>
+                <input type="text" id="title" required>
+
+                <label for="slug">Slug</label>
+                <div class="hint">Auto-generated from the title for permalinks. You can edit it; clear to re-sync.</div>
+                <input type="text" id="slug" placeholder="auto-generated-from-title">
+
+                <label for="description">Description</label>
+                <textarea id="description"></textarea>
+
+                <div class="array-field-group">
+                    <label for="ingredients">Ingredients <span style="color:red">*</span></label>
+                    <div class="hint">One ingredient per line.</div>
+                    <textarea id="ingredients" required placeholder="e.g. 1 cup flour&#10;2 large eggs"></textarea>
+                </div>
+
+                <div class="array-field-group">
+                    <label for="instructions">Instructions <span style="color:red">*</span></label>
+                    <div class="hint">One step per line.</div>
+                    <textarea id="instructions" required placeholder="e.g. Preheat the oven.&#10;Mix dry ingredients."></textarea>
+                </div>
+                
+                <label for="servings">Servings</label>
+                <input type="text" id="servings" placeholder="e.g. 8 cookies">
+
+                <label for="prepTime">Prep Time</label>
+                <input type="text" id="prepTime" placeholder="e.g. 15 minutes">
+
+                <label for="cookTime">Cook Time</label>
+                <input type="text" id="cookTime" placeholder="e.g. 45-60 minutes">
+
+                <label for="totalTime">Total Time</label>
+                <input type="text" id="totalTime" placeholder="e.g. 2 hours">
+
+                <label for="source">Source</label>
+                <input type="text" id="source" placeholder="e.g. My Grandmother">
+
+                <label for="image">Image Path</label>
+                <input type="text" id="image" placeholder='e.g. images/my-new-recipe.jpg (or leave blank for null)'>
+                
+                <label for="category">Category</label>
+                <input type="text" id="category" placeholder="e.g. chomp chomp, Breakfast, Side Dish">
+
+                <label for="notes">Notes</label>
+                <textarea id="notes"></textarea>
+
+                <button type="button" onclick="generateJson()">Generate JSON</button>
+            </form>
+        </div>
+
+        <div class="output-section">
+            <h2>JSON Output</h2>
+            <div class="hint">Copy the text below and append it to your `recipes.json` file. Remember to add a comma (`,`) after the previous recipe's closing curly brace!</div>
+            <pre id="jsonOutput">
+{
+  "title": "...",
+  // JSON will appear here
+}
+            </pre>
+            <button onclick="copyToClipboard()" id="copyButton" style="margin-top: 10px;">Copy JSON</button>
+
+            <div class="preview-section">
+                <h2>Recipe Preview (structure only)</h2>
+                <div class="hint">This preview shows the structural layout of your recipe without site styling. It updates as you edit fields.</div>
+                <div id="preview" class="preview-block">
+                    <div class="preview-placeholder">Preview will appear here after you fill in the fields or parse Markdown.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Conversion Helper Functions ---
+
+        // Helper function to convert a newline-separated string to a JSON array of strings.
+        function toArray(text) {
+            if (!text) return [];
+            // Split by newline, trim whitespace from each line, and filter out empty lines.
+            return text.split('\n')
+                       .map(line => line.trim())
+                       .filter(line => line.length > 0);
+        }
+
+        // Helper to normalize keys (e.g., 'Prep Time' -> 'prepTime')
+        function normalizeKey(key) {
+            if (!key) return null;
+            const map = {
+                'servings': 'servings',
+                'prep': 'prepTime',
+                'preptime': 'prepTime',
+                'cook': 'cookTime',
+                'cooktime': 'cookTime',
+                'total': 'totalTime',
+                'totaltime': 'totalTime',
+                'source': 'source',
+                'image': 'image',
+                'category': 'category',
+                'slug': 'slug'
+            };
+            const normalized = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return map[normalized] || null;
+        }
+
+
+        // Slug generator
+        function generateSlug(title) {
+            if (!title) return '';
+            return title
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        // Keep slug in sync with title unless manually edited
+        let slugManuallyEdited = false;
+        document.addEventListener('DOMContentLoaded', () => {
+            const titleInput = document.getElementById('title');
+            const slugInput = document.getElementById('slug');
+            if (titleInput && slugInput) {
+                titleInput.addEventListener('input', () => {
+                    if (!slugManuallyEdited) {
+                        slugInput.value = generateSlug(titleInput.value);
+                    }
+                    updatePreview();
+                });
+                slugInput.addEventListener('input', () => {
+                    const val = slugInput.value.trim();
+                    if (val === '') {
+                        slugManuallyEdited = false;
+                        slugInput.value = generateSlug(titleInput.value);
+                    } else {
+                        slugManuallyEdited = true;
+                    }
+                    updatePreview();
+                });
+            }
+        });
+
+
+        // --- Main Markdown Parsing Logic ---
+
+        function parseMarkdown() {
+            const mdText = document.getElementById('markdownInput').value;
+            if (!mdText) {
+                alert("Please paste your Markdown recipe content first.");
+                return;
+            }
+
+            const lines = mdText.split('\n');
+            let section = 'title';
+            let description = [];
+            let metadata = {};
+            let ingredients = [];
+            let instructions = [];
+            let notes = [];
+            let title = '';
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+
+                // 1. Check for Section Headers
+                if (trimmedLine.startsWith('# ')) {
+                    // This is the Title
+                    title = trimmedLine.substring(2).trim();
+                    section = 'description';
+                    continue;
+                } else if (trimmedLine.startsWith('## Ingredients')) {
+                    section = 'ingredients';
+                    continue;
+                } else if (trimmedLine.startsWith('## Instructions')) {
+                    section = 'instructions';
+                    continue;
+                } else if (trimmedLine.startsWith('## Notes')) {
+                    section = 'notes';
+                    continue;
+                }
+
+                if (trimmedLine === '') {
+                    // Skip empty lines, but allow section flow
+                    continue;
+                }
+
+                // 2. Process content based on the current section
+                if (section === 'description') {
+                    // Check for metadata first (e.g., "Servings: 6")
+                    const metaMatch = trimmedLine.match(/^([A-Za-z\s]+):(.+)$/);
+                    if (metaMatch) {
+                        const key = normalizeKey(metaMatch[1].trim());
+                        const value = metaMatch[2].trim();
+                        if (key) {
+                            metadata[key] = value;
+                        }
+                    } else {
+                        // Assume it's part of the description if not metadata
+                        description.push(trimmedLine);
+                    }
+
+                } else if (section === 'ingredients') {
+                    // Remove Markdown list markers (-, *, or 1. etc)
+                    ingredients.push(trimmedLine.replace(/^[\*\-\d\.]+\s*/, '').trim());
+
+                } else if (section === 'instructions') {
+                    // Remove Markdown list markers (-, *, or 1. etc)
+                    instructions.push(trimmedLine.replace(/^[\*\-\d\.]+\s*/, '').trim());
+                
+                } else if (section === 'notes') {
+                    notes.push(trimmedLine);
+                }
+            }
+            
+            // 3. Populate Form Fields
+            document.getElementById('title').value = title || '';
+            document.getElementById('description').value = description.join('\n').trim() || '';
+            document.getElementById('servings').value = metadata.servings || '';
+            document.getElementById('prepTime').value = metadata.prepTime || '';
+            document.getElementById('cookTime').value = metadata.cookTime || '';
+            document.getElementById('totalTime').value = metadata.totalTime || '';
+            document.getElementById('source').value = metadata.source || '';
+            document.getElementById('image').value = metadata.image || '';
+            document.getElementById('category').value = metadata.category || '';
+
+            // Slug: use metadata.slug if present; otherwise generate from title
+            const rawTitle = title || document.getElementById('title').value.trim();
+            const slugInput = document.getElementById('slug');
+            if (metadata.slug) {
+                slugInput.value = metadata.slug.trim();
+            } else {
+                slugInput.value = generateSlug(rawTitle);
+            }
+
+            // Join array fields with newlines
+            document.getElementById('ingredients').value = ingredients.join('\n');
+            document.getElementById('instructions').value = instructions.join('\n');
+            document.getElementById('notes').value = notes.join('\n').trim() || '';
+            
+            // Automatically generate the JSON after parsing
+            generateJson();
+            updatePreview();
+
+            alert("Markdown successfully parsed and fields filled! Review the details, then copy the JSON output.");
+        }
+
+
+        // --- Main JSON Generation Logic ---
+        
+        // Main function to read form data and generate JSON.
+        function generateJson() {
+            const form = document.getElementById('recipeForm');
+            if (!form.checkValidity()) {
+                document.getElementById('jsonOutput').textContent = "ERROR: Missing required fields (Title, Ingredients, Instructions).";
+                return;
+            }
+
+            const rawTitle = document.getElementById('title').value.trim();
+            const slugField = document.getElementById('slug').value.trim();
+            const finalSlug = slugField || generateSlug(rawTitle);
+
+            const recipe = {
+                "title": rawTitle || null,
+                "slug": finalSlug || null,
+                "description": document.getElementById('description').value.trim() || null,
+                "servings": document.getElementById('servings').value.trim() || null,
+                "prepTime": document.getElementById('prepTime').value.trim() || null,
+                "cookTime": document.getElementById('cookTime').value.trim() || null,
+                "totalTime": document.getElementById('totalTime').value.trim() || null,
+                "source": document.getElementById('source').value.trim() || null,
+                "image": document.getElementById('image').value.trim() || null,
+                "category": document.getElementById('category').value.trim() || null, 
+                "ingredients": toArray(document.getElementById('ingredients').value),
+                "instructions": toArray(document.getElementById('instructions').value),
+                "notes": document.getElementById('notes').value.trim() || null
+            };
+
+            // Convert the object to a beautifully formatted JSON string
+            const jsonString = JSON.stringify(recipe, null, 2);
+            document.getElementById('jsonOutput').textContent = jsonString;
+            updatePreview();
+        }
+
+
+        // Simple structural preview below form
+        function updatePreview() {
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const servings = document.getElementById('servings').value.trim();
+            const prep = document.getElementById('prepTime').value.trim();
+            const cook = document.getElementById('cookTime').value.trim();
+            const total = document.getElementById('totalTime').value.trim();
+            const source = document.getElementById('source').value.trim();
+            const category = document.getElementById('category').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+            const ingredients = toArray(document.getElementById('ingredients').value);
+            const instructions = toArray(document.getElementById('instructions').value);
+
+            const previewDiv = document.getElementById('preview');
+            if (!previewDiv) return;
+
+            if (!title && !ingredients.length && !instructions.length) {
+                previewDiv.innerHTML = '<div class="preview-placeholder">Preview will appear here after you fill in the fields or parse Markdown.</div>';
+                return;
+            }
+
+            let metaParts = [];
+            if (prep) metaParts.push('prep: ' + prep);
+            if (cook) metaParts.push('cook: ' + cook);
+            if (total) metaParts.push('total: ' + total);
+            if (servings) metaParts.push('servings: ' + servings);
+            if (source) metaParts.push('source: ' + source);
+            if (category) metaParts.push('category: ' + category);
+
+            let html = '';
+            html += '<div class="preview-title">' + (title || '(no title)') + '</div>';
+            if (metaParts.length) {
+                html += '<div class="preview-meta">' + metaParts.join(' | ') + '</div>';
+            }
+
+            if (description) {
+                html += '<p>' + description.replace(/\n/g, '<br>') + '</p>';
+            }
+
+            if (ingredients.length) {
+                html += '<div class="preview-section-title">Ingredients</div>';
+                html += '<ul class="preview-list">';
+                ingredients.forEach(line => {
+                    html += '<li>' + line + '</li>';
+                });
+                html += '</ul>';
+            }
+
+            if (instructions.length) {
+                html += '<div class="preview-section-title">Instructions</div>';
+                html += '<ol class="preview-list">';
+                instructions.forEach(line => {
+                    html += '<li>' + line + '</li>';
+                });
+                html += '</ol>';
+            }
+
+            if (notes) {
+                html += '<div class="preview-section-title">Notes</div>';
+                html += '<div class="preview-notes">' + notes.replace(/\n/g, '<br>') + '</div>';
+            }
+
+            previewDiv.innerHTML = html;
+        }
+
+
+        // Function to copy the generated JSON to the clipboard.
+        function copyToClipboard() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                const button = document.getElementById('copyButton');
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy JSON';
+                }, 2000);
+            }).catch(err => {
+                alert('Could not copy text: ' + err);
+            });
+        }
+    </script>
+</body>
+</html>
