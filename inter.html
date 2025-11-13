@@ -48,7 +48,7 @@
     }
 
     .recipe-list-container {
-  max-height: calc(56px * 3);
+  max-height: calc(100vh - 120px);
   overflow-y: auto;
 
       position: relative;
@@ -411,6 +411,17 @@
   }
 }
 
+
+/* consolidated home-text colors */
+.home-text, .home-text h1, .home-text h2, .home-text .recipe-description {
+  color: #1a1a1a !important;
+}
+@media (prefers-color-scheme: dark) {
+  .home-text, .home-text h1, .home-text h2, .home-text .recipe-description {
+    color: #e0e0e0 !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -506,11 +517,11 @@
       const slugParam = params.get('slug');
       const titleParam = params.get('recipe');
 
-      if (!slugParam && !titleParam) return false;
+      if ((!slugParam || slugParam.trim() === '') && !titleParam) return false;
 
       let target = null;
 
-      if (slugParam) {
+      if (slugParam && slugParam.trim() !== '') {
         target = recipes.find(r => r.slug === slugParam);
       } else if (titleParam) {
         const lower = titleParam.toLowerCase();
@@ -570,16 +581,7 @@
     }
 
     
-function updateScrollIndicator() {
-  const indicator = document.getElementById('scrollIndicator');
-  const isMobile = window.innerWidth < 768;
-  if ((isMobile && recipes.length > 2) || (!isMobile && recipes.length > 10)) {
-    indicator.style.display = 'block';
-    indicator.textContent = isMobile ? "↓ more recipes below" : "↓ scroll for more recipes";
-  } else {
-    indicator.style.display = 'none';
-  }
-}
+function }
 
 
 
