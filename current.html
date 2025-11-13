@@ -419,6 +419,14 @@
   }
 }
 
+
+@media (prefers-color-scheme: dark) {
+  .home-text .recipe-title {
+    color: #fe0032 !important;
+  }
+}
+
+
 </style>
 </head>
 <body>
@@ -537,6 +545,25 @@
     }
 
 
+    function copyPermalink() {
+      let url = window.location.href;
+      if (!currentRecipe) {
+        url = window.location.origin + window.location.pathname;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          alert('Permalink copied!');
+        }).catch(err => {
+          console.error('Failed to copy permalink:', err);
+          alert('Unable to copy permalink automatically. You can copy it from the address bar.');
+        });
+      } else {
+        alert('You can copy this link from your browser address bar:\n' + url);
+      }
+    }
+
+
+
     function sortRecipesAlphabetically() {
       recipes.sort((a,b)=>
         a.title.toLowerCase() < b.title.toLowerCase() ? -1 :
@@ -647,7 +674,7 @@
           <div class="recipe-meta">${metaInfo.join(' | ')}</div>
           <div class="recipe-actions">
             <button onclick="printRecipe()" class="recipe-action-button">Print</button>
-            <button onclick="copyPermalink()" class="recipe-action-button">Copy Link</button>
+            <button onclick="copyPermalink()" class="recipe-action-button">Permalink</button>
           </div>
         </div>
         ${descriptionHTML}${imageHTML}
