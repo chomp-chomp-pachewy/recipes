@@ -21,6 +21,7 @@
     }
 
     @media (prefers-color-scheme: dark) {
+.home-text, .home-text .recipe-description { color: #e0e0e0 !important; }
       body { background-color: #1a1a1a; color: #e0e0e0; }
       .sidebar { background-color: #f8f8f8; border-right-color: #444; }
       .search-box { background-color: #333; border-color: #555; color: #e0e0e0; }
@@ -136,7 +137,7 @@
     .home-text {
       text-align: left;
       padding: 50px 0;
-      max-width: 700px;
+      max-width: 600px;
       margin: 0 auto;
       font-size: 1.05em;
       font-family: 'Source Sans 3', sans-serif;
@@ -164,6 +165,7 @@
 
     /* Underline only first line of manifesto title */
     .manifesto-title .manifesto-line-1 {
+  font-weight:700 !important;
       text-decoration: underline;
       text-underline-offset: 4px;
       font-weight: 500;
@@ -309,7 +311,7 @@
 .home-text,
 .home-text .recipe-description {
   color: #1a1a1a !important;
-  font-size: 1.12em !important;
+  font-size: 1em !important;
   line-height: 1.9 !important;
 }
 .recipe-meta span { margin-right: 0 !important; }
@@ -320,8 +322,8 @@
 }
 .recipe-action-button {
   font-family: 'Inter', sans-serif !important;
-  font-size: 0.85em;
-  padding: 6px 12px;
+  font-size: 0.95em;
+  padding: 6px 10px;
   background: transparent;
   border: 1px solid #fe0032;
   color: #fe0032;
