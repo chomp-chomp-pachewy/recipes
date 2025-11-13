@@ -20,8 +20,7 @@
       min-height: 100vh;
     }
 
-    @media (prefers-color-scheme: dark) {
-  .home-text, .home-text .recipe-description { color: #e0e0e0 !important; }
+    
 .home-text, .home-text .recipe-description { color: #e0e0e0 !important; }
       body { background-color: #1a1a1a; color: #e0e0e0; }
       .sidebar { background-color: #f8f8f8; border-right-color: #444; }
@@ -364,12 +363,7 @@
   transition: opacity 0.3s ease;
   display: none;
 }
-@media (prefers-color-scheme: dark) {
-  .sticky-indicator {
-    background: rgba(235, 235, 235, 0.92);
-    color: #2a2a2a;
-    backdrop-filter: blur(4px);
-  }
+
 }
 
 
@@ -389,24 +383,11 @@
       rgba(0,0,0,0.15),
       rgba(0,0,0,0));
 }
-@media (prefers-color-scheme: dark) {
-  .top-shadow {
-    background:
-      linear-gradient(to bottom,
-        rgba(26,26,26,1) 0%,
-        rgba(26,26,26,0) 90%),
-      linear-gradient(to bottom,
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0));
-  }
+
 }
 
 
-@media (prefers-color-scheme: dark) {
-  .home-text, .home-text .recipe-description,
-  .home-text h1, .home-text h2 {
-    color: #e0e0e0 !important;
-  }
+
 }
 
 
@@ -414,105 +395,32 @@
 .home-text .recipe-description {
   color: #1a1a1a !important;
 }
-@media (prefers-color-scheme: dark) {
-  .home-text .recipe-description {
-    color: #e0e0e0 !important;
-  }
+
 }
 
 
 /* Keep manifesto titles red in dark mode */
-@media (prefers-color-scheme: dark) {
-  .home-text .recipe-title,
-  .home-text .section-title {
-    color: #fe0032 !important;
-  }
+
 }
 
-/* === Dark mode palette overrides (v13) === */
+
+/* === Unified Dark Mode Palette (v13) === */
 @media (prefers-color-scheme: dark) {
-  /* Softer dark background + warm body text */
-  body {
-    background-color: #2a2a2a;
-    color: #E6E1DD;
+  body { background:#2a2a2a; color:#E6E1DD; }
+  .recipe-content { background:#2a2a2a; }
+  .home-text, .home-text .recipe-description { color:#E6E1DD !important; }
+  .recipe-description { color:#E6E1DD; }
+  .recipe-meta { color:#C7D2E0; }
+  .recipe-title, .section-title, .sidebar-title, .email-link {
+    color:#ff4f6b !important;
   }
-
-  .recipe-content {
-    background-color: #2a2a2a;
-  }
-
-  /* Manifesto / home text body copy */
-  .home-text,
-  .home-text .recipe-description {
-    color: #E6E1DD !important;
-  }
-
-  /* Generic recipe text */
-  .recipe-description {
-    color: #E6E1DD;
-  }
-
-  /* Metadata row: prep / cook / total / servings / source / category */
-  .recipe-meta {
-    color: #C7D2E0;
-  }
-
-  /* Softer brand red for headings & links */
-  .recipe-title,
-  .section-title,
-  .sidebar-title,
-  .email-link {
-    color: #ff4f6b !important;
-  }
-
-  /* Manifesto titles specifically */
-  .home-text .recipe-title,
-  .home-text .section-title {
-    color: #ff4f6b !important;
-  }
-
-  /* Accent red for ingredients and step bubbles */
-  .ingredient-item {
-    border-left-color: #ff4f6b;
-  }
-
-  .instruction-item::before {
-    background-color: #ff4f6b;
-  }
-
-  /* Action buttons: Print / Permalink */
-  .recipe-action-button {
-    border-color: #ff4f6b;
-    color: #ff4f6b;
-  }
-
-  .recipe-action-button:hover {
-    background-color: #ff4f6b;
-    color: #ffffff;
-  }
-
-  /* Sticky "scroll for more" indicator */
-  .sticky-indicator {
-    background: #d6d6d6;
-    color: #2a2a2a;
-    backdrop-filter: blur(4px);
-  }
-
-  /* Top shadow above the list, tuned to new dark background */
-  .top-shadow {
-    background:
-      linear-gradient(to bottom,
-        rgba(42,42,42,1) 0%,
-        rgba(42,42,42,0) 90%),
-      linear-gradient(to bottom,
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0));
-  }
-
-  /* Soften the inline manifesto red spans (#fe0032) in dark mode */
-  .home-text .recipe-description span[style*="#fe0032"] {
-    color: #ff4f6b !important;
-  }
+  .home-text .recipe-title, .home-text .section-title { color:#ff4f6b !important; }
+  .ingredient-item { border-left-color:#ff4f6b; }
+  .instruction-item::before { background-color:#ff4f6b; }
+  .recipe-action-button { border:1px solid #ff4f6b; color:#ff4f6b; }
+  .recipe-action-button:hover { background:#ff4f6b; color:#fff; }
+  .sticky-indicator { background:#D6D6D6; color:#2a2a2a; backdrop-filter:blur(4px); }
+  .home-text .recipe-description span[style*="#fe0032"] { color:#ff4f6b !important; }
 }
 
 </style>
@@ -520,7 +428,7 @@
 <body>
   <div class="sidebar">
     <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
-      <div class="sidebar-title">Rituals / Recipes</div>
+      <div class="sidebar-title">rituals / recipes</div>
     </div>
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
     
