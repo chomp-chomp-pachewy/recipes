@@ -410,11 +410,11 @@
 
 
 /* consolidated home-text colors */
-.home-text, .home-text h1, .home-text h2, .home-text .recipe-description {
+.home-text .recipe-description {
   color: #1a1a1a !important;
 }
 @media (prefers-color-scheme: dark) {
-  .home-text, .home-text h1, .home-text h2, .home-text .recipe-description {
+  .home-text .recipe-description {
     color: #e0e0e0 !important;
   }
 }
@@ -501,6 +501,41 @@
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
     }
+
+    function updateStickyIndicator() {
+      const list = document.querySelector('.recipe-list-container');
+      const indicator = document.getElementById('stickyIndicator');
+      const topShadow = document.querySelector('.top-shadow');
+      if (!list || !indicator) return;
+
+      const isScrollable = list.scrollHeight > list.clientHeight;
+
+      if (!isScrollable) {
+        indicator.style.display = 'none';
+        if (topShadow) topShadow.style.opacity = 0;
+        return;
+      }
+
+      indicator.style.display = 'block';
+      const isMobile = window.innerWidth < 768;
+      indicator.textContent = isMobile ? "↓ more recipes below" : "↓ scroll for more recipes";
+
+      const atTop = list.scrollTop <= 1;
+      indicator.style.opacity = atTop ? 1 : 0;
+      if (topShadow) topShadow.style.opacity = atTop ? 0 : 1;
+
+      if (!list._hasStickyScrollHandler) {
+        list.addEventListener('scroll', () => {
+          const nowAtTop = list.scrollTop <= 1;
+          indicator.style.opacity = nowAtTop ? 1 : 0;
+          if (topShadow) {
+            topShadow.style.opacity = nowAtTop ? 0 : 1;
+          }
+        });
+        list._hasStickyScrollHandler = true;
+      }
+    }
+
 
     function sortRecipesAlphabetically() {
       recipes.sort((a,b)=>
