@@ -527,7 +527,7 @@
 
       indicator.style.display = 'block';
       const isMobile = window.innerWidth < 768;
-      indicator.textContent = isMobile ? "↓ more recipes below" : "↓ scroll for more recipes";
+      indicator.textContent = isMobile ? "↓ scroll for more" : "↓ scroll for more recipes";
 
       const atTop = list.scrollTop <= 1;
       indicator.style.opacity = atTop ? 1 : 0;
