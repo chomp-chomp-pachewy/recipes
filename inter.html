@@ -349,13 +349,38 @@
 }
 
 
-.scroll-indicator {
-  text-align: center;
-  font-size: 0.8em;
-  color: #888;
-  padding: 8px 0 12px;
-  opacity: 0.85;
+
+
+
+.scroll-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      rgba(253,253,253,0) 0%,
+      rgba(253,253,253,0.9) 70%,
+      rgba(253,253,253,1) 100%),
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.12),
+      rgba(0,0,0,0.12));
+  background-repeat: no-repeat;
   display: none;
+}
+@media (prefers-color-scheme: dark) {
+  .scroll-shadow {
+    background:
+      linear-gradient(to bottom,
+        rgba(26,26,26,0) 0%,
+        rgba(26,26,26,0.9) 70%,
+        rgba(26,26,26,1) 100%),
+      linear-gradient(to bottom,
+        rgba(0,0,0,0.4),
+        rgba(0,0,0,0.4));
+  }
 }
 
 </style>
@@ -369,7 +394,7 @@
     
     <div class="recipe-list-container">
         <ul class="recipe-list" id="recipeList"></ul>
-<div id="scrollIndicator" class="scroll-indicator"></div>
+<div class="scroll-shadow"></div>
         <div class="no-results" id="noResults" style="display: none;">no recipes found</div>
     </div>
   </div>
@@ -492,7 +517,7 @@
 
         sortRecipesAlphabetically();
         displayRecipeList(recipes);
-        updateScrollIndicator(); 
+        updateScrollShadow(); 
 
         if (!openRecipeFromURL()) {
           resetRecipeView();
@@ -524,6 +549,20 @@ function updateScrollIndicator() {
     indicator.textContent = isMobile ? "↓ more recipes below" : "↓ scroll for more recipes";
   } else {
     indicator.style.display = 'none';
+  }
+}
+
+
+function updateScrollShadow() {
+  const shadow = document.querySelector('.scroll-shadow');
+  if (!shadow) return;
+  const isMobile = window.innerWidth < 768;
+  const visibleLimit = isMobile ? 2 : 10;
+
+  if (recipes.length > visibleLimit) {
+    shadow.style.display = 'block';
+  } else {
+    shadow.style.display = 'none';
   }
 }
 
@@ -588,10 +627,14 @@ function copyPermalink() {
         r.ingredients.some(i=>i.toLowerCase().includes(searchTerm))
       );
       displayRecipeList(filtered);
-      updateScrollIndicator();
+      updateScrollShadow();
     });
 
     loadRecipes();
+window.addEventListener('resize', () => {
+  updateScrollShadow();
+});
+
   </script>
 </body>
 </html>
