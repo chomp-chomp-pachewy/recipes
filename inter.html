@@ -140,7 +140,7 @@
       max-width: 600px;
       margin: 0 auto;
       font-size: 1.05em;
-      font-family: 'Source Sans 3', sans-serif;
+      font-family: 'Inter', sans-serif;
       line-height: 1.85;
     }
 
@@ -156,7 +156,7 @@
 
     /* Only manifesto paragraphs get Source Sans 3 typography tweaks */
     .home-text .recipe-description {
-      font-family: 'Source Sans 3', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-weight: 300;
       line-height: 1.85;
       margin-bottom: 25px;
@@ -202,11 +202,12 @@
     .print-button:hover { background-color: #c90028; }
 
     .recipe-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
 
     .copy-link-button {
       background: none;
@@ -317,6 +318,8 @@
 .recipe-meta span { margin-right: 0 !important; }
 .recipe-actions {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 10px;
   margin-top: 10px;
 }
