@@ -53,7 +53,7 @@
     .sidebar-title {
       font-size: 1.6em;
       font-weight: 700;
-      color: #ea7480;
+      color: #d3687e;
       flex-shrink: 0;
     }
 
@@ -74,7 +74,7 @@
       flex-shrink: 0;
     }
 
-    .search-box:focus { outline: none; border-color: #ea7480; }
+    .search-box:focus { outline: none; border-color: #d3687e; }
 
     .recipe-list { list-style: none; padding: 0; margin: 0; }
 
@@ -90,7 +90,7 @@
     .recipe-item:hover { background-color: #f0f0f0; }
 
     .recipe-item.active {
-      background-color: #ea7480;
+      background-color: #d3687e;
       color: #ffffff;
     }
 
@@ -152,7 +152,7 @@
     .recipe-title {
       font-size: 2.1em;
       font-weight: 300;
-      color: #ea7480;
+      color: #d3687e;
       margin-bottom: 15px;
       line-height: 1.2;
     }
@@ -240,15 +240,15 @@
       font-size: 0.95em;
       padding: 6px 10px;
       background: transparent;
-      border: 1px solid #ea7480;
-      color: #ea7480;
+      border: 1px solid #d3687e;
+      color: #d3687e;
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s ease;
     }
     
     .recipe-action-button:hover {
-      background-color: #ea7480;
+      background-color: #d3687e;
       color: white;
     }
 
@@ -256,7 +256,7 @@
     .print-button {
       padding: 10px 15px;
       font-size: 16px;
-      background-color: #ea7480;
+      background-color: #d3687e;
       color: white;
       border: none;
       border-radius: 4px;
@@ -265,7 +265,7 @@
       transition: background-color 0.2s;
     }
 
-    .print-button:hover { background-color: #ea7480; }
+    .print-button:hover { background-color: #d3687e; }
 
     .copy-link-button {
       background: none;
@@ -277,10 +277,10 @@
       text-decoration: underline;
     }
 
-    .copy-link-button:hover { color: #ea7480; }
+    .copy-link-button:hover { color: #d3687e; }
 
     .section-title {
-      color: #ea7480;
+      color: #d3687e;
       font-size: 1.2em;
       font-weight: 700;
       margin: 35px 0 15px 0;
@@ -291,7 +291,7 @@
 
     .ingredient-item {
       padding: 8px 0 8px 16px;
-      border-left: 3px solid #ea7480;
+      border-left: 3px solid #d3687e;
       margin-bottom: 8px;
       font-weight: 300;
     }
@@ -314,7 +314,7 @@
       top: 0;
       width: 28px;
       height: 28px;
-      background-color: #ea7480;
+      background-color: #d3687e;
       color: #ffffff;
       border-radius: 50%;
       display: flex;
@@ -339,7 +339,7 @@
       font-size: 0.95em;
     }
 
-    a.email-link { color: #ea7480; font-weight: 700; text-decoration: none; }
+    a.email-link { color: #d3687e; font-weight: 700; text-decoration: none; }
 
     /* ---------------------------------------------------- */
     /* === MEDIA QUERIES === */
@@ -380,14 +380,14 @@
       /* Base */
       body {
         background: #2a2a2a;
-        color: #E6E1DD;
+        color: #f5f5f5;
       }
       .recipe-content {
         background: #2a2a2a;
       }
 
       .sidebar {
-        background-color: #9e9e9e;
+        background-color: #f8f8f8;
       }
 
       .recipe-name {
@@ -399,7 +399,7 @@
       .home-text .recipe-description,
       .home-text h1,
       .home-text h2 {
-        color: #E6E1DD !important;
+        color: #f5f5f5 !important;
       }
 
       /* Recipe metadata */
@@ -407,37 +407,37 @@
         color: #C7D2E0;
       }
 
-      /* Titles, section headings, sidebar title, email link = soft pink */
+      /* Titles, section headings, sidebar title, email link = accent */
       .recipe-title,
       .section-title,
       .sidebar-title,
       .email-link {
-        color: #ea7480 !important;
+        color: #d3687e !important;
       }
 
-      /* Manifesto titles specifically (override home text E6E1DD) */
+      /* Manifesto titles specifically (override home text color) */
       .home-text .recipe-title,
       .home-text .section-title {
-        color: #ea7480 !important;
+        color: #d3687e !important;
       }
 
       /* Accents */
       .ingredient-item {
-        border-left-color: #ea7480;
+        border-left-color: #d3687e;
       }
 
       .instruction-item::before {
-        background-color: #ea7480;
+        background-color: #d3687e;
       }
 
       /* Buttons */
       .recipe-action-button {
-        border: 1px solid #ea7480;
-        color: #ea7480;
+        border: 1px solid #d3687e;
+        color: #d3687e;
       }
 
       .recipe-action-button:hover {
-        background: #ea7480;
+        background: #d3687e;
         color: #ffffff;
       }
 
@@ -514,32 +514,32 @@
 
           <p class="recipe-description">
           Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs.
-          No: this would be far too naïve. Baking is the materialization of <span style="color:#ea7480;">comfort itself</span>.
+          No: this would be far too naïve. Baking is the materialization of <span style="color:#d3687e;">comfort itself</span>.
           When we bake, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays.
           And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse;
           the dough may refuse to proof. The oven, that domestic abyss, stares back.
           </p>
 
           <p class="recipe-description">
-          But in this gap (between intention and outcome) lies the <span style="color:#ea7480;">zen of baking</span>.
+          But in this gap (between intention and outcome) lies the <span style="color:#d3687e;">zen of baking</span>.
           We submit ourselves to a process that resists total mastery. The mind quiets as the hands work.
           The self dissolves into the rhythm of kneading, folding, and whisking.
-          In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#ea7480;">shareable</span>.
+          In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#d3687e;">shareable</span>.
           Is this not, in a way, an allegory of all human creation?
           We impose form upon chaos, and call it dessert.
           </p>
 
           <p class="recipe-description">
           Culturally, baking binds us in a way that predates language.
-          Across centuries and continents, <span style="color:#ea7480;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia.
+          Across centuries and continents, <span style="color:#d3687e;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia.
           You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended.
-          Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span style="color:#ea7480;">network</span> of borrowed gestures and shared <span style="color:#ea7480;">community</span>.
+          Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span style="color:#d3687e;">network</span> of borrowed gestures and shared <span style="color:#d3687e;">community</span>.
           </p>
 
           <p class="recipe-description">
           So, as you explore these recipes, remember: you are not merely reproducing instructions.
-          You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#ea7480;">community</span>, scarcity and indulgence.
-          You are, in the truest sense, baking the <span style="color:#ea7480;">striving toward transcendence</span>.
+          You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#d3687e;">community</span>, scarcity and indulgence.
+          You are, in the truest sense, baking the <span style="color:#d3687e;">striving toward transcendence</span>.
           </p>
 
           <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
@@ -549,13 +549,13 @@
           </p>
 
           <p class="recipe-description">
-          Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#ea7480;">the symptom of desire</span>!
+          Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#d3687e;">the symptom of desire</span>!
           </p>
 
           <p class="recipe-description">
           Because baking, like theory, thrives on exchange and variation, I’m always looking for something new.
-          If you have a recipe - your grandmother’s secret torte, your own <span style="color:#ea7480;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me.
-          I’ll add it here, with full credit, so that our <span style="color:#ea7480;">collective archive</span> of baked transcendence may continue to grow.
+          If you have a recipe - your grandmother’s secret torte, your own <span style="color:#d3687e;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me.
+          I’ll add it here, with full credit, so that our <span style="color:#d3687e;">collective archive</span> of baked transcendence may continue to grow.
           </p>
 
           <p class="recipe-description">
