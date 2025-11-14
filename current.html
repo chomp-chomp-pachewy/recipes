@@ -196,7 +196,7 @@
       padding: 50px 0;
       max-width: 600px;
       margin: 0 auto;
-      font-size: 1.05em; /* Specific size for home page body text */
+      /* Removed font-size duplication */
       font-family: 'Inter', sans-serif;
       line-height: 1.85;
     }
@@ -212,21 +212,28 @@
     }
 
     .home-text .recipe-title {
-      font-weight: 700 !important;
+      /* Consolidated font-weight */
+      font-weight: 700;
       text-transform: none !important;
+      font-size: 2em; /* Set specific font size here */
     }
 
     .manifesto-title .manifesto-line-1 {
-      font-weight: 700 !important;
-      /* C.2. REMOVE UNDERLINING: Removed text-decoration */
+      /* Removed conflicting font-weight: 700 !important */
       font-weight: 500;
+      /* Removed text-decoration, as per previous request */
+    }
+    
+    .manifesto-title {
+      font-size: 1.2em; /* Set specific font size here */
     }
 
     .home-text,
     .home-text .recipe-description {
-      color: #1a1a1a !important; /* Specific color for home text */
-      font-size: 1em !important;
-      line-height: 1.9 !important;
+      /* Removed !important as context should override body color */
+      color: #1a1a1a;
+      /* Removed font-size: 1em !important as it's the default size */
+      line-height: 1.9;
     }
 
     /* ---------------------------------------------------- */
@@ -242,7 +249,7 @@
     }
 
     .recipe-action-button {
-      font-family: 'Inter', sans-serif !important;
+      /* Removed font-family !important, rely on global Inter */
       font-size: 0.95em;
       padding: 6px 10px;
       background: transparent;
@@ -261,7 +268,7 @@
       color: white;
     }
 
-    /* Print Button (Legacy, now using recipe-action-button) */
+    /* Print Button (Legacy, now using recipe-action-button) - Removed unused class, but kept for reference if needed */
     .print-button {
       padding: 10px 15px;
       font-size: 16px;
@@ -294,7 +301,7 @@
     .section-title {
       /* A. COLOR CHANGE: Updated to #d3687e */
       color: #d3687e;
-      font-size: 1.2em;
+      font-size: 1.2em; /* Set specific font size here */
       font-weight: 700;
       margin: 35px 0 15px 0;
       /* B. REMOVE LOWERCASE: Removed text-transform: lowercase; */
@@ -413,15 +420,15 @@
       .home-text h1,
       .home-text h2 {
         /* E. DARK MODE BODY TEXT: Updated to #f5f5f5 */
-        color: #f5f5f5 !important;
+        color: #f5f5f5; /* Removed !important */
       }
-      
+      
       /* D. DARK MODE RECIPE TITLE COLOR: Set to #f5f5f5 */
       .recipe-item {
         color: #f5f5f5;
         border-bottom: 1px solid #4a4a4a; /* Adjusted border for contrast */
       }
-
+      
       /* Recipe metadata */
       .recipe-meta {
         color: #C7D2E0;
@@ -433,14 +440,14 @@
       .sidebar-title,
       .email-link {
         /* A. COLOR CHANGE: Updated to #d3687e */
-        color: #d3687e !important;
+        color: #d3687e; /* Removed !important */
       }
 
       /* Manifesto titles specifically (override home text color) */
       .home-text .recipe-title,
       .home-text .section-title {
         /* A. COLOR CHANGE: Updated to #d3687e */
-        color: #d3687e !important;
+        color: #d3687e; /* Removed !important */
       }
 
       /* Accents */
@@ -474,7 +481,7 @@
         color: #2a2a2a;
         backdrop-filter: blur(4px);
       }
-      
+      
       /* Top shadow over recipe list */
       .top-shadow {
         background:
@@ -486,7 +493,7 @@
             rgba(0, 0, 0, 0.35),
             rgba(0, 0, 0, 0));
       }
-      
+      
       /* Search box border focus in dark mode */
       .search-box:focus { border-color: #d3687e; }
     }
@@ -539,8 +546,8 @@
     const HOME_CONTENT_HTML = `
       <div class="home-text">
           <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-                    <h1 class="recipe-title" style="font-size:2em;">Recipes & Rituals</h1>
-                    <h2 class="section-title manifesto-title" style="font-size:1.2em;">
+                              <h1 class="recipe-title">Recipes & Rituals</h1>
+                              <h2 class="section-title manifesto-title">
             <span class="manifesto-line-1">Baking as Community</span>
           </h2>
 
@@ -574,7 +581,7 @@
           You are, in the truest sense, baking the <span style="color:#d3687e;">striving toward transcendence</span>.
           </p>
 
-          <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
+                    <h2 class="section-title">Bake first, theorize later</h2>
 
           <p class="recipe-description">
           Scroll through the recipes, or search by keyword.
