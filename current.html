@@ -25,7 +25,7 @@
 
     .sidebar {
       width: 300px;
-      /* D. LIGHT MODE SIDEBAR BACKGROUND: Updated from #f8f8f8 to #f5f5f5 */
+      /* D. LIGHT MODE SIDEBAR BACKGROUND: Updated to #f5f5f5 */
       background-color: #f5f5f5;
       border-right: 1px solid #e0e0e0;
       overflow-y: auto;
@@ -45,7 +45,7 @@
     }
 
     .sidebar-header {
-      /* C.1. BOTTOM PADDING REDUCED: Changed from 20px to 10px */
+      /* C.1. REDUCE BOTTOM PADDING: Changed from 20px to 10px */
       padding: 30px 20px 10px 20px;
       text-align: center;
       cursor: pointer;
@@ -55,7 +55,7 @@
     .sidebar-title {
       font-size: 1.6em;
       font-weight: 300;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       color: #d3687e;
       /* B. REMOVE LOWERCASE: Removed text-transform: lowercase; */
       flex-shrink: 0;
@@ -78,7 +78,7 @@
       flex-shrink: 0;
     }
 
-    /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+    /* A. COLOR CHANGE: Updated to #d3687e */
     .search-box:focus { outline: none; border-color: #d3687e; }
 
     .recipe-list { list-style: none; padding: 0; margin: 0; }
@@ -97,7 +97,7 @@
     .recipe-item:hover { background-color: #f0f0f0; }
 
     .recipe-item.active {
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       background-color: #d3687e;
       color: #ffffff;
     }
@@ -157,7 +157,7 @@
     .recipe-title {
       font-size: 2.1em;
       font-weight: 300;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       color: #d3687e;
       margin-bottom: 15px;
       line-height: 1.2;
@@ -213,13 +213,12 @@
 
     .home-text .recipe-title {
       font-weight: 700 !important;
-      /* B. REMOVE LOWERCASE: Retained text-transform: none !important; from original */
       text-transform: none !important;
     }
 
     .manifesto-title .manifesto-line-1 {
       font-weight: 700 !important;
-      /* C.2. REMOVE UNDERLINING: Removed text-decoration: underline; and text-underline-offset: 4px; */
+      /* C.2. REMOVE UNDERLINING: Removed text-decoration */
       font-weight: 500;
     }
 
@@ -247,9 +246,9 @@
       font-size: 0.95em;
       padding: 6px 10px;
       background: transparent;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       border: 1px solid #d3687e;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       color: #d3687e;
       border-radius: 4px;
       cursor: pointer;
@@ -257,7 +256,7 @@
     }
     
     .recipe-action-button:hover {
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       background-color: #d3687e;
       color: white;
     }
@@ -266,7 +265,7 @@
     .print-button {
       padding: 10px 15px;
       font-size: 16px;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       background-color: #d3687e;
       color: white;
       border: none;
@@ -276,7 +275,7 @@
       transition: background-color 0.2s;
     }
 
-    /* A. COLOR CHANGE: Updated from #c90028 (darker red) to #c4596f (darker new color) */
+    /* A. COLOR CHANGE: Updated darker red to a darker new color */
     .print-button:hover { background-color: #c4596f; }
 
     .copy-link-button {
@@ -289,11 +288,11 @@
       text-decoration: underline;
     }
 
-    /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+    /* A. COLOR CHANGE: Updated to #d3687e */
     .copy-link-button:hover { color: #d3687e; }
 
     .section-title {
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       color: #d3687e;
       font-size: 1.2em;
       font-weight: 700;
@@ -305,7 +304,7 @@
 
     .ingredient-item {
       padding: 8px 0 8px 16px;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       border-left: 3px solid #d3687e;
       margin-bottom: 8px;
       font-weight: 300;
@@ -329,7 +328,7 @@
       top: 0;
       width: 28px;
       height: 28px;
-      /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+      /* A. COLOR CHANGE: Updated to #d3687e */
       background-color: #d3687e;
       color: #ffffff;
       border-radius: 50%;
@@ -355,7 +354,7 @@
       font-size: 0.95em;
     }
 
-    /* A. COLOR CHANGE: Updated from #fe0032 to #d3687e */
+    /* A. COLOR CHANGE: Updated to #d3687e */
     a.email-link { color: #d3687e; font-weight: 700; text-decoration: none; }
 
     /* ---------------------------------------------------- */
@@ -398,7 +397,6 @@
       .sidebar {
         background-color: #9e9e9e;
       }
-      
       /* Base */
       body {
         background: #2a2a2a;
@@ -408,13 +406,22 @@
       .recipe-content {
         background: #2a2a2a;
       }
-      
+
+      /* Manifesto + Home Text */
+      .home-text,
+      .home-text .recipe-description,
+      .home-text h1,
+      .home-text h2 {
+        /* E. DARK MODE BODY TEXT: Updated to #f5f5f5 */
+        color: #f5f5f5 !important;
+      }
+      
       /* D. DARK MODE RECIPE TITLE COLOR: Set to #f5f5f5 */
       .recipe-item {
         color: #f5f5f5;
-        border-bottom: 1px solid #4a4a4a; /* Adjusted separator for dark mode */
+        border-bottom: 1px solid #4a4a4a; /* Adjusted border for contrast */
       }
-      
+
       /* Recipe metadata */
       .recipe-meta {
         color: #C7D2E0;
@@ -429,15 +436,7 @@
         color: #d3687e !important;
       }
 
-      /* Manifesto + Home Text (E. updated from #E6E1DD to #f5f5f5) */
-      .home-text,
-      .home-text .recipe-description,
-      .home-text h1,
-      .home-text h2 {
-        color: #f5f5f5 !important;
-      }
-      
-      /* Manifesto titles specifically (override home text #f5f5f5) */
+      /* Manifesto titles specifically (override home text color) */
       .home-text .recipe-title,
       .home-text .section-title {
         /* A. COLOR CHANGE: Updated to #d3687e */
@@ -453,18 +452,6 @@
       .instruction-item::before {
         /* A. COLOR CHANGE: Updated to #d3687e */
         background-color: #d3687e;
-      }
-      
-      /* Active list item */
-      .recipe-item.active {
-        /* A. COLOR CHANGE: Updated to #d3687e */
-        background-color: #d3687e;
-        color: #ffffff;
-      }
-      
-      /* List item hover effect */
-      .recipe-item:hover {
-        background-color: #a7a7a7; /* Adjusted hover for dark/sidebar mode */
       }
 
       /* Buttons */
@@ -487,7 +474,7 @@
         color: #2a2a2a;
         backdrop-filter: blur(4px);
       }
-
+      
       /* Top shadow over recipe list */
       .top-shadow {
         background:
@@ -499,7 +486,7 @@
             rgba(0, 0, 0, 0.35),
             rgba(0, 0, 0, 0));
       }
-      
+      
       /* Search box border focus in dark mode */
       .search-box:focus { border-color: #d3687e; }
     }
@@ -552,8 +539,8 @@
     const HOME_CONTENT_HTML = `
       <div class="home-text">
           <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-          <h1 class="recipe-title" style="font-size:2em;">Recipes & Rituals</h1>
-          <h2 class="section-title manifesto-title" style="font-size:1.2em;">
+                    <h1 class="recipe-title" style="font-size:2em;">Recipes & Rituals</h1>
+                    <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">Baking as Community</span>
           </h2>
 
