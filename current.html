@@ -38,12 +38,13 @@
       max-height: calc(100vh - 120px);
       overflow-y: auto;
       flex-grow: 1;
+      /* Mask for fading effect at the bottom */
       mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
       -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
     }
 
     .sidebar-header {
-      padding: 30px 20px 10px 20px;
+      padding: 30px 20px 20px 20px;
       text-align: center;
       cursor: pointer;
       flex-shrink: 0;
@@ -65,6 +66,7 @@
       margin: 0 20px 20px 20px;
       padding: 12px 16px;
       font-size: 15px;
+      font-family: 'Inter', sans-serif;
       border: 1px solid #434343;
       border-radius: 8px;
       background-color: #ffffff;
@@ -98,6 +100,8 @@
       font-size: 1em;
     }
 
+    .recipe-item.active .recipe-time { color: rgba(255, 255, 255, 0.8); }
+
     /* Sticky Indicator and Shadow */
     .sticky-indicator {
       position: sticky;
@@ -121,9 +125,14 @@
       opacity: 0;
       transition: opacity 0.25s ease;
       background:
-        linear-gradient(to bottom, rgba(253,253,253,1) 0%, rgba(253,253,253,0) 90%),
-        linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0));
+        linear-gradient(to bottom,
+          rgba(253,253,253,1) 0%,
+          rgba(253,253,253,0) 90%),
+        linear-gradient(to bottom,
+          rgba(0,0,0,0.15),
+          rgba(0,0,0,0));
     }
+
 
     /* ---------------------------------------------------- */
     /* === RECIPE CONTENT === */
@@ -136,7 +145,7 @@
       max-width: 900px;
     }
 
-    .recipe-header { margin-bottom: 30px; }
+    .recipe-header { margin-bottom: 20px; }
 
     .recipe-title {
       font-size: 2.1em;
@@ -151,7 +160,9 @@
       font-size: 0.95em;
       margin-bottom: 10px;
     }
+    .recipe-meta span { margin-right: 0 !important; }
 
+    /* Base styles for description (used for both recipe and manifesto) */
     .recipe-description {
       font-weight: 300;
       line-height: 1.8;
@@ -166,6 +177,46 @@
       height: auto;
       border-radius: 8px;
       margin: 0 auto 20px auto;
+    }
+
+    /* ---------------------------------------------------- */
+    /* === HOME / MANIFESTO TEXT (CONSOLIDATED) === */
+    /* ---------------------------------------------------- */
+    
+    .home-text {
+      text-align: left;
+      padding: 50px 0;
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1.05em; /* Specific size for home page body text */
+      font-family: 'Inter', sans-serif;
+      line-height: 1.85;
+    }
+
+    .home-text .home-image {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      margin-bottom: 30px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .home-text .recipe-title {
+      font-weight: 700 !important;
+    }
+
+    .manifesto-title .manifesto-line-1 {
+      font-weight: 700 !important;
+      font-weight: 500;
+    }
+
+    .home-text,
+    .home-text .recipe-description {
+      color: #1a1a1a !important; /* Specific color for home text */
+      font-size: 1em !important;
+      line-height: 1.9 !important;
     }
 
     /* ---------------------------------------------------- */
@@ -191,13 +242,13 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
+    
     .recipe-action-button:hover {
       background-color: #d3687e;
       color: white;
     }
 
-    /* Print Button (Legacy) */
+    /* Print Button (Legacy, now using recipe-action-button) */
     .print-button {
       padding: 10px 15px;
       font-size: 16px;
@@ -206,10 +257,84 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-top: 0;
       transition: background-color 0.2s;
     }
 
-    .print-button:hover { background-color: #c4596f; }
+    .print-button:hover { background-color: #c90028; }
+
+    .copy-link-button {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.9em;
+      color: #666666;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .copy-link-button:hover { color: #d3687e; }
+
+    .section-title {
+      color: #d3687e;
+      font-size: 1.2em;
+      font-weight: 700;
+      margin: 35px 0 15px 0;
+    }
+
+    .ingredients-list { list-style: none; margin-bottom: 30px; }
+
+    .ingredient-item {
+      padding: 8px 0 8px 16px;
+      border-left: 3px solid #d3687e;
+      margin-bottom: 8px;
+      font-weight: 300;
+    }
+
+    .instructions-list { list-style: none; counter-reset: step-counter; }
+
+    .instruction-item {
+      counter-increment: step-counter;
+      margin-bottom: 20px;
+      padding-left: 40px;
+      position: relative;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+
+    .instruction-item::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      background-color: #d3687e;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 400;
+      font-size: 0.9em;
+    }
+
+    .notes-section {
+      background-color: #f8f8f8;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+      font-weight: 300;
+    }
+
+    .no-recipe {
+      padding: 20px;
+      text-align: center;
+      color: #666666;
+      font-size: 0.95em;
+    }
+
+    a.email-link { color: #d3687e; font-weight: 700; text-decoration: none; }
 
     /* ---------------------------------------------------- */
     /* === MEDIA QUERIES === */
@@ -230,23 +355,113 @@
 
     @media print {
       .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button {
-          display: none !important;
+        display: none !important;
       }
       body { display: block; min-height: auto; color: #000000; }
       .recipe-content { width: 100%; max-width: 100%; margin: 0; padding: 0; }
-      .recipe-title { color: #000000 !important; }
+      .recipe-title { color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .recipe-meta, .recipe-description { color: #333333; }
       .section-title { color: #333333 !important; }
       .notes-section { background-color: transparent; border: 1px dashed #cccccc; }
       .ingredient-item { border-left-color: #cccccc !important; }
-      .instruction-item::before { background-color: #000000 !important; }
+      .instruction-item::before { background-color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+
+    /* ---------------------------------------------------- */
+    /* === UNIFIED DARK MODE PALETTE (v14) === */
+    /* ---------------------------------------------------- */
+
+    @media (prefers-color-scheme: dark) {
+      /* Base */
+      body {
+        background: #2a2a2a;
+        color: #f5f5f5;
+      }
+      .recipe-content {
+        background: #2a2a2a;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background-color: #9e9e9e;
+      }
+
+      /* Recipe items in sidebar */
+      .recipe-item {
+        color: #f5f5f5;
+      }
+
+      /* Manifesto + Home Text */
+      .home-text,
+      .home-text .recipe-description,
+      .home-text h1,
+      .home-text h2 {
+        color: #f5f5f5 !important;
+      }
+
+      /* Recipe metadata */
+      .recipe-meta {
+        color: #C7D2E0;
+      }
+
+      /* Titles, section headings, sidebar title, email link */
+      .recipe-title,
+      .section-title,
+      .sidebar-title,
+      .email-link {
+        color: #d3687e !important;
+      }
+
+      /* Manifesto titles specifically (override home text) */
+      .home-text .recipe-title,
+      .home-text .section-title {
+        color: #d3687e !important;
+      }
+
+      /* Accents */
+      .ingredient-item {
+        border-left-color: #d3687e;
+      }
+
+      .instruction-item::before {
+        background-color: #d3687e;
+      }
+
+      /* Buttons */
+      .recipe-action-button {
+        border: 1px solid #d3687e;
+        color: #d3687e;
+      }
+
+      .recipe-action-button:hover {
+        background: #d3687e;
+        color: #ffffff;
+      }
+
+      /* Sticky Indicator */
+      .sticky-indicator {
+        background: #D6D6D6;
+        color: #2a2a2a;
+        backdrop-filter: blur(4px);
+      }
+
+      /* Top shadow over recipe list */
+      .top-shadow {
+        background:
+          linear-gradient(to bottom,
+            rgba(42, 42, 42, 1) 0%,
+            rgba(42, 42, 42, 0) 90%),
+          linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.35),
+            rgba(0, 0, 0, 0));
+      }
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
     <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
-      <div class="sidebar-title">recipes / rituals</div>
+      <div class="sidebar-title">rituals / recipes</div>
     </div>
     <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
     
@@ -263,79 +478,297 @@
   <script>
     let recipes = [];
     let currentRecipe = null;
-
+    
     function printRecipe() { window.print(); }
 
     function generateSlug(title) {
       return title
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '') // Keep alphanumeric, space, and hyphen
-        .replace(/\s+/g, '-') // Replace spaces with hyphens
-        .trim();
+        .replace(/\s+/g, '-') // Replace spaces with a single hyphen
+        .replace(/-+/g, '-') // Replace multiple hyphens with a single one
+        .trim('-'); // Remove leading/trailing hyphens/whitespace
     }
 
-    function loadRecipeData() {
-      // Example data, to be replaced with real data loading
-      recipes = [
-        { 
-          title: "Spaghetti Bolognese",
-          description: "A delicious Italian pasta dish with rich, meaty sauce.",
-          ingredients: ["spaghetti", "ground beef", "tomato sauce", "onion", "garlic"],
-          instructions: [
-            "Boil pasta according to package instructions.",
-            "Cook ground beef in a pan until browned.",
-            "Add onion and garlic, cooking until softened.",
-            "Add tomato sauce, simmer for 10 minutes.",
-            "Serve sauce over pasta."
-          ],
-          time: "30 minutes"
+    // Function to copy the permalink of the currently viewed recipe
+    function copyPermalink() {
+        if (!currentRecipe || !currentRecipe.slug) return;
+        const url = `${window.location.origin}${window.location.pathname}?slug=${encodeURIComponent(currentRecipe.slug)}`;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Permalink copied to clipboard!');
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
+
+    const HOME_CONTENT_HTML = `
+      <div class="home-text">
+          <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <h1 class="recipe-title" style="font-size:2em;">Recipes & Rituals</h1>
+          <h2 class="section-title manifesto-title" style="font-size:1.2em;">
+            <span class="manifesto-line-1">Baking as Community</span>
+          </h2>
+
+ 
+          <p class="recipe-description">
+          Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs.
+          No: this would be far too naïve. Baking is the materialization of <span style="color:#d3687e;">comfort itself</span>.
+          When we bake, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays.
+          And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse;
+          the dough may refuse to proof. The oven, that domestic abyss, stares back.
+          </p>
+
+          <p class="recipe-description">
+          But in this gap (between intention and outcome) lies the <span style="color:#d3687e;">zen of baking</span>.
+          We submit ourselves to a process that resists total mastery. The mind quiets as the hands work.
+          The self dissolves into the rhythm of kneading, folding, and whisking.
+          In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#d3687e;">shareable</span>.
+          Is this not, in a way, an allegory of all human creation?
+          We impose form upon chaos, and call it dessert.
+          </p>
+
+          <p class="recipe-description">
+          Culturally, baking binds us in a way that predates language.
+          Across centuries and continents, <span style="color:#d3687e;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia.
+          You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended.
+          Even the recipes themselves - whether original inventions, found online, or passed from one colleague's grandmother to another's notebook - form a <span style="color:#d3687e;">network</span> of borrowed gestures and shared <span style="color:#d3687e;">community</span>.
+          </p>
+
+          <p class="recipe-description">
+          So, as you explore these recipes, remember: you are not merely reproducing instructions.
+          You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#d3687e;">community</span>, scarcity and indulgence.
+          You are, in the truest sense, baking the <span style="color:#d3687e;">striving toward transcendence</span>.
+          </p>
+
+          <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
+
+          <p class="recipe-description">
+          Scroll through the recipes, or search by keyword.
+          </p>
+
+          <p class="recipe-description">
+          Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#d3687e;">the symptom of desire</span>!
+          </p>
+
+          <p class="recipe-description">
+          Because baking, like theory, thrives on exchange and variation, I'm always looking for something new.
+          If you have a recipe - your grandmother's secret torte, your own <span style="color:#d3687e;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me.
+          I'll add it here, with full credit, so that our <span style="color:#d3687e;">collective archive</span> of baked transcendence may continue to grow.
+          </p>
+
+          <p class="recipe-description">
+          <a href="mailto:baking@chomp.ltd" class="email-link">baking@chomp.ltd</a>
+          </p>
+  
+          <p class="recipe-description">
+          <a href="https://www.chomp.ltd" class="email-link">chomp chomp: cookies, etc.</a>
+          </p>
+   
+          <p class="recipe-description">
+          <a href="https://tools.chomp.ltd" class="email-link">chomp chomp: tools</a>
+          </p> 
+      </div>
+    `;
+
+    function resetRecipeView() {
+        document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
+        document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
+        currentRecipe = null;
+        // Reset URL when going back to home view
+        history.replaceState(null, '', window.location.pathname);
+    }
+
+    function updateStickyIndicator() {
+      const list = document.querySelector('.recipe-list-container');
+      const indicator = document.getElementById('stickyIndicator');
+      const topShadow = document.querySelector('.top-shadow');
+      if (!list || !indicator) return;
+
+      const isScrollable = list.scrollHeight > list.clientHeight;
+      if (!isScrollable) {
+        indicator.style.display = 'none';
+        if (topShadow) topShadow.style.opacity = 0;
+        return;
+      }
+
+      indicator.style.display = 'block';
+      const isMobile = window.innerWidth < 768;
+      indicator.textContent = isMobile ?
+        "↓ scroll for more" : "↓ scroll for more recipes";
+
+      const atTop = list.scrollTop <= 1;
+      indicator.style.opacity = atTop ? 1 : 0;
+      if (topShadow) topShadow.style.opacity = atTop ? 0 : 1;
+      
+      if (!list._hasStickyScrollHandler) {
+        list.addEventListener('scroll', () => {
+          const nowAtTop = list.scrollTop <= 1;
+          indicator.style.opacity = nowAtTop ? 1 : 0;
+          if (topShadow) {
+            topShadow.style.opacity = nowAtTop ? 0 : 1;
+          }
+        });
+        list._hasStickyScrollHandler = true;
+      }
+    }
+
+    function sortRecipesAlphabetically() {
+      recipes.sort((a,b)=>
+        a.title.toLowerCase() < b.title.toLowerCase() ? -1 :
+        a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0
+      );
+    }
+
+    function openRecipeFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const slugParam = params.get('slug');
+      const titleParam = params.get('recipe');
+
+      if ((!slugParam || slugParam.trim() === '') && !titleParam) return false;
+      let target = null;
+
+      if (slugParam && slugParam.trim() !== '') {
+        target = recipes.find(r => r.slug === slugParam.trim());
+      } else if (titleParam) {
+        const lower = titleParam.toLowerCase();
+        target = recipes.find(r => r.title.toLowerCase() === lower);
+      }
+
+      if (!target) return false;
+      const recipeList = document.getElementById('recipeList');
+      const items = recipeList.querySelectorAll('.recipe-item');
+
+      items.forEach(item => {
+        const nameEl = item.querySelector('.recipe-name');
+        if (nameEl && nameEl.textContent.trim() === target.title) {
+          selectRecipe(target, item);
         }
-      ];
-
-      displayRecipeList();
+      });
+      return true;
     }
 
-    function displayRecipeList() {
-      const recipeListContainer = document.getElementById('recipeList');
-      recipeListContainer.innerHTML = '';
-      recipes.forEach((recipe, index) => {
-        const recipeItem = document.createElement('li');
-        recipeItem.className = 'recipe-item';
-        recipeItem.innerHTML = `<span class="recipe-name">${recipe.title}</span><span class="recipe-time">${recipe.time}</span>`;
-        recipeItem.onclick = () => showRecipe(index);
-        recipeListContainer.appendChild(recipeItem);
+    async function loadRecipes() {
+      try {
+        const response = await fetch('recipes.json');
+        recipes = await response.json();
+
+        // ensure every recipe has a slug (fallback)
+        recipes.forEach(r => {
+          if (!r.slug) {
+            r.slug = generateSlug(r.title);
+          }
+        });
+        
+        sortRecipesAlphabetically();
+        displayRecipeList(recipes);
+        updateStickyIndicator(); 
+
+        if (!openRecipeFromURL()) {
+          resetRecipeView();
+        }
+      } catch (error) { 
+        console.error('Error loading recipes:', error);
+        // Display fallback message if recipes fail to load
+        document.getElementById('recipeContent').innerHTML = `
+            <div class="no-recipe">
+                <p>Unable to load recipes. Please check the 'recipes.json' file path and content.</p>
+            </div>
+        `;
+      }
+    }
+
+    function displayRecipeList(recipesToShow) {
+      const recipeList = document.getElementById('recipeList');
+      const noResults = document.getElementById('noResults');
+      recipeList.innerHTML = '';
+      if (!recipesToShow.length) { 
+        noResults.style.display = 'block'; 
+        return;
+      }
+      noResults.style.display = 'none';
+      recipesToShow.forEach(recipe => {
+        const li = document.createElement('li');
+        li.className = 'recipe-item';
+        li.onclick = () => selectRecipe(recipe, li);
+        li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
+        
+        // Retain 'active' class if this recipe is the one currently selected
+        if (currentRecipe && currentRecipe.slug === recipe.slug) {
+            li.classList.add('active');
+        }
+
+        recipeList.appendChild(li);
       });
     }
 
-    function showRecipe(index) {
-      currentRecipe = recipes[index];
-      const recipeContent = document.getElementById('recipeContent');
-      recipeContent.innerHTML = `
+    function selectRecipe(recipe, element) {
+      currentRecipe = recipe;
+      document.querySelectorAll('.recipe-item').forEach(item=>item.classList.remove('active'));
+      element.classList.add('active');
+      const content = document.getElementById('recipeContent');
+
+      let metaInfo = [];
+      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
+      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
+      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
+
+      let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
+      let descriptionHTML = recipe.description?`<div class="recipe-description">${recipe.description}</div>`:'';
+      const ingredientsHTML = recipe.ingredients.map(i=>`<li class="ingredient-item">${i}</li>`).join('');
+      const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${i}</li>`).join('');
+      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>`:'';
+
+      // update URL to current recipe slug
+      if (recipe.slug) {
+        const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
+        history.replaceState(null, '', newUrl);
+      }
+
+      content.innerHTML = `
         <div class="recipe-header">
-          <h2 class="recipe-title">${currentRecipe.title}</h2>
-          <div class="recipe-meta">Time: ${currentRecipe.time}</div>
+          <h1 class="recipe-title">${recipe.title}</h1>
+          <div class="recipe-meta">${metaInfo.join(' | ')}</div>
+          <div class="recipe-actions">
+            <button onclick="printRecipe()" class="recipe-action-button">Print</button>
+            <button onclick="copyPermalink()" class="recipe-action-button">Copy Link</button>
+          </div>
+      
         </div>
-        <div class="recipe-description">${currentRecipe.description}</div>
-        <h3 class="section-title">Ingredients</h3>
-        <ul class="ingredients-list">
-          ${currentRecipe.ingredients.map(item => `<li class="ingredient-item">${item}</li>`).join('')}
-        </ul>
-        <h3 class="section-title">Instructions</h3>
-        <ol class="instructions-list">
-          ${currentRecipe.instructions.map(item => `<li class="instruction-item">${item}</li>`).join('')}
-        </ol>
-        <div class="recipe-actions">
-          <button class="recipe-action-button" onclick="printRecipe()">Print Recipe</button>
-        </div>
+        ${descriptionHTML}${imageHTML}
+        <div class="section-title">ingredients</div>
+        <ul class="ingredients-list">${ingredientsHTML}</ul>
+        <div class="section-title">instructions</div>
+        <ol class="instructions-list">${instructionsHTML}</ol>
+        ${notesHTML}
       `;
     }
 
-    function resetRecipeView() {
-      document.getElementById('recipeContent').innerHTML = '';
-      document.getElementById('recipeList').innerHTML = '';
-    }
+    // ----------------------------------------------------
+    // === INITIALIZATION & EVENT LISTENERS ===
+    // ----------------------------------------------------
 
-    loadRecipeData();
+    document.getElementById('searchBox').addEventListener('input', e=>{
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = recipes.filter(r=>
+        r.title.toLowerCase().includes(searchTerm) ||
+        (r.description&&r.description.toLowerCase().includes(searchTerm)) ||
+        r.ingredients.some(i=>i.toLowerCase().includes(searchTerm))
+      );
+      displayRecipeList(filtered);
+      updateStickyIndicator();
+    });
+    
+    // Load data and set up initial view
+    loadRecipes();
+    
+    // Update sticky indicator on resize
+    window.addEventListener('resize', () => {
+      updateStickyIndicator();
+    });
+
   </script>
 </body>
 </html>
