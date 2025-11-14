@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>chomp recipes</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Inter for manifesto; system stack for app chrome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
   <style>
     * {
       margin: 0;
@@ -12,34 +20,38 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --accent: #fe0032;
+      --accent-dark: #b80022;
+      --bg-main: #fdfdfd;
+      --bg-sidebar: #f6f6f6;
+      --text-main: #222222;
+      --text-muted: #666666;
+      --border-subtle: #e0e0e0;
+      --sticky-shadow: rgba(0, 0, 0, 0.08);
+      --meta-text: #555555;
+    }
+
     body {
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #fdfdfd;
-      color: #3A3A3A;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
       line-height: 1.7;
       display: flex;
       min-height: 100vh;
     }
 
+    /* Layout */
     .sidebar {
       width: 300px;
-      background-color: #f8f8f8;
-      border-right: 1px solid #e0e0e0;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
       overflow-y: auto;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       position: relative;
-    }
-
-    .recipe-list-container {
-      position: relative;
-      max-height: calc(100vh - 120px);
-      overflow-y: auto;
-      flex-grow: 1;
-      -webkit-overflow-scrolling: touch;
-      mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
     }
 
     .sidebar-header {
@@ -52,32 +64,40 @@
     .sidebar-title {
       font-size: 1.6em;
       font-weight: 300;
-      color: #fe0032;
-      letter-spacing: 0;
-      flex-shrink: 0;
+      color: var(--accent);
+      /* no forced lowercase */
+      letter-spacing: 0.02em;
     }
 
     .search-box {
       width: calc(100% - 40px);
-      margin: 0 20px 20px 20px;
-      padding: 12px 16px;
-      font-size: 15px;
+      margin: 0 20px 16px 20px;
+      padding: 11px 14px;
+      font-size: 14px;
       font-family: inherit;
-      border: 1px solid #434343;
+      border: 1px solid #b5b5b5;
       border-radius: 8px;
       background-color: #ffffff;
-      color: #434343;
+      color: #333333;
       flex-shrink: 0;
     }
 
     .search-box::placeholder {
-      color: #9b9b9b;
+      color: #9a9a9a;
     }
 
     .search-box:focus {
       outline: none;
-      border-color: #fe0032;
-      box-shadow: 0 0 0 2px rgba(254, 0, 50, 0.12);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(254, 0, 50, 0.1);
+    }
+
+    .recipe-list-container {
+      position: relative;
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
+      flex-grow: 1;
+      padding-bottom: 40px;
     }
 
     .recipe-list {
@@ -87,14 +107,11 @@
     }
 
     .recipe-item {
-      padding: 14px 20px;
+      padding: 12px 18px;
       cursor: pointer;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid #ececec;
       transition: background-color 0.18s ease, color 0.18s ease;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      font-size: 0.95rem;
     }
 
     .recipe-item:last-child {
@@ -102,30 +119,132 @@
     }
 
     .recipe-item:hover {
-      background-color: #f0f0f0;
+      background-color: #efefef;
     }
 
     .recipe-item.active {
-      background-color: #fe0032;
+      background-color: var(--accent);
       color: #ffffff;
     }
 
     .recipe-name {
       font-weight: 400;
-      font-size: 0.98em;
-      line-height: 1.3;
-      color: #434343;
+      font-size: 0.98rem;
+      color: inherit;
     }
 
-    .recipe-item.active .recipe-name {
-      color: #ffffff;
+    .recipe-time {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: #8a8a8a;
     }
 
+    .recipe-item.active .recipe-time {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .no-results {
+      padding: 12px 18px;
+      font-size: 0.9rem;
+      color: #999999;
+    }
+
+    /* Sticky scroll indicator row */
+    .sticky-indicator {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 8px 18px 10px;
+      font-size: 0.8rem;
+      background: rgba(250, 250, 250, 0.94);
+      color: #333333;
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 3;
+      transition: opacity 0.2s ease;
+    }
+
+    .sticky-indicator.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .sticky-indicator span {
+      white-space: nowrap;
+    }
+
+    .scroll-note-label {
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+    }
+
+    .scroll-note-dots {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .scroll-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #bbbbbb;
+    }
+
+    .scroll-dot.active {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+    }
+
+    .scroll-note-arrow {
+      font-size: 0.85rem;
+      transform: translateY(1px);
+    }
+
+    /* Top shadow when sidebar is scrolled */
+    .top-shadow {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      background: linear-gradient(
+          to bottom,
+          rgba(253, 253, 253, 1) 0%,
+          rgba(253, 253, 253, 0) 90%
+        ),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0));
+      z-index: 2;
+    }
+
+    .top-shadow.visible {
+      opacity: 1;
+    }
+
+    /* Main content */
     .recipe-content {
       flex: 1;
       overflow-y: auto;
       padding: 40px 60px;
       max-width: 900px;
+      margin: 0 auto;
     }
 
     .recipe-header {
@@ -133,103 +252,76 @@
     }
 
     .recipe-title {
-      font-size: 2.1em;
+      font-size: 2rem;
       font-weight: 300;
-      color: #fe0032;
-      margin-bottom: 15px;
+      color: var(--accent);
+      margin-bottom: 16px;
       line-height: 1.2;
-    }
-
-    .home-text {
-      text-align: left;
-      padding: 50px 0;
-      max-width: 700px;
-      margin: 0 auto;
-      font-size: 1em;
-    }
-
-    .home-text .home-image {
-      width: 100%;
-      max-width: 260px;
-      height: auto;
-      margin-bottom: 30px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      border-radius: 8px;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
     }
 
     .recipe-meta {
-      color: #646464;
-      font-size: 0.95em;
+      color: var(--meta-text);
+      font-size: 0.9rem;
       margin-bottom: 18px;
       display: flex;
       flex-wrap: wrap;
-      gap: 6px 12px;
+      gap: 6px 14px;
       align-items: center;
     }
 
-    .recipe-meta span {
-      position: relative;
-      padding-right: 12px;
-      font-weight: 400;
+    .recipe-meta span::before {
+      content: "";
     }
 
-    .recipe-meta span:not(:last-child)::after {
+    .recipe-meta span + span::before {
       content: "|";
-      position: absolute;
-      right: 2px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #b3b3b3;
-      font-weight: 300;
-      font-size: 0.9em;
+      margin: 0 7px 0 3px;
+      color: #c0c0c0;
     }
 
     .button-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 8px;
+      margin-top: 8px;
     }
 
-    .outline-button {
-      padding: 7px 14px;
-      font-size: 0.9em;
-      border-radius: 999px;
-      border: 1px solid #fe0032;
+    .button-row .print-button,
+    .button-row .link-button {
+      padding: 6px 10px;
+      font-size: 0.85rem;
       background-color: transparent;
-      color: #fe0032;
+      color: var(--meta-text);
+      border: 1px solid rgba(0, 0, 0, 0.28);
+      border-radius: 999px;
       cursor: pointer;
-      font-weight: 400;
-      letter-spacing: 0.01em;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.08s ease;
+      transition: background-color 0.2s ease, color 0.2s ease,
+        border-color 0.2s ease, transform 0.08s ease;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
     }
 
-    .outline-button:hover {
-      background-color: rgba(254, 0, 50, 0.06);
-      color: #c90028;
-      box-shadow: 0 0 0 1px rgba(254, 0, 50, 0.06);
+    .button-row .print-button:hover,
+    .button-row .link-button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background-color: rgba(254, 0, 50, 0.04);
+      transform: translateY(-0.5px);
     }
 
-    .outline-button:active {
-      transform: translateY(1px);
-      box-shadow: none;
-    }
-
-    .outline-button .icon {
-      font-size: 0.9em;
-      line-height: 1;
+    .button-row .print-button:active,
+    .button-row .link-button:active {
+      transform: translateY(0.5px);
     }
 
     .recipe-description {
       font-weight: 300;
-      line-height: 1.8;
-      margin-bottom: 25px;
-      font-size: 1em;
+      line-height: 1.9;
+      margin-bottom: 24px;
+      font-size: 0.98rem;
+      max-width: 720px;
     }
 
     .recipe-image {
@@ -242,24 +334,38 @@
     }
 
     .section-title {
-      color: #fe0032;
-      font-size: 1.2em;
-      font-weight: 700;
-      margin: 35px 0 15px 0;
+      color: var(--accent);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 32px 0 14px 0;
       text-transform: lowercase;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
     }
 
     .ingredients-list {
       list-style: none;
       margin-bottom: 30px;
+      padding-left: 0;
     }
 
     .ingredient-item {
-      padding: 8px 0 8px 16px;
-      border-left: 3px solid #fe0032;
-      margin-bottom: 8px;
+      padding: 7px 0 7px 16px;
+      border-left: 3px solid var(--accent);
+      margin-bottom: 6px;
       font-weight: 300;
+      font-size: 0.96rem;
+    }
+
+    .ingredient-item.subheading {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.78rem;
+      border-left-color: rgba(0, 0, 0, 0.08);
+      color: #555555;
+      margin-top: 16px;
     }
 
     .instructions-list {
@@ -270,11 +376,12 @@
 
     .instruction-item {
       counter-increment: step-counter;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       padding-left: 40px;
       position: relative;
       font-weight: 300;
-      line-height: 1.8;
+      line-height: 1.9;
+      font-size: 0.97rem;
     }
 
     .instruction-item::before {
@@ -282,94 +389,37 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: 28px;
-      height: 28px;
-      background-color: #fe0032;
+      width: 26px;
+      height: 26px;
+      background-color: var(--accent);
       color: #ffffff;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 400;
-      font-size: 0.9em;
+      font-weight: 500;
+      font-size: 0.78rem;
     }
 
     .notes-section {
-      background-color: #f8f8f8;
-      padding: 20px;
+      background-color: #f7f7f7;
+      padding: 18px;
       border-radius: 8px;
-      margin-top: 30px;
+      margin-top: 26px;
       font-weight: 300;
-    }
-
-    .notes-section .subheading {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-size: 0.86em;
+      font-size: 0.94rem;
+      border: 1px dashed #dddddd;
     }
 
     .no-recipe {
       padding: 20px;
       text-align: center;
-      color: #666666;
-      font-size: 0.95em;
-    }
-
-    .no-results {
-      padding: 12px 20px 18px;
-      font-size: 0.88em;
-      color: #777;
-      text-align: center;
-    }
-
-    .no-results strong {
-      color: #fe0032;
-      font-weight: 600;
-    }
-
-    .scroll-indicator {
-      position: sticky;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 8px 16px 10px;
-      font-size: 0.84em;
-      text-align: center;
-      background: linear-gradient(to top, #f8f8f8 60%, rgba(248, 248, 248, 0));
-      color: #666666;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-    .scroll-indicator span {
-      pointer-events: auto;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background-color: rgba(0, 0, 0, 0.04);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .scroll-indicator .arrow {
-      font-size: 0.9em;
-      display: inline-block;
-      transform: translateY(0);
-      animation: bob 1.4s ease-in-out infinite;
-    }
-
-    @keyframes bob {
-      0% { transform: translateY(0); opacity: 1; }
-      50% { transform: translateY(3px); opacity: 0.75; }
-      100% { transform: translateY(0); opacity: 1; }
+      color: #777777;
+      font-size: 0.95rem;
     }
 
     a.email-link {
-      color: #fe0032;
+      color: var(--accent);
       font-weight: 700;
       text-decoration: none;
     }
@@ -378,17 +428,77 @@
       text-decoration: underline;
     }
 
+    /* Home / manifesto view */
+    .home-text {
+      text-align: left;
+      padding: 48px 0 60px;
+      max-width: 720px;
+      margin: 0 auto;
+      font-size: 0.98rem;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    .home-text .home-image {
+      width: 100%;
+      max-width: 260px;
+      height: auto;
+      margin-bottom: 28px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .home-text .recipe-title {
+      font-size: 1.95rem;
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    .home-text .section-title {
+      font-size: 1.02rem;
+      text-transform: none;
+      letter-spacing: 0.01em;
+      margin-bottom: 18px;
+      color: var(--accent);
+    }
+
+    .home-text .section-title strong {
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .home-text .recipe-description {
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+      color: #262626;
+    }
+
+    .home-text .recipe-description span {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .home-text a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .home-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
     @media (max-width: 900px) {
       .recipe-content {
-        padding: 26px 22px 26px 22px;
-      }
-
-      .recipe-title {
-        font-size: 1.6em;
+        padding: 22px 18px 28px;
       }
 
       .home-text {
-        padding-top: 30px;
+        padding-top: 32px;
       }
     }
 
@@ -400,65 +510,67 @@
       .sidebar {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #e0e0e0;
-        max-height: 42vh;
+        border-bottom: 1px solid var(--border-subtle);
+        max-height: 46vh;
       }
 
       .recipe-content {
-        padding: 22px 16px 28px;
+        padding: 20px 18px 28px;
       }
 
       .recipe-image {
-        max-width: 80%;
+        max-width: 82%;
+      }
+
+      .recipe-title {
+        font-size: 1.7rem;
+      }
+
+      .home-text .recipe-title {
+        font-size: 1.8rem;
+      }
+
+      .home-text .home-image {
+        max-width: 230px;
       }
 
       .recipe-list-container {
-        max-height: calc(42vh - 120px);
+        max-height: calc(46vh - 120px);
       }
     }
 
     @media (max-width: 480px) {
       .sidebar-header {
-        padding: 22px 16px 16px 16px;
+        padding: 22px 16px 12px;
       }
 
       .sidebar-title {
-        font-size: 1.35em;
+        font-size: 1.3rem;
       }
 
       .search-box {
-        margin: 0 16px 14px 16px;
+        margin: 0 16px 12px 16px;
       }
 
       .recipe-item {
-        padding: 12px 16px;
+        padding: 10px 14px;
       }
 
-      .recipe-content {
-        padding: 18px 14px 26px;
-      }
-
-      .recipe-title {
-        font-size: 1.5em;
-      }
-
-      .home-text {
-        padding-top: 24px;
-      }
-
-      .home-text .home-image {
-        max-width: 220px;
+      .sticky-indicator {
+        padding: 6px 14px 8px;
       }
     }
 
+    /* Print styles */
     @media print {
       .sidebar,
       .search-box,
       .print-button,
-      .copy-link-button,
+      .link-button,
       .sidebar-header,
       .recipe-list-container,
-      .scroll-indicator {
+      .sticky-indicator,
+      .top-shadow {
         display: none !important;
       }
 
@@ -466,6 +578,7 @@
         display: block;
         min-height: auto;
         color: #000000;
+        background: #ffffff !important;
       }
 
       .recipe-content {
@@ -506,167 +619,161 @@
       }
     }
 
-    /* === Unified Dark Mode Palette & Behavior === */
+    /* Dark mode tweaks */
     @media (prefers-color-scheme: dark) {
-      :root {
-        --dm-bg-main: #0d0d0d;
-        --dm-bg-sidebar: #141414;
-        --dm-bg-sidebar-alt: #181818;
-        --dm-border-subtle: #2a2a2a;
-        --dm-text-primary: #e3e3e3;
-        --dm-text-muted: #9aa0ac;
-        --dm-text-primary-subtle: #c7ccd4;
-        --dm-accent-main: #ff4f6b;
-        --dm-accent-soft: rgba(255, 79, 107, 0.12);
-        --dm-input-bg: #111111;
-        --dm-input-border: #333333;
-        --dm-indicator-bg: rgba(0, 0, 0, 0.32);
+      body {
+        background-color: #101010;
+        color: #e6e6e6;
       }
 
-      body {
-        background-color: var(--dm-bg-main);
-        color: var(--dm-text-primary);
+      .recipe-content {
+        background-color: #101010;
       }
 
       .sidebar {
-        background-color: var(--dm-bg-sidebar);
-        border-right-color: var(--dm-border-subtle);
-      }
-
-      .recipe-list-container {
-        mask-image: linear-gradient(to bottom, black 92%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, black 92%, transparent 100%);
-      }
-
-      .sidebar-header {
-        border-bottom: 1px solid var(--dm-border-subtle);
+        background-color: #f6f6f6; /* keep light sidebar in dark mode */
+        border-right-color: #3a3a3a;
       }
 
       .search-box {
-        background-color: var(--dm-input-bg);
-        border-color: var(--dm-input-border);
-        color: var(--dm-text-primary);
+        background-color: #ffffff;
+        border-color: #999999;
+        color: #222222;
       }
 
       .search-box::placeholder {
-        color: #777c86;
-      }
-
-      .search-box:focus {
-        border-color: var(--dm-accent-main);
-        box-shadow: 0 0 0 2px rgba(255, 79, 107, 0.22);
+        color: #999999;
       }
 
       .recipe-item {
-        border-bottom-color: var(--dm-border-subtle);
+        border-bottom-color: #dddddd;
+        color: #333333;
       }
 
       .recipe-item:hover {
-        background-color: #1f1f1f;
+        background-color: #ececec;
       }
 
       .recipe-item.active {
-        background-color: var(--dm-accent-main);
+        background-color: var(--accent-dark);
+        color: #ffffff;
       }
 
       .recipe-item.active .recipe-name {
         color: #ffffff;
       }
 
-      .recipe-name {
-        color: var(--dm-text-primary-subtle);
+      .recipe-item.active .recipe-time {
+        color: rgba(255, 255, 255, 0.88);
       }
 
-      .recipe-content {
-        background-color: var(--dm-bg-main);
-        color: var(--dm-text-primary);
+      .sticky-indicator {
+        background: rgba(235, 235, 235, 0.92);
+        color: #2a2a2a;
+        border-top-color: rgba(0, 0, 0, 0.08);
       }
+    }
 
-      .home-text .recipe-title,
-      .home-text .section-title,
-      .home-text .recipe-description,
-      .home-text a {
-        color: var(--dm-accent-main);
-      }
+    .top-shadow {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      background: linear-gradient(
+          to bottom,
+          rgba(253, 253, 253, 1) 0%,
+          rgba(253, 253, 253, 0) 90%
+        ),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    }
 
-      .recipe-title,
-      .section-title,
-      .copy-link-button,
-      .print-button {
-        color: #0b0b0b;
-      }
+    .top-shadow.visible {
+      opacity: 1;
+    }
 
-      .recipe-meta {
-        color: var(--dm-text-muted);
-      }
-
-      .recipe-description {
-        color: var(--dm-text-primary);
-      }
-
-      .ingredient-item {
-        border-left-color: var(--dm-accent-main);
-      }
-
-      .notes-section {
-        background-color: #161616;
-        color: var(--dm-text-primary-subtle);
-      }
-
-      .scroll-indicator {
+    @media (prefers-color-scheme: dark) {
+      .top-shadow {
         background: linear-gradient(
-          to top,
-          var(--dm-bg-sidebar-alt) 60%,
-          rgba(24, 24, 24, 0)
-        );
-        color: var(--dm-text-muted);
+            to bottom,
+            rgba(20, 20, 20, 1) 0%,
+            rgba(20, 20, 20, 0) 90%
+          ),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
       }
+    }
 
-      .scroll-indicator span {
-        background-color: rgba(255, 255, 255, 0.02);
-        border-color: rgba(255, 255, 255, 0.04);
-      }
-
-      /* Dark-mode sidebar text tone-down */
-      .sidebar .recipe-name,
-      .sidebar .sidebar-title {
-        color: #C7CCD4;
-      }
-
-      /* Sticky indicator in dark mode */
-      .scroll-indicator {
-        background: linear-gradient(
-          to top,
-          #D6D6D6 60%,
-          rgba(24, 24, 24, 0)
-        );
-      }
-
-      .sidebar {
-        background-color: #141414;
-      }
-
-      .search-box {
-        background-color: #111111;
-        border-color: #333333;
-        color: #e0e0e0;
-      }
-
-      .recipe-item:hover {
-        background-color: #232323;
-      }
-
+    @media (prefers-color-scheme: dark) {
       .recipe-content {
-        background-color: #0d0d0d;
-        color: #e3e3e3;
-      }
-
-      .notes-section {
         background-color: #101010;
       }
 
-      body {
-        color: #e3e3e3;
+      .recipe-title {
+        color: #f4f4f4;
+      }
+
+      .recipe-meta {
+        color: #b9c3cf;
+      }
+
+      .button-row .print-button,
+      .button-row .link-button {
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #d5dde7;
+        background-color: transparent;
+      }
+
+      .button-row .print-button:hover,
+      .button-row .link-button:hover {
+        border-color: var(--accent-dark);
+        color: var(--accent-dark);
+        background-color: rgba(184, 0, 34, 0.12);
+      }
+
+      .section-title {
+        color: var(--accent-dark);
+      }
+
+      .ingredient-item {
+        border-left-color: var(--accent-dark);
+      }
+
+      .notes-section {
+        background-color: #181818;
+        border-color: #3b3b3b;
+        color: #e0e0e0;
+      }
+
+      .instruction-item::before {
+        background-color: var(--accent-dark);
+      }
+    }
+
+    /* Dark mode: manifesto styling */
+    @media (prefers-color-scheme: dark) {
+      .home-text .recipe-title {
+        color: var(--accent-dark);
+      }
+
+      .home-text .section-title {
+        color: var(--accent-dark);
+      }
+
+      .home-text .recipe-description {
+        color: #e6e6e6;
+      }
+
+      .home-text a {
+        color: var(--accent-dark);
+      }
+    }
+
+    /* Soften accent-colored inline spans in manifesto body text on dark mode */
+    @media (prefers-color-scheme: dark) {
+      .home-text .recipe-description span {
+        color: #b80022 !important;
       }
     }
   </style>
@@ -676,16 +783,31 @@
     <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
       <div class="sidebar-title">Rituals / Recipes</div>
     </div>
-    <input type="text" class="search-box" id="searchBox" placeholder="search recipes...">
+
+    <input
+      type="text"
+      class="search-box"
+      id="searchBox"
+      placeholder="search recipes..."
+    />
+
+    <div class="top-shadow" id="topShadow"></div>
 
     <div class="recipe-list-container" id="recipeListContainer">
       <ul class="recipe-list" id="recipeList"></ul>
       <div class="no-results" id="noResults" style="display: none;">
-        no recipes found for <strong id="noResultsTerm"></strong>
+        no recipes found
       </div>
-      <div class="scroll-indicator" id="scrollIndicator" style="display: none;">
-        <span><span class="arrow">↓</span> scroll for more recipes</span>
-      </div>
+    </div>
+
+    <div class="sticky-indicator hidden" id="scrollIndicator">
+      <span class="scroll-note-label">scroll for more</span>
+      <span class="scroll-note-dots" aria-hidden="true">
+        <span class="scroll-dot"></span>
+        <span class="scroll-dot active"></span>
+        <span class="scroll-dot"></span>
+      </span>
+      <span class="scroll-note-arrow">↓</span>
     </div>
   </div>
 
@@ -694,341 +816,357 @@
   <script>
     let recipes = [];
     let currentRecipe = null;
-    let recipesJsonLastModified = null;
-    let permalinkBase = 'https://recipes.chomp.ltd';
-
-    const HOME_CONTENT_HTML = `
-      <div class="home-text">
-        <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-        <h1 class="recipe-title" style="font-size:2em;">Rituals & Recipes</h1>
-        <h2 class="section-title" style="font-size:1.2em; text-transform:none; font-weight:600; text-decoration:underline;">
-          Chomp Chomp's Baking Manifesto
-        </h2>
-        <h2 class="section-title" style="font-size:1.1em; text-transform:none; margin-top:8px;">
-          Ritual and rebellion
-        </h2>
-
-        <p class="recipe-description">
-          Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. Baking is the materialization of <span style="color:#fe0032;">comfort itself</span>. When we bake, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
-        </p>
-
-        <p class="recipe-description">
-          But in this gap (between intention and outcome) lies the <span style="color:#fe0032;">zen of baking</span>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span style="color:#fe0032;">shareable</span>. Is this not, in a way, an allegory of all human creation? We impose form upon chaos, and call it dessert.
-        </p>
-
-        <p class="recipe-description">
-          Culturally, baking binds us in a way that predates language. Across centuries and continents, <span style="color:#fe0032;">the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span style="color:#fe0032;">network</span> of borrowed gestures and shared <span style="color:#fe0032;">community</span>.
-        </p>
-
-        <p class="recipe-description">
-          So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#fe0032;">community</span>, scarcity and indulgence. You are, in the truest sense, baking the <span style="color:#fe0032;">striving toward transcendence</span>.
-        </p>
-
-        <h2 class="section-title" style="font-size:1.2em; text-transform:none;">Bake first, theorize later</h2>
-
-        <p class="recipe-description">
-          Scroll through the recipes, or search by keyword.
-        </p>
-
-        <p class="recipe-description">
-          Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#fe0032;">the symptom of desire</span>!
-        </p>
-
-        <p class="recipe-description">
-          Because baking, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own <span style="color:#fe0032;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our <span style="color:#fe0032;">collective archive</span> of baked transcendence may continue to grow.
-        </p>
-
-        <p class="recipe-description">
-          <a href="mailto:baking@chomp.ltd" class="email-link">baking@chomp.ltd</a>
-        </p>
-      </div>
-    `;
-
-    function resetRecipeView() {
-      document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
-      document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
-      currentRecipe = null;
-      updateURLForHome();
-    }
-
-    function sortRecipesAlphabetically() {
-      recipes.sort((a, b) =>
-        a.title.toLowerCase() < b.title.toLowerCase() ? -1 :
-        a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0
-      );
-    }
-
-    async function loadRecipes() {
-      try {
-        const response = await fetch('recipes.json', { cache: 'no-cache' });
-
-        const lastModified = response.headers.get('Last-Modified');
-        if (recipesJsonLastModified && lastModified === recipesJsonLastModified) {
-          initializeFromURL();
-          return;
-        }
-
-        recipesJsonLastModified = lastModified;
-        recipes = await response.json();
-        sortRecipesAlphabetically();
-        displayRecipeList(recipes);
-        initializeFromURL();
-        setupScrollIndicator();
-      } catch (error) {
-        console.error('Error loading recipes:', error);
-        document.getElementById('recipeContent').innerHTML =
-          '<div class="no-recipe">Error loading recipes. Please check <code>recipes.json</code>.</div>';
-      }
-    }
-
-    function displayRecipeList(recipesToShow) {
-      const recipeList = document.getElementById('recipeList');
-      const noResults = document.getElementById('noResults');
-      const noResultsTerm = document.getElementById('noResultsTerm');
-
-      recipeList.innerHTML = '';
-
-      if (!recipesToShow.length) {
-        const searchTerm = document.getElementById('searchBox').value.trim();
-        noResultsTerm.textContent = searchTerm || 'your search';
-        noResults.style.display = 'block';
-        return;
-      }
-
-      noResults.style.display = 'none';
-
-      recipesToShow.forEach(recipe => {
-        const li = document.createElement('li');
-        li.className = 'recipe-item';
-        li.onclick = () => selectRecipe(recipe, li);
-        li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
-        li.dataset.slug = recipe.slug || '';
-        recipeList.appendChild(li);
-      });
-
-      setupScrollIndicator();
-    }
-
-    function buildRecipeMeta(recipe) {
-      const metaInfo = [];
-      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
-      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
-      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
-      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
-      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
-      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
-      return metaInfo.join('');
-    }
-
-    function getPermalinkForRecipe(recipe) {
-      const slug = recipe.slug || slugifyTitle(recipe.title);
-      return `${permalinkBase}?r=${encodeURIComponent(slug)}`;
-    }
-
-    function slugifyTitle(title) {
-      if (!title) return '';
-      return title
-        .toLowerCase()
-        .replace(/['"]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    }
-
-    function selectRecipe(recipe, element, skipURLUpdate = false) {
-      currentRecipe = recipe;
-
-      document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
-      if (element) {
-        element.classList.add('active');
-        element.scrollIntoView({ block: 'nearest' });
-      } else {
-        const matchingItem = findSidebarItemForRecipe(recipe);
-        if (matchingItem) {
-          matchingItem.classList.add('active');
-          matchingItem.scrollIntoView({ block: 'nearest' });
-        }
-      }
-
-      const content = document.getElementById('recipeContent');
-      const metaHTML = buildRecipeMeta(recipe);
-      const imageHTML = recipe.image ? `<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">` : '';
-      const descriptionHTML = recipe.description ? `<div class="recipe-description">${recipe.description}</div>` : '';
-      const ingredientsHTML = (recipe.ingredients || []).map(i => {
-        if (typeof i === 'string' && i.trim().startsWith('###')) {
-          const label = i.replace(/^###\s*/, '').trim();
-          return `<li class="ingredient-item"><span class="subheading">${label}</span></li>`;
-        }
-        return `<li class="ingredient-item">${i}</li>`;
-      }).join('');
-      const instructionsHTML = (recipe.instructions || []).map(i => `<li class="instruction-item">${i}</li>`).join('');
-      const notesHTML = recipe.notes
-        ? `<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>`
-        : '';
-
-      const permalink = getPermalinkForRecipe(recipe);
-
-      content.innerHTML = `
-        <div class="recipe-header">
-          <h1 class="recipe-title">${recipe.title}</h1>
-          <div class="recipe-meta">${metaHTML}</div>
-          <div class="button-row">
-            <button onclick="printRecipe()" class="outline-button print-button">
-              <span class="icon">🖨</span> Print
-            </button>
-            <button onclick="copyPermalink('${permalink}')" class="outline-button copy-link-button">
-              <span class="icon">🔗</span> Permalink
-            </button>
-          </div>
-        </div>
-        ${descriptionHTML}
-        ${imageHTML}
-        <div class="section-title">ingredients</div>
-        <ul class="ingredients-list">${ingredientsHTML}</ul>
-        <div class="section-title">instructions</div>
-        <ol class="instructions-list">${instructionsHTML}</ol>
-        ${notesHTML}
-      `;
-
-      if (!skipURLUpdate) {
-        updateURLForRecipe(recipe);
-      }
-    }
-
-    function findSidebarItemForRecipe(recipe) {
-      const slug = recipe.slug || slugifyTitle(recipe.title);
-      const items = document.querySelectorAll('.recipe-item');
-      for (const item of items) {
-        if (item.dataset.slug === slug) return item;
-        const name = item.querySelector('.recipe-name');
-        if (name && name.textContent.trim() === recipe.title.trim()) {
-          return item;
-        }
-      }
-      return null;
-    }
-
-    function updateURLForRecipe(recipe) {
-      const slug = recipe.slug || slugifyTitle(recipe.title);
-      const newUrl = `${window.location.pathname}?r=${encodeURIComponent(slug)}`;
-      if (window.location.search !== `?r=${encodeURIComponent(slug)}`) {
-        window.history.replaceState({ slug }, '', newUrl);
-      }
-    }
-
-    function updateURLForHome() {
-      if (window.location.search) {
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      }
-    }
-
-    function initializeFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      const slugParam = params.get('r');
-
-      document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
-
-      if (slugParam) {
-        const decodedSlug = decodeURIComponent(slugParam);
-        let recipe = recipes.find(r => r.slug === decodedSlug);
-        if (!recipe) {
-          recipe = recipes.find(r => slugifyTitle(r.title) === decodedSlug);
-        }
-        if (recipe) {
-          selectRecipe(recipe, null, true);
-          return;
-        }
-      }
-      resetRecipeView();
-    }
 
     function printRecipe() {
       window.print();
     }
 
-    function copyPermalink(permalink) {
-      if (!navigator.clipboard) {
-        const tempInput = document.createElement('input');
-        tempInput.value = permalink;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand('copy');
-        document.body.removeChild(tempInput);
-      } else {
-        navigator.clipboard.writeText(permalink);
-      }
+    function copyPermalink() {
+      if (!currentRecipe) return;
+      const base = "https://recipes.chomp.ltd";
+      const slug = currentRecipe.slug || slugify(currentRecipe.title);
+      const url = `${base}?recipe=${encodeURIComponent(slug)}`;
 
-      const btns = document.querySelectorAll('.copy-link-button');
-      btns.forEach(btn => {
-        const original = btn.textContent.trim();
-        btn.textContent = 'Copied!';
-        setTimeout(() => {
-          btn.innerHTML = '<span class="icon">🔗</span> Permalink';
-        }, 1600);
-      });
+      navigator.clipboard
+        .writeText(url)
+        .then(() => {
+          alert("Permalink copied:\n" + url);
+        })
+        .catch((err) => {
+          console.error("Clipboard error:", err);
+          alert("Permalink: " + url);
+        });
     }
 
-    function setupScrollIndicator() {
-      const container = document.getElementById('recipeListContainer');
-      const indicator = document.getElementById('scrollIndicator');
-      const list = document.getElementById('recipeList');
+    function slugify(text) {
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/['"]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
 
-      if (!container || !indicator || !list) return;
+    const HOME_CONTENT_HTML = `
+  <div class="home-text">
+    <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
+    
+    <h1 class="recipe-title">Rituals &amp; Recipes</h1>
+    
+    <h2 class="section-title">
+      <strong>Chomp Chomp's Baking Manifesto</strong><br />
+      ritual and rebellion
+    </h2>
 
-      const width = window.innerWidth || document.documentElement.clientWidth;
-      const children = list.children;
-      let thresholdCount = width <= 768 ? 3 : 10;
+    <p class="recipe-description">
+      Baking. What is baking, <em>really</em>? It is not simply the combination of flour, sugar, butter, and eggs. No: this would be far too naïve. Baking is the materialization of <span>comfort itself</span>. When we bake, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays. And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse; the dough may refuse to proof. The oven, that domestic abyss, stares back.
+    </p>
 
-      if (!children || children.length <= thresholdCount) {
-        indicator.style.display = 'none';
+    <p class="recipe-description">
+      But in this gap (between intention and outcome) lies the <span>zen of baking</span>. We submit ourselves to a process that resists total mastery. The mind quiets as the hands work. The self dissolves into the rhythm of kneading, folding, and whisking. In baking, the most mundane gestures become philosophical: the transformation of raw matter into something tender, fragrant, <span>shareable</span>. Is this not, in a way, an allegory of all human creation? We impose form upon chaos, and call it dessert.
+    </p>
+
+    <p class="recipe-description">
+      Culturally, baking binds us in a way that predates language. Across centuries and continents, <span>the act of sharing</span> bread, cake, or cookie functions as a social contract - a small edible utopia. You offer someone a slice, a biscuit, a still-warm loaf, and for a fleeting moment the alienation of modern life is suspended. Even the recipes themselves - whether original inventions, found online, or passed from one colleague’s grandmother to another’s notebook - form a <span>network</span> of borrowed gestures and shared <span>community</span>.
+    </p>
+
+    <p class="recipe-description">
+      So, as you explore these recipes, remember: you are not merely reproducing instructions. You are reenacting an ancient dialectic between chaos and order, solitude and <span>community</span>, scarcity and indulgence. You are, in the truest sense, baking the <span>striving toward transcendence</span>.
+    </p>
+
+    <h2 class="section-title">Bake first, theorize later</h2>
+
+    <p class="recipe-description">
+      Scroll through the recipes, or search by keyword.
+    </p>
+
+    <p class="recipe-description">
+      Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span>the symptom of desire</span>!
+    </p>
+
+    <p class="recipe-description">
+      Because baking, like theory, thrives on exchange and variation, I’m always looking for something new. If you have a recipe - your grandmother’s secret torte, your own <span>subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me. I’ll add it here, with full credit, so that our <span>collective archive</span> of baked transcendence may continue to grow.
+    </p>
+
+    <p class="recipe-description">
+      <a href="mailto:baking@chomp.ltd">baking@chomp.ltd</a>
+    </p>
+  </div>
+`;
+
+    function resetRecipeView() {
+      document
+        .querySelectorAll(".recipe-item")
+        .forEach((item) => item.classList.remove("active"));
+      document.getElementById("recipeContent").innerHTML = HOME_CONTENT_HTML;
+      currentRecipe = null;
+      updatePermalinkForHome();
+    }
+
+    function sortRecipesAlphabetically() {
+      recipes.sort((a, b) =>
+        a.title.toLowerCase() < b.title.toLowerCase()
+          ? -1
+          : a.title.toLowerCase() > b.title.toLowerCase()
+          ? 1
+          : 0
+      );
+    }
+
+    async function loadRecipes() {
+      try {
+        const response = await fetch("recipes.json");
+        recipes = await response.json();
+        sortRecipesAlphabetically();
+        displayRecipeList(recipes);
+        restoreInitialSelectionFromPermalink();
+        setupSidebarScrollEffects();
+      } catch (error) {
+        console.error("Error loading recipes:", error);
+        document.getElementById("recipeContent").innerHTML =
+          '<div class="no-recipe">error loading recipes</div>';
+      }
+    }
+
+    function displayRecipeList(recipesToShow) {
+      const recipeList = document.getElementById("recipeList");
+      const noResults = document.getElementById("noResults");
+      recipeList.innerHTML = "";
+
+      if (!recipesToShow.length) {
+        noResults.style.display = "block";
         return;
       }
 
-      const hasVerticalScroll = container.scrollHeight > container.clientHeight + 4;
+      noResults.style.display = "none";
 
-      if (!hasVerticalScroll) {
-        indicator.style.display = 'none';
-        return;
-      }
+      recipesToShow.forEach((recipe) => {
+        const li = document.createElement("li");
+        li.className = "recipe-item";
+        li.dataset.slug = recipe.slug || slugify(recipe.title);
 
-      indicator.style.display = 'block';
+        li.onclick = () => {
+          selectRecipe(recipe, li, true);
+        };
 
-      const handleScroll = () => {
-        const { scrollTop, scrollHeight, clientHeight } = container;
-        if (scrollTop + clientHeight >= scrollHeight - 12) {
-          indicator.style.opacity = '0';
-          indicator.style.pointerEvents = 'none';
+        const timeBits = [];
+        if (recipe.totalTime) {
+          timeBits.push(`total: ${recipe.totalTime}`);
         } else {
-          indicator.style.opacity = '1';
-          indicator.style.pointerEvents = 'auto';
+          if (recipe.prepTime) timeBits.push(`prep: ${recipe.prepTime}`);
+          if (recipe.cookTime) timeBits.push(`cook: ${recipe.cookTime}`);
         }
-      };
 
-      container.removeEventListener('scroll', handleScroll);
-      container.addEventListener('scroll', handleScroll, { passive: true });
+        const metaSnippet = timeBits.length
+          ? `<div class="recipe-time">${timeBits.join(" | ")}</div>`
+          : "";
+
+        li.innerHTML = `
+        <div class="recipe-name">${recipe.title}</div>
+        ${metaSnippet}
+      `;
+        recipeList.appendChild(li);
+      });
+
+      updateScrollIndicator();
+    }
+
+    function selectRecipe(recipe, element, updateUrl = false) {
+      currentRecipe = recipe;
+
+      document
+        .querySelectorAll(".recipe-item")
+        .forEach((item) => item.classList.remove("active"));
+      if (element) element.classList.add("active");
+
+      const content = document.getElementById("recipeContent");
+
+      let metaInfo = [];
+      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime)
+        metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
+      if (recipe.servings)
+        metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
+      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      if (recipe.category && recipe.category !== "null")
+        metaInfo.push(`<span>category: ${recipe.category}</span>`);
+
+      let imageHTML = recipe.image
+        ? `<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`
+        : "";
+      let descriptionHTML = recipe.description
+        ? `<div class="recipe-description">${recipe.description}</div>`
+        : "";
+      const ingredientsHTML = recipe.ingredients
+        .map((i) => {
+          if (i.trim().startsWith("###")) {
+            const clean = i.replace(/^###\s*/, "").trim();
+            return `<li class="ingredient-item subheading">${clean}</li>`;
+          }
+          return `<li class="ingredient-item">${i}</li>`;
+        })
+        .join("");
+      const instructionsHTML = recipe.instructions
+        .map((i) => `<li class="instruction-item">${i}</li>`)
+        .join("");
+      let notesHTML = recipe.notes
+        ? `<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>`
+        : "";
+
+      const slug = recipe.slug || slugify(recipe.title);
+      const permalink = `https://recipes.chomp.ltd?recipe=${encodeURIComponent(
+        slug
+      )}`;
+
+      content.innerHTML = `
+      <div class="recipe-header">
+        <h1 class="recipe-title">${recipe.title}</h1>
+        <div class="recipe-meta">${metaInfo.join("")}</div>
+        <div class="button-row">
+          <button onclick="printRecipe()" class="print-button">Print</button>
+          <button onclick="copyPermalink()" class="link-button" title="${permalink}">Permalink</button>
+        </div>
+      </div>
+      ${descriptionHTML}
+      ${imageHTML}
+      <div class="section-title">ingredients</div>
+      <ul class="ingredients-list">${ingredientsHTML}</ul>
+      <div class="section-title">instructions</div>
+      <ol class="instructions-list">${instructionsHTML}</ol>
+      ${notesHTML}
+    `;
+
+      if (updateUrl) {
+        const url = new URL(window.location);
+        url.searchParams.set("recipe", slug);
+        window.history.replaceState({}, "", url);
+      }
+    }
+
+    function updatePermalinkForHome() {
+      const url = new URL(window.location);
+      url.searchParams.delete("recipe");
+      window.history.replaceState({}, "", url);
+    }
+
+    function restoreInitialSelectionFromPermalink() {
+      try {
+        const url = new URL(window.location.href);
+        const recipeSlug = url.searchParams.get("recipe");
+        if (!recipeSlug) {
+          resetRecipeView();
+          return;
+        }
+
+        const target = recipes.find(
+          (r) => (r.slug || slugify(r.title)) === recipeSlug
+        );
+        if (!target) {
+          resetRecipeView();
+          return;
+        }
+
+        const list = document.getElementById("recipeList");
+        const li = list.querySelector(`[data-slug="${recipeSlug}"]`);
+        selectRecipe(target, li || null, false);
+
+        if (li) {
+          const container = document.getElementById("recipeListContainer");
+          const liOffsetTop = li.offsetTop;
+          const liHeight = li.offsetHeight;
+          const containerHeight = container.clientHeight;
+          container.scrollTop = liOffsetTop - containerHeight / 2 + liHeight / 2;
+        }
+      } catch (err) {
+        console.error("Error restoring selection from permalink:", err);
+        resetRecipeView();
+      }
+    }
+
+    function setupSidebarScrollEffects() {
+      const container = document.getElementById("recipeListContainer");
+      const indicator = document.getElementById("scrollIndicator");
+      const topShadow = document.getElementById("topShadow");
+
+      if (!container || !indicator || !topShadow) return;
+
+      function handleScroll() {
+        const scrollTop = container.scrollTop;
+        const maxScroll =
+          container.scrollHeight - container.clientHeight - 1;
+
+        if (scrollTop > 4) {
+          topShadow.classList.add("visible");
+        } else {
+          topShadow.classList.remove("visible");
+        }
+
+        if (maxScroll <= 0) {
+          indicator.classList.add("hidden");
+          return;
+        }
+
+        if (scrollTop >= maxScroll - 4) {
+          indicator.classList.add("hidden");
+        } else {
+          indicator.classList.remove("hidden");
+        }
+      }
 
       handleScroll();
+      container.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleScroll);
     }
 
-    window.addEventListener('resize', () => {
-      setupScrollIndicator();
-    });
+    function updateScrollIndicator() {
+      const container = document.getElementById("recipeListContainer");
+      const indicator = document.getElementById("scrollIndicator");
+      const topShadow = document.getElementById("topShadow");
+      if (!container || !indicator || !topShadow) return;
 
-    document.getElementById('searchBox').addEventListener('input', e => {
-      const searchTerm = e.target.value.toLowerCase();
-      const filtered = recipes.filter(r =>
-        r.title.toLowerCase().includes(searchTerm) ||
-        (r.description && r.description.toLowerCase().includes(searchTerm)) ||
-        (r.ingredients || []).some(i =>
-          (typeof i === 'string') && i.toLowerCase().includes(searchTerm)
-        )
-      );
-      displayRecipeList(filtered);
-    });
+      const scrollTop = container.scrollTop;
+      const maxScroll =
+        container.scrollHeight - container.clientHeight - 1;
+      const hasOverflow = maxScroll > 0;
 
-    window.addEventListener('DOMContentLoaded', () => {
-      loadRecipes();
-    });
+      if (!hasOverflow) {
+        indicator.classList.add("hidden");
+        topShadow.classList.remove("visible");
+        return;
+      }
+
+      if (scrollTop > 4) {
+        topShadow.classList.add("visible");
+      } else {
+        topShadow.classList.remove("visible");
+      }
+
+      if (scrollTop >= maxScroll - 4) {
+        indicator.classList.add("hidden");
+      } else {
+        indicator.classList.remove("hidden");
+      }
+    }
+
+    document
+      .getElementById("searchBox")
+      .addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = recipes.filter(
+          (r) =>
+            r.title.toLowerCase().includes(searchTerm) ||
+            (r.description &&
+              r.description.toLowerCase().includes(searchTerm)) ||
+            r.ingredients.some((i) =>
+              i.toLowerCase().includes(searchTerm)
+            )
+        );
+        displayRecipeList(filtered);
+      });
+
+    loadRecipes();
   </script>
 </body>
 </html>
