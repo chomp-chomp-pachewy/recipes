@@ -633,13 +633,13 @@
       if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
       if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
       if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
-      if (recipe.source) metaInfo.push(`<span>source: ${recipe.source}</span>`);
+      if (recipe.source) metaInfo.push(`<span>source: ${parseMarkdown(recipe.source)}</span>`);
       if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
 
       let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
       let descriptionHTML = recipe.description?`<div class="recipe-description">${parseMarkdown(recipe.description)}</div>`:'';
       const ingredientsHTML = recipe.ingredients.map(i=>`<li class="ingredient-item">${i}</li>`).join('');
-      const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${i}</li>`).join('');
+      const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${parseMarkdown(i)}</li>`).join('');
       let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
 
       // update URL to current recipe slug
@@ -693,4 +693,3 @@
   </script>
 </body>
 </html>
-
