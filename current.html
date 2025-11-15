@@ -405,6 +405,12 @@
         .trim('-'); // Remove leading/trailing hyphens/whitespace
     }
 
+    function parseMarkdown(text) {
+      if (!text) return text;
+      // Convert markdown links [text](url) to HTML links
+      return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    }
+
     // Function to copy the permalink of the currently viewed recipe
     function copyPermalink() {
         if (!currentRecipe || !currentRecipe.slug) return;
@@ -631,10 +637,10 @@
       if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
 
       let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
-      let descriptionHTML = recipe.description?`<div class="recipe-description">${recipe.description}</div>`:'';
+      let descriptionHTML = recipe.description?`<div class="recipe-description">${parseMarkdown(recipe.description)}</div>`:'';
       const ingredientsHTML = recipe.ingredients.map(i=>`<li class="ingredient-item">${i}</li>`).join('');
       const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${i}</li>`).join('');
-      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${recipe.notes}</div>`:'';
+      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
 
       // update URL to current recipe slug
       if (recipe.slug) {
@@ -687,3 +693,4 @@
   </script>
 </body>
 </html>
+
