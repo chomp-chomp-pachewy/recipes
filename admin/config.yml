@@ -14,7 +14,7 @@ collections:
     label: "Recipe Catalog" # The name that appears in the CMS sidebar
     # Crucial: This tells the CMS to load data from a single JSON file.
     # The file path is relative to the project root.
-    file: "Chomp_Recipe_Site_JSON_Recipes.txt"
+    file: "recipes.json"
     format: "json"
     create: true # Allow users to create new recipes
     slug: "{{title}}" # Use the recipe title as the slug/ID
