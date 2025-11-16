@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 # --- CONFIGURATION ---
-RECIPE_FILE = 'recipes.json'
+RECIPE_FILE = '/recipes.json'
 
 app = Flask(__name__)
 # Enable CORS for development, allowing the HTML to access the API.
