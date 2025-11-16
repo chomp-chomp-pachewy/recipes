@@ -457,5 +457,49 @@
       "Bake both sheets at the same time, swapping the top sheet to the bottom rack and bottom sheet to the top midway through baking, until the tops of the cookies crack and puff slightly, 15 to 18 minutes. Let cool completely on the baking sheets."
     ],
     "notes": "Five-spice powder can be found in the spice section of most well-stocked grocery stores.\nMake Ahead\nIf wrapped tightly in plastic, the dough can be stored in the refrigerator for several days before baking. If too firm to scoop, let sit at room temperature for 15 minutes and try again.\nStorage\nStore the cookies in an airtight container at room temperature for up to 1 week.\nBlackstrap Molasses\nUsing blackstrap molasses instead of regular unsulphured molasses would significantly change the flavor and texture of these Five Spice Molasses Cookies. Here's what to expect and how you might want to adjust the recipe:\nFlavor Difference:\nBlackstrap molasses is much darker, thicker, and less sweet than regular unsulphured molasses. It has a more intense, bitter flavor with strong earthy, almost burnt undertones. This would make the cookies taste more robust, with a deeper, more intense molasses flavor.\nThe cookies would have a less sweet and potentially slightly bitter taste compared to using unsulphured molasses. The deep, complex flavors of blackstrap molasses would overpower the five-spice blend and other elements if not adjusted.\nTexture Difference:\nBlackstrap molasses is thicker and more concentrated, which could make the dough denser and the cookies chewier or harder.\nThe cookies may also spread less due to the higher concentration of sugar solids in blackstrap molasses.\nModifications:\nIncrease the sugar: To balance out the bitterness of the blackstrap molasses, you could increase the amount of sugar in the recipe. Adding an additional 1/4 to 1/3 cup of brown sugar would help counterbalance the intense, bitter flavor of blackstrap molasses.\nAdd more spices: Blackstrap molasses can overpower the spices in the recipe, so you might want to increase the five-spice powder to 1 1/2 tablespoons and perhaps add 1/2 teaspoon of ground ginger or cinnamon to help bring out the spice flavors against the stronger molasses.\nReduce the blackstrap molasses: If you want to use blackstrap but still maintain a smoother flavor, you could reduce the blackstrap to 1/4 cup and add 1 tablespoon of honey or maple syrup. This will balance the bitterness without losing the moisture content.\nMonitor baking time: Since blackstrap molasses may make the dough denser, check the cookies a few minutes earlier to avoid them becoming too hard. Baking for 13-15 minutes instead of 15-18 might help retain some softness.\nSummary of Modifications:\nBlackstrap molasses: Use 1/4 to 1/3 cup (instead of 1/3 cup of unsulphured) and balance with extra sugar (1/4 to 1/3 cup).\nSpices: Increase the five-spice powder to 1 1/2 tablespoons and optionally add extra ground ginger or cinnamon (1/2 teaspoon).\nAlternative sweeteners: Add 1 tablespoon honey or maple syrup to balance bitterness if reducing blackstrap.\nBaking time: Reduce by a few minutes, checking around the 13-15 minute mark.\nThese adjustments should help balance the robust flavor of blackstrap molasses while keeping the cookies delicious and flavorful."
-  }
+  },
+  {
+  "title": "Vanilla Frozen Custard Recipe",
+  "slug": "vanilla-frozen-custard-recipe",
+  "description": "This Vanilla Frozen Custard Ice Cream is rich, decadent, and oh so creamy. Pair with your favorite pie, cake, or cookie or simply perfect on its own.\n\nWhat is Frozen Custard?\n\nFrozen custard is a frozen dessert similar to ice cream but has a richer and creamier texture. It is made from a base of cream, milk, sugar, and pasteurized egg yolks. The key difference between frozen custard and traditional ice cream is the addition of egg yolks, which gives frozen custard its smooth and velvety consistency.",
+  "servings": "6 people",
+  "prepTime": "30min",
+  "cookTime": "10min",
+  "totalTime": "370min",
+  "source": "[foodfolksandfun.net](https://foodfolksandfun.net/vanilla-custard-ice-cream/)",
+  "image": null,
+  "category": null,
+  "ingredients": [
+    "1 cup whole milk",
+    "¾ cup granulated sugar",
+    "2 cups heavy cream (divided)",
+    "Pinch of salt",
+    "1 vanilla bean (cut lengthwise)",
+    "6 large egg yolks",
+    "1 teaspoon vanilla extract"
+  ],
+  "instructions": [
+    "### PREP MILK, CREAM, AND VANILLA BEAN",
+    "Place a medium pot over medium-high heat, and whisk together the milk, sugar, and 1 cup of the heavy cream.",
+    "Use a spoon or the back of a butter knife to scrape the seeds from the vanilla bean into the pot. Add the vanilla bean to the pot, too.",
+    "### HEAT MILK MIXTURE",
+    "Heat the mixture, while stirring often, until the mixture reaches 110 degrees.",
+    "Cover the pot and let the mixture cool for about 25 minutes, or until it cools to 80 degrees.",
+    "### MIX CUSTARD MIXTURE",
+    "Remove the vanilla bean and add the egg yolks to the pot and whisk it into the warm milk mixture until combined.",
+    "### COOK CUSTARD MIXTURE",
+    "Place the pot back on the stove and heat it over medium heat. Cook, while stirring constantly (make sure you scrape all around the bottom of the pan and edges).",
+    "Cook until the mixture reaches 170-175 degrees F on an instant-read thermometer. The mixture will be thickened enough to coat the back of a spoon. Remove the pot from the heat.",
+    "### STRAIN",
+    "Place a fine-mesh​ strainer over a medium bowl and pour the custard mixture through the strainer.",
+    "### MIX AND CHILL",
+    "Whisk in the remaining cup of heavy cream and vanilla extract. Cool the mixture for 10 minutes, and then cover it and refrigerate for at least 2 hours, or overnight.",
+    "### CHURN AND FREEZE",
+    "Churn in an ice cream maker as per the manufacturer’s instructions. Churn until custard resembles soft-serve ice cream.",
+    "Transfer the frozen custard to an airtight container and freeze for 3 hours.",
+    "### SERVE",
+    "Scoop and serve!"
+  ],
+  "notes": null
+}
 ]
