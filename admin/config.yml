@@ -1,0 +1,73 @@
+backend:
+  # Use Netlify's built-in authentication system
+  name: git-gateway
+  # Set the branch where content changes should be committed
+  branch: main  # Change this if your main branch is named 'master'
+
+# The path to the media folder (where images are stored)
+media_folder: "images"
+public_folder: "/images"
+
+# --- Collections (Data Models) ---
+collections:
+  - name: "recipes" # A unique identifier for this content collection
+    label: "Recipe Catalog" # The name that appears in the CMS sidebar
+    # Crucial: This tells the CMS to load data from a single JSON file.
+    # The file path is relative to the project root.
+    file: "Chomp_Recipe_Site_JSON_Recipes.txt"
+    format: "json"
+    create: true # Allow users to create new recipes
+    slug: "{{title}}" # Use the recipe title as the slug/ID
+
+    # --- Fields (Defines the structure of ONE recipe object) ---
+    fields:
+      - label: "Title"
+        name: "title"
+        widget: "string"
+        required: true
+      - label: "Description"
+        name: "description"
+        widget: "markdown" # Use a rich text editor for the main description
+        required: false
+      - label: "Image Path"
+        name: "image"
+        widget: "image" # Allows uploading images to the 'images' folder
+        required: false
+      - label: "Servings"
+        name: "servings"
+        widget: "string"
+        required: false
+      - label: "Prep Time (e.g., 20min)"
+        name: "prepTime"
+        widget: "string"
+        required: false
+      - label: "Cook Time (e.g., 65-80 minutes)"
+        name: "cookTime"
+        widget: "string"
+        required: false
+      - label: "Total Time"
+        name: "totalTime"
+        widget: "string"
+        required: false
+      - label: "Source"
+        name: "source"
+        widget: "string"
+        required: false
+      - label: "Category (e.g., chomp chomp)"
+        name: "category"
+        widget: "string"
+        required: false
+      # Ingredients and Instructions are handled as string lists (arrays of strings)
+      - label: "Ingredients (One per line)"
+        name: "ingredients"
+        widget: "list"
+        field: { label: "Ingredient Item", name: "ingredient_item", widget: "string" }
+      - label: "Instructions (One step per line)"
+        name: "instructions"
+        widget: "list"
+        field: { label: "Instruction Step", name: "instruction_step", widget: "markdown" }
+      - label: "Notes"
+        name: "notes"
+        widget: "text"
+        required: false
+
