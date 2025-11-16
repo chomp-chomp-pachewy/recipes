@@ -582,7 +582,7 @@
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <img src="/images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
@@ -712,7 +712,7 @@
 
     async function loadRecipes() {
       try {
-        const response = await fetch('Chomp_Recipe_Site_JSON_Recipes.txt'); 
+        const response = await fetch('recipes.json'); 
         recipes = await response.json();
 
         recipes.forEach(r => {
