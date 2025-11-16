@@ -712,7 +712,7 @@
 
     async function loadRecipes() {
       try {
-        const response = await fetch('Chomp_Recipe_Site_JSON_Recipes.txt'); 
+        const response = await fetch('recipes.json'); 
         recipes = await response.json();
 
         recipes.forEach(r => {
