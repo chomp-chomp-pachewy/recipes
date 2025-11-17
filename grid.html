@@ -294,10 +294,9 @@
 
     .grid-controls {
       display: flex;
-      flex-wrap: wrap; /* NEW: Allows controls to wrap */
+      flex-wrap: wrap; 
       gap: 15px;
       align-items: center;
-      margin-bottom: 30px;
       justify-content: flex-start;
       padding: 0 10px;
     }
@@ -322,7 +321,53 @@
     
     .clear-filters-btn:hover {
       border-color: #E73B42;
-      color: #E73B42;
+      color: #7d7d7d;
+    }
+
+    /* ---------------------------------------------------- */
+    /* === RATING SPECIFIC STYLES === */
+    /* ---------------------------------------------------- */
+    .rating-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    .stars-display {
+        font-size: 1.5em;
+        color: #ffc107; /* Gold color for stars */
+        letter-spacing: -2px;
+    }
+    .rating-label {
+        font-size: 0.9em;
+        color: #353535;
+        font-weight: 600;
+    }
+    .rating-buttons {
+        display: flex;
+        gap: 5px;
+        font-size: 1.2em;
+    }
+    .rating-buttons button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #e0e0e0; /* Gray for unselected */
+        transition: color 0.2s;
+    }
+    .rating-buttons button:hover,
+    .rating-buttons button.hovered {
+        color: #ffdd77; /* Light gold on hover */
+    }
+    .rating-buttons button.selected {
+        color: #ffc107; /* Gold for selected */
+    }
+    .rating-message {
+        font-size: 0.85em;
+        color: #7d7d7d;
+        margin-top: 8px;
     }
 
 
@@ -440,7 +485,7 @@
     }
 
     @media print {
-      .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area {
+      .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container {
         display: none !important;
       }
       body { display: block; min-height: auto; color: #000000; }
@@ -465,7 +510,6 @@
       <select id="sidebar-sort-by" style="width:100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 4px;">
           <option value="alphabetical">Sort: A-Z</option>
           <option value="newest">Sort: Newest</option>
-          <option value="rating">Sort: Best Rated</option>
           <option value="time">Sort: Quickest Time</option>
       </select>
     </div>
@@ -482,44 +526,244 @@
 
   <div class="recipe-content" id="recipeContent"></div>
 
-  <script>
+  <script type="module">
+    // --- FIREBASE IMPORTS ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, onSnapshot, collection, query, updateDoc, setDoc, getDoc, runTransaction, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- FIREBASE CONFIGURATION (MANDATORY GLOBALS) ---
+    // The hosting environment MUST provide these global variables:
+    // __app_id, __firebase_config, __initial_auth_token
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'chomp-chomp-recipes'; 
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify({
+        apiKey: "YOUR_FIREBASE_API_KEY", 
+        projectId: "chomp-chomp-recipes",
+        // ... include rest of config here if not provided by host
+    }));
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    
+    let userId = null;
     let recipes = [];
     let currentRecipe = null;
     let currentGridPage = 0;
     const RECIPES_PER_PAGE = 15;
+    let isAuthReady = false;
+    
+    // --- FIREBASE COLLECTION PATHS ---
+    // The path is defined by the migration script and uses the Project ID for APP_ID
+    function getRecipesCollectionPath() {
+        return `artifacts/${appId}/public/data/recipes`;
+    }
+    function getRatingsCollectionPath() {
+        return `artifacts/${appId}/public/data/ratings`;
+    }
+    function getRatingDocPath(recipeSlug, userId) {
+        return doc(db, getRatingsCollectionPath(), `${recipeSlug}_${userId}`);
+    }
+    function getAggregateRatingDocPath(recipeSlug) {
+        return doc(db, getRatingsCollectionPath(), recipeSlug);
+    }
+    
+    // --- AUTHENTICATION & INITIALIZATION ---
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            userId = user.uid;
+        }
+        isAuthReady = true;
+        setupRecipeListener(); 
+    });
 
+    async function initAuth() {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            try {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } catch (error) {
+                console.error("Error signing in with custom token, falling back to anonymous:", error);
+                await signInAnonymously(auth);
+            }
+        } else {
+            await signInAnonymously(auth);
+        }
+    }
+    
+    // --- REAL-TIME RECIPE LISTENER (Pulls ALL content from Firestore) ---
+    function setupRecipeListener() {
+        const recipesRef = collection(db, getRecipesCollectionPath());
+        const q = query(recipesRef);
+
+        onSnapshot(q, (snapshot) => {
+            let initialLoad = recipes.length === 0;
+            
+            recipes = snapshot.docs.map(doc => {
+                const data = doc.data();
+                
+                // Handling serialized JSON fields created by the migration script
+                if (typeof data.ingredients === 'string') {
+                    try { data.ingredients = JSON.parse(data.ingredients); } catch (e) { console.error("Failed to parse ingredients JSON string:", e); }
+                }
+                if (typeof data.source === 'string') {
+                    try { data.source = JSON.parse(data.source); } catch (e) { console.error("Failed to parse source JSON string:", e); }
+                }
+
+                return {
+                    ...data,
+                    // Ensure slug exists for linking
+                    slug: data.slug || generateSlug(data.title),
+                    totalTimeInMinutes: parseTime(data.totalTime || data.cookTime),
+                    dishType: assignDishType(data.title),
+                    ratingScore: data.averageScore || 0, // Fallback if aggregate listener is slow
+                    ratingCount: data.count || 0
+                };
+            });
+
+            sortRecipes(recipes, 'alphabetical');
+            displayRecipeList(recipes);
+            updateStickyIndicator(); 
+            
+            if (initialLoad) {
+                if (window.location.hash === '#grid') {
+                    displayGridPage(recipes);
+                } else if (!openRecipeFromURL()) {
+                    resetRecipeView();
+                }
+                setupRatingListener(); 
+            }
+        }, (error) => {
+            console.error("Error setting up recipe listener:", error);
+            document.getElementById('recipeContent').innerHTML = `<div class="no-recipe"><p>Failed to load recipes from the database. Please ensure data has been migrated and Firebase config is correct.</p></div>`;
+        });
+    }
+
+    // --- RATING LISTENERS AND SUBMISSION ---
+    
+    function setupRatingListener() {
+        const q = collection(db, getRatingsCollectionPath());
+        
+        onSnapshot(q, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.doc.id.length > 20) return; 
+                
+                const data = change.doc.data();
+                const recipeSlug = change.doc.id;
+                
+                const recipeIndex = recipes.findIndex(r => r.slug === recipeSlug);
+                if (recipeIndex !== -1) {
+                    if (data.averageScore !== undefined) {
+                        recipes[recipeIndex].ratingScore = data.averageScore || 0;
+                        recipes[recipeIndex].ratingCount = data.count || 0;
+                    }
+                }
+            });
+            
+            const isGridVisible = document.getElementById('gridCardsContainer');
+            if (isGridVisible) {
+                 filterAndSortGrid(); 
+            }
+            displayRecipeList(recipes);
+            
+            if (currentRecipe && currentRecipe.slug) {
+                renderRatingUI(currentRecipe.slug); 
+            }
+        });
+    }
+    
+    window.submitRating = async (recipeSlug, score) => {
+        if (!isAuthReady || !userId) {
+            console.error('Rating system is still loading or user is not authenticated.');
+            return;
+        }
+
+        const statusEl = document.getElementById(`rating-status-${recipeSlug}`);
+        statusEl.textContent = 'Submitting your rating...';
+
+        try {
+            // 1. Save the individual user rating
+            const userRatingRef = getRatingDocPath(recipeSlug, userId);
+            await setDoc(userRatingRef, {
+                recipeId: recipeSlug,
+                userId: userId,
+                score: score,
+                timestamp: Date.now()
+            });
+
+            // 2. Aggregate logic (Client-side simulation—NOTE: In production, use Cloud Functions)
+            const q = query(collection(db, getRatingsCollectionPath()), where("recipeId", "==", recipeSlug));
+            const snaps = await getDocs(q);
+            
+            let totalScore = 0;
+            snaps.forEach(d => totalScore += d.data().score);
+            const count = snaps.size;
+            const averageScore = totalScore / count;
+            
+            // 3. Update the *aggregate* doc which the listener is watching
+            const aggregateRef = getAggregateRatingDocPath(recipeSlug);
+            await setDoc(aggregateRef, {
+                averageScore: averageScore,
+                totalScore: totalScore,
+                count: count,
+                recipeSlug: recipeSlug
+            }, { merge: true });
+
+            // 4. Force a UI update
+            const updatedRecipe = recipes.find(r => r.slug === recipeSlug);
+            if (updatedRecipe) {
+                updatedRecipe.ratingScore = averageScore;
+                updatedRecipe.ratingCount = count;
+                selectRecipe(updatedRecipe, null);
+            }
+            statusEl.textContent = `Thank you! Your ${score} star rating has been recorded.`;
+
+        } catch (e) {
+            console.error("Rating submission failed: ", e);
+            statusEl.textContent = `Error: Could not save rating.`;
+        }
+    };
+    
+    // --- UTILITIES ---
+    
     function printRecipe() { window.print(); }
 
     function generateSlug(title) {
-      return title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim('-');
+        return title
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
     }
 
     function parseMarkdown(text) {
-      if (!text) return text;
-      // Converts [text](link) to HTML <a> tag
-      text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-      // Handles source objects from the JSON
-      if (typeof text === 'object' && text !== null && Array.isArray(text)) {
-          return text.map(item => {
-              if (item.text && item.href) {
-                  return `<a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.text}</a>`;
-              }
-              return item.text || item;
-          }).join('');
-      }
-      return text;
+        if (!text) return text;
+        
+        // Handle serialized JSON arrays (from migration script)
+        if (typeof text === 'object' && Array.isArray(text)) {
+            // This assumes the complex ingredient structure. We will simplify it here.
+            return text.map(item => {
+                if (typeof item === 'string') return item;
+                if (Array.isArray(item)) return item.map(subItem => {
+                    if (subItem && subItem.text) return `<a href="${subItem.href}">${subItem.text}</a>`;
+                    return subItem;
+                }).join(' ');
+                return item;
+            }).join(', '); // Join complex array items with a space for display simplicity
+        }
+
+        // Standard Markdown links
+        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        
+        return text;
     }
 
     function copyPermalink() {
         if (!currentRecipe || !currentRecipe.slug) return;
         const url = `${window.location.origin}${window.location.pathname}?slug=${encodeURIComponent(currentRecipe.slug)}`;
         navigator.clipboard.writeText(url).then(() => {
-            alert('Permalink copied to clipboard!');
+            console.log('Permalink copied to clipboard!');
         }).catch(err => {
             console.error('Could not copy text: ', err);
         });
@@ -527,14 +771,10 @@
 
     function parseTime(timeString) {
         if (!timeString) return Infinity; 
-        
-        // Handle "65-80 minutes" by taking the lower bound
         const rangeMatch = String(timeString).match(/^(\d+)/);
         const rangeMinutes = rangeMatch ? parseInt(rangeMatch[1]) : 0;
-        
         const hoursMatch = String(timeString).match(/(\d+)\s*h/);
         const hours = hoursMatch ? parseInt(hoursMatch[1]) * 60 : 0;
-        
         const minutesMatch = String(timeString).match(/(\d+)\s*min/);
         const minutes = minutesMatch ? parseInt(minutesMatch[1]) : 0;
         
@@ -546,7 +786,6 @@
         return Infinity;
     }
 
-    // NEW UTILITY FUNCTION
     function assignDishType(title) {
         const lower = title.toLowerCase();
         if (lower.includes('cake') || lower.includes('torte') || lower.includes('pie') || lower.includes('brûlée')) return 'Dessert/Pastry';
@@ -563,9 +802,6 @@
             case 'time':
                 recipesToSort.sort((a, b) => a.totalTimeInMinutes - b.totalTimeInMinutes);
                 break;
-            case 'rating':
-                recipesToSort.sort((a, b) => b.ratingScore - a.ratingScore);
-                break;
             case 'newest':
                 recipesToSort.reverse(); 
                 break;
@@ -579,15 +815,14 @@
         }
     }
 
-
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="/images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <img src="Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
           </h2>
-
+          <!-- (REST OF HOME CONTENT OMITTED FOR BREVITY) -->
           <p class="recipe-description">
           Baking. What is baking, <em>really</em>?
           It is not simply the combination of flour, sugar, butter, and eggs.
@@ -658,115 +893,132 @@
     }
 
     function updateStickyIndicator() {
-      const list = document.querySelector('.recipe-list-container');
-      const indicator = document.getElementById('stickyIndicator');
-      const topShadow = document.querySelector('.top-shadow');
-      if (!list || !indicator) return;
+        const list = document.querySelector('.recipe-list-container');
+        const indicator = document.getElementById('stickyIndicator');
+        const topShadow = document.querySelector('.top-shadow');
+        if (!list || !indicator) return;
 
-      const isScrollable = list.scrollHeight > list.clientHeight;
-      if (!isScrollable) {
-        indicator.style.display = 'none';
-        if (topShadow) topShadow.style.opacity = 0;
-        return;
-      }
+        const isScrollable = list.scrollHeight > list.clientHeight;
+        if (!isScrollable) {
+            indicator.style.display = 'none';
+            if (topShadow) topShadow.style.opacity = 0;
+            return;
+        }
 
-      indicator.style.display = 'block';
-      const isMobile = window.innerWidth < 768;
-      indicator.textContent = isMobile ?
-        "↓ scroll for more" : "↓ scroll for more recipes";
+        indicator.style.display = 'block';
+        const isMobile = window.innerWidth < 768;
+        indicator.textContent = isMobile ?
+            "↓ scroll for more" : "↓ scroll for more recipes";
 
-      const atTop = list.scrollTop <= 1;
-      indicator.style.opacity = atTop ? 1 : 0;
-      if (topShadow) topShadow.style.opacity = atTop ? 0 : 1;
-      if (!list._hasStickyScrollHandler) {
-        list.addEventListener('scroll', () => {
-          const nowAtTop = list.scrollTop <= 1;
-          indicator.style.opacity = nowAtTop ? 1 : 0;
-          if (topShadow) {
-            topShadow.style.opacity = nowAtTop ? 0 : 1;
-          }
-        });
-        list._hasStickyScrollHandler = true;
-      }
+        const atTop = list.scrollTop <= 1;
+        indicator.style.opacity = atTop ? 1 : 0;
+        if (topShadow) topShadow.style.opacity = atTop ? 0 : 1;
+        if (!list._hasStickyScrollHandler) {
+            list.addEventListener('scroll', () => {
+                const nowAtTop = list.scrollTop <= 1;
+                indicator.style.opacity = nowAtTop ? 1 : 0;
+                if (topShadow) {
+                    topShadow.style.opacity = nowAtTop ? 0 : 1;
+                }
+            });
+            list._hasStickyScrollHandler = true;
+        }
     }
+
 
     function openRecipeFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      const slugParam = params.get('slug');
+        const params = new URLSearchParams(window.location.search);
+        const slugParam = params.get('slug');
 
-      if (!slugParam || slugParam.trim() === '') return false;
-      let target = recipes.find(r => r.slug === slugParam.trim());
+        if (!slugParam || slugParam.trim() === '') return false;
+        let target = recipes.find(r => r.slug === slugParam.trim());
 
-      if (!target) return false;
-      const recipeList = document.getElementById('recipeList');
-      const items = recipeList.querySelectorAll('.recipe-item');
+        if (!target) return false;
+        const recipeList = document.getElementById('recipeList');
+        const items = recipeList.querySelectorAll('.recipe-item');
 
-      items.forEach(item => {
-        const nameEl = item.querySelector('.recipe-name');
-        if (nameEl && nameEl.textContent.trim() === target.title) {
-          selectRecipe(target, item);
-        }
-      });
-      return true;
-    }
-
-    async function loadRecipes() {
-      try {
-        const response = await fetch('recipes.json'); 
-        recipes = await response.json();
-
-        recipes.forEach(r => {
-          if (!r.slug) {
-            r.slug = generateSlug(r.title);
-          }
-          // Data Enrichment
-          r.totalTimeInMinutes = parseTime(r.totalTime || r.cookTime);
-          r.ratingScore = Math.random() * 1.5 + 3.5; // Simulate rating (3.5 to 5.0)
-          r.dishType = assignDishType(r.title); // NEW: Assign dish type for filtering
+        items.forEach(item => {
+            const nameEl = item.querySelector('.recipe-name');
+            if (nameEl && nameEl.textContent.trim() === target.title) {
+                selectRecipe(target, item);
+            }
         });
-        
-        // Initial sort for the sidebar list
-        sortRecipes(recipes, 'alphabetical');
-        
-        displayRecipeList(recipes);
-        updateStickyIndicator(); 
-
-        if (window.location.hash === '#grid') {
-            displayGridPage(recipes);
-        } else if (!openRecipeFromURL()) {
-            resetRecipeView();
-        }
-      } catch (error) { 
-        console.error('Error loading recipes:', error);
-        document.getElementById('recipeContent').innerHTML = `
-            <div class="no-recipe">
-                <p>Unable to load recipes. Please ensure 'Chomp_Recipe_Site_JSON_Recipes.txt' is correctly formatted and accessible.</p>
-            </div>
-        `;
-      }
+        return true;
     }
+    
+    // Renders the interactive rating UI and shows user's current score
+    async function renderRatingUI(recipeSlug) {
+        const container = document.getElementById('rating-ui-container');
+        if (!container || !isAuthReady || !userId) {
+            container.innerHTML = `<p class="rating-message">Loading rating system...</p>`;
+            return;
+        }
+
+        const userRatingDocRef = getRatingDocPath(recipeSlug, userId);
+        const userRatingSnap = await getDoc(userRatingDocRef);
+        const userScore = userRatingSnap.exists() ? userRatingSnap.data().score : 0;
+        
+        let message = userScore > 0 
+            ? `You rated this recipe ${userScore.toFixed(1)} stars.` 
+            : `Rate this recipe:`;
+        
+        const starButtons = Array.from({ length: 5 }, (_, i) => {
+            const score = i + 1;
+            return `<button 
+                        class="star-btn ${score <= userScore ? 'selected' : ''}" 
+                        data-score="${score}" 
+                        onclick="window.submitRating('${recipeSlug}', ${score})">★</button>`;
+        }).join('');
+
+        container.innerHTML = `
+            <div class="rating-container">
+                <span class="rating-label">${message}</span>
+                <div class="rating-buttons" id="star-buttons-${recipeSlug}">
+                    ${starButtons}
+                </div>
+            </div>
+            <div id="rating-status-${recipeSlug}" class="rating-message"></div>
+        `;
+        
+        const starContainer = document.getElementById(`star-buttons-${recipeSlug}`);
+        if (starContainer) {
+            starContainer.addEventListener('mouseover', (e) => {
+                if (!e.target.classList.contains('star-btn')) return;
+                const hoverScore = parseInt(e.target.dataset.score);
+                starContainer.querySelectorAll('.star-btn').forEach(btn => {
+                    const btnScore = parseInt(btn.dataset.score);
+                    btn.classList.toggle('hovered', btnScore <= hoverScore);
+                });
+            });
+            starContainer.addEventListener('mouseout', () => {
+                starContainer.querySelectorAll('.star-btn').forEach(btn => btn.classList.remove('hovered'));
+            });
+        }
+    }
+    
+    // --- DISPLAY FUNCTIONS ---
 
     function displayRecipeList(recipesToShow) {
-      const recipeList = document.getElementById('recipeList');
-      const noResults = document.getElementById('noResults');
-      recipeList.innerHTML = '';
-      if (!recipesToShow.length) { 
-        noResults.style.display = 'block';
-        return;
-      }
-      noResults.style.display = 'none';
-      recipesToShow.forEach(recipe => {
-        const li = document.createElement('li');
-        li.className = 'recipe-item';
-        li.onclick = () => selectRecipe(recipe, li);
-        li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
-        
-        if (currentRecipe && currentRecipe.slug === recipe.slug) {
-            li.classList.add('active');
+        const recipeList = document.getElementById('recipeList');
+        const noResults = document.getElementById('noResults');
+        recipeList.innerHTML = '';
+        if (!recipesToShow.length) { 
+            noResults.style.display = 'block';
+            return;
         }
+        noResults.style.display = 'none';
+        recipesToShow.forEach(recipe => {
+            const li = document.createElement('li');
+            li.className = 'recipe-item';
+            li.onclick = () => selectRecipe(recipe, li);
+            li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
+            
+            if (currentRecipe && currentRecipe.slug === recipe.slug) {
+                li.classList.add('active');
+            }
 
-        recipeList.appendChild(li);
-      });
+            recipeList.appendChild(li);
+        });
     }
 
     function selectRecipe(recipe, element) {
@@ -791,7 +1043,11 @@
       
       const ingredientsHTML = recipe.ingredients.map(i => {
           if (typeof i === 'string') return `<li class="ingredient-item">${i}</li>`;
-          return `<li class="ingredient-item">${parseMarkdown(i)}</li>`;
+          // If the ingredient is a complex array structure (serialized JSON), we need to parse it back
+          if (Array.isArray(i)) {
+               return `<li class="ingredient-item">${parseMarkdown(i)}</li>`; // Handled by parseMarkdown logic
+          }
+          return `<li class="ingredient-item">${i}</li>`;
       }).join('');
 
       const instructionsHTML = recipe.instructions.map(i=>`<li class="instruction-item">${parseMarkdown(i)}</li>`).join('');
@@ -801,11 +1057,18 @@
         const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
         history.replaceState(null, '', newUrl);
       }
+      
+      const currentScore = recipe.ratingScore || 0;
+      const currentCount = recipe.ratingCount || 0;
 
       content.innerHTML = `
         <div class="recipe-header">
           <h1 class="recipe-title">${recipe.title}</h1>
           <div class="recipe-meta">${metaInfo.join(' | ')}</div>
+          
+          <div id="rating-display">${formatRating(currentScore, currentCount)}</div>
+          <div id="rating-ui-container"></div>
+          
           <div class="recipe-actions">
             <button onclick="printRecipe()" class="recipe-action-button">Print</button>
             <button onclick="copyPermalink()" class="recipe-action-button">Copy Link</button>
@@ -818,9 +1081,11 @@
         <ol class="instructions-list">${instructionsHTML}</ol>
         ${notesHTML}
       `;
+      
+      renderRatingUI(recipe.slug);
     }
 
-    // --- GRID VIEW FILTERING, SORTING, AND RENDERING ---
+    // --- GRID VIEW FUNCTIONS (SAME) ---
     
     function getUniqueFilterOptions(key) {
         const options = new Set();
@@ -839,13 +1104,19 @@
                 ? `<img src="${imagePath}" alt="${recipe.title}" class="card-image">`
                 : `<div class="card-image-placeholder">No Image Available</div>`;
             
+            const score = recipe.ratingScore || 0;
+            const count = recipe.ratingCount || 0;
+            const ratingText = count > 0 
+                ? `⭐️ ${score.toFixed(1)} (${count})` 
+                : 'No ratings yet';
+
             return `
                 <div class="recipe-card" onclick="selectRecipeFromGrid('${recipe.slug}')">
                     ${imageHTML}
                     <div class="card-content">
                         <div class="card-title">${recipe.title}</div>
                         <div class="card-description">${recipe.description || 'A delicious recipe waiting to be made!'}</div>
-                        <div class="card-time">⭐️ ${recipe.ratingScore.toFixed(1)} | ${timeText}</div>
+                        <div class="card-time">${ratingText} | ${timeText}</div>
                     </div>
                 </div>
             `;
@@ -873,7 +1144,6 @@
 
         let recipesToFilter = [...recipes]; 
 
-        // 1. Filtering
         if (categoryFilter !== 'all') {
             recipesToFilter = recipesToFilter.filter(r => r.category === categoryFilter);
         }
@@ -881,17 +1151,14 @@
             recipesToFilter = recipesToFilter.filter(r => r.dishType === typeFilter);
         }
 
-        // 2. Sorting
         sortRecipes(recipesToFilter, sortBy);
 
-        // 3. Render
         currentGridPage = 0;
         const initialCards = renderCards(recipesToFilter.slice(0, RECIPES_PER_PAGE));
         
         const container = document.getElementById('gridCardsContainer');
         if (container) container.innerHTML = initialCards;
 
-        // 4. Update Load More Button
         const loadMoreBtn = document.getElementById('load-more-btn');
         if (loadMoreBtn) {
             if (recipesToFilter.length <= RECIPES_PER_PAGE) {
@@ -912,19 +1179,15 @@
         const container = document.getElementById('gridCardsContainer');
         if (container) container.insertAdjacentHTML('beforeend', renderCards(nextBatch));
         
-        // Hide button if all recipes are loaded
         if (endIndex >= filteredRecipes.length) {
             document.getElementById('load-more-btn').style.display = 'none';
         }
     }
 
     function clearAllFilters() {
-        // Reset all filter and sort selectors
         document.getElementById('filter-category').value = 'all';
         document.getElementById('filter-type').value = 'all';
         document.getElementById('grid-sort-by').value = 'alphabetical';
-        
-        // Re-run the filtering/sorting function with default values
         filterAndSortGrid();
     }
 
@@ -932,7 +1195,6 @@
     function displayGridPage(initialRecipes) {
         const content = document.getElementById('recipeContent');
 
-        // Get filter options dynamically
         const categories = getUniqueFilterOptions('category');
         const dishTypes = getUniqueFilterOptions('dishType');
 
@@ -951,7 +1213,6 @@
             <select id="grid-sort-by" onchange="filterAndSortGrid()">
               <option value="alphabetical">Sort: A-Z</option>
               <option value="newest">Sort: Newest</option>
-              <option value="rating">Sort: Highest Rated</option>
               <option value="time">Sort: Quickest Time</option>
             </select>
 
@@ -978,16 +1239,12 @@
             </div>
         `;
 
-        // Attach load more handler to initial unfiltered list
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
-
-        // Set the hash in the URL
         history.replaceState(null, '', window.location.pathname + '#grid');
     }
+    
+    // --- GLOBAL LISTENERS & INIT ---
 
-    // --- EVENT LISTENERS ---
-
-    // 1. Sidebar Search
     document.getElementById('searchBox').addEventListener('input', e=>{
       const searchTerm = e.target.value.toLowerCase();
       const filtered = recipes.filter(r=>
@@ -999,13 +1256,11 @@
       updateStickyIndicator();
     });
 
-    // 2. Sidebar Sort Selector
     document.getElementById('sidebar-sort-by').addEventListener('change', e => {
         sortRecipes(recipes, e.target.value);
         displayRecipeList(recipes); 
     });
 
-    // 3. Hash Change Listener (for back button/direct link to grid)
     window.addEventListener('hashchange', () => {
         if (window.location.hash === '#grid' && recipes.length > 0) {
             displayGridPage(recipes);
@@ -1014,13 +1269,11 @@
         }
     });
 
-    // 4. Initial Load and Resize
-    loadRecipes();
+    initAuth();
     
     window.addEventListener('resize', () => {
       updateStickyIndicator();
     });
-
   </script>
 </body>
 </html>
