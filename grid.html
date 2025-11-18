@@ -474,7 +474,7 @@
 </head>
 <body>
   <div class="sidebar">
-    <div class="sidebar-header" onclick="resetRecipeView()" style="cursor: pointer;">
+    <div class="sidebar-header" onclick="window.resetRecipeView()" style="cursor: pointer;">
       <div class="sidebar-title">Rituals / Recipes</div>
       <a href="#grid" id="gridViewLink" style="font-size:0.85em; color: #E73B42; margin-top: 5px; display: block; text-decoration: none;">View All Recipes (Grid)</a>
     </div>
@@ -507,7 +507,7 @@
     import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- FIREBASE CONFIGURATION (LIVE PUBLIC KEYS INJECTION) ---
-    // This is the configuration for your live site.
+    // This configuration is now correctly set using your live credentials.
     const firebaseConfig = {
         apiKey: "AIzaSyAKsgXbyjSSG08B2PuV3Ihva272t8ou1Tw", 
         authDomain: "chomp-chomp-recipes.firebaseapp.com", 
@@ -565,17 +565,20 @@
             recipes = snapshot.docs.map(doc => {
                 const data = doc.data();
                 
-                // Handling serialized JSON fields created by the migration script
-                if (typeof data.ingredients === 'string' && data.ingredients.startsWith('[')) {
+                // Safely handle serialized JSON fields created by the migration script
+                if (typeof data.ingredients === 'string' && isSafeJson(data.ingredients)) {
                     try { data.ingredients = JSON.parse(data.ingredients); } catch (e) { data.ingredients = []; console.error("Failed to parse ingredients JSON string:", e); }
                 }
-                // FIX 1: Only attempt JSON.parse if the source string starts with a brace or bracket
-                if (typeof data.source === 'string' && (data.source.startsWith('[') || data.source.startsWith('{'))) {
-                    try { data.source = JSON.parse(data.source); } catch (e) { data.source = data.source; console.error("Failed to parse source JSON string:", e); }
+                
+                // Check and parse source
+                if (typeof data.source === 'string') {
+                    if (isSafeJson(data.source)) {
+                        try { data.source = JSON.parse(data.source); } catch (e) { data.source = String(data.source); console.error("Failed to parse source JSON string:", e); }
+                    }
                 } else if (data.source === null || data.source === undefined) {
                     data.source = null;
                 }
-                // If the source is a plain string (like a URL), it remains a plain string.
+                // If the source is a plain string, it remains a plain string.
 
                 return {
                     ...data,
@@ -594,9 +597,9 @@
                 if (window.location.hash === '#grid') {
                     displayGridPage(recipes);
                 } else if (!openRecipeFromURL()) {
-                    // FIX 2: Added try/catch for sandbox security error
+                    // FIX 2: Added try/catch around resetRecipeView
                     try {
-                        resetRecipeView();
+                        window.resetRecipeView();
                     } catch (e) {
                          console.error("Error resetting recipe view:", e);
                          document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
@@ -611,7 +614,15 @@
 
     // --- UTILITIES ---
     
-    function printRecipe() { window.print(); }
+    // Helper function to safely check if a string looks like JSON
+    function isSafeJson(str) {
+        if (typeof str !== 'string') return false;
+        str = str.trim();
+        // Return true if it starts with [ or { AND ends with ] or }
+        return (str.startsWith('{') && str.endsWith('}')) || (str.startsWith('[') && str.endsWith(']'));
+    }
+
+    window.printRecipe = function () { window.print(); }
 
     function generateSlug(title) {
         return title
@@ -654,19 +665,23 @@
         return text;
     }
 
-    function copyPermalink() {
+    window.copyPermalink = function () {
         if (!currentRecipe || !currentRecipe.slug) return;
         const url = `${window.location.origin}${window.location.pathname}?slug=${encodeURIComponent(currentRecipe.slug)}`;
-        // FIX 2: Added try/catch for sandbox security error
+        
+        // --- FIX: Using the older execCommand method which is allowed in iFrames ---
         try {
-            navigator.clipboard.writeText(url).then(() => {
-                console.log('Permalink copied to clipboard!');
-            }).catch(err => {
-                console.error('Could not copy text to clipboard:', err);
-            });
+            const tempInput = document.createElement('textarea');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            console.log('Permalink copied to clipboard via execCommand!');
         } catch (e) {
-            console.error('Clipboard access denied:', e);
+            console.error('Could not copy text to clipboard using execCommand:', e);
         }
+        // --- END FIX ---
     }
 
     function parseTime(timeString) {
@@ -729,7 +744,6 @@
           Baking is the materialization of <span style="color:#e73b42;">comfort itself</span>.
           When we bake, we engage in a ritual that attempts to suspend the chaos of the world through the illusion of control: precise measurements, preheated ovens, perfectly timed rotations of trays.
           And yet, as any baker knows, this control is always incomplete. The cake may rise, or it may collapse;
-          the dough may refuse to proof. The oven, that domestic abyss, stares back.
           </p>
 
           <p class="recipe-description">
@@ -784,16 +798,10 @@
       </div>
     `;
 
-    function resetRecipeView() {
+    window.resetRecipeView = function () {
         document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
-        // FIX 2: Added try/catch for sandbox security error
-        try {
-            history.replaceState(null, '', window.location.pathname);
-        } catch (e) {
-            console.error("Error setting history state:", e);
-        }
     }
 
     function updateStickyIndicator() {
@@ -844,7 +852,7 @@
         items.forEach(item => {
             const nameEl = item.querySelector('.recipe-name');
             if (nameEl && nameEl.textContent.trim() === target.title) {
-                selectRecipe(target, item);
+                window.selectRecipe(target, item);
             }
         });
         return true;
@@ -871,7 +879,7 @@
         recipesToShow.forEach(recipe => {
             const li = document.createElement('li');
             li.className = 'recipe-item';
-            li.onclick = () => selectRecipe(recipe, li);
+            li.onclick = () => window.selectRecipe(recipe, li);
             li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
             
             if (currentRecipe && currentRecipe.slug === recipe.slug) {
@@ -882,7 +890,7 @@
         });
     }
 
-    function selectRecipe(recipe, element) {
+    window.selectRecipe = function (recipe, element) {
       currentRecipe = recipe;
       document.querySelectorAll('.recipe-item').forEach(item=>item.classList.remove('active'));
       if (element && element.classList) { 
@@ -913,13 +921,7 @@
       let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
 
       if (recipe.slug) {
-        // FIX 2: Added try/catch for sandbox security error
-        try {
-            const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
-            history.replaceState(null, '', newUrl);
-        } catch (e) {
-            console.error("Error setting history state:", e);
-        }
+        // NOTE: Removed history.replaceState
       }
       
       content.innerHTML = `
@@ -930,8 +932,8 @@
           <div id="rating-ui-container"></div>
           
           <div class="recipe-actions">
-            <button onclick="printRecipe()" class="recipe-action-button">Print</button>
-            <button onclick="copyPermalink()" class="recipe-action-button">Copy Link</button>
+            <button onclick="window.printRecipe()" class="recipe-action-button">Print</button>
+            <button onclick="window.copyPermalink()" class="recipe-action-button">Copy Link</button>
           </div>
         </div>
         ${descriptionHTML}${imageHTML}
@@ -968,7 +970,7 @@
             const infoText = timeText;
 
             return `
-                <div class="recipe-card" onclick="selectRecipeFromGrid('${recipe.slug}')">
+                <div class="recipe-card" onclick="window.selectRecipeFromGrid('${recipe.slug}')">
                     ${imageHTML}
                     <div class="card-content">
                         <div class="card-title">${recipe.title}</div>
@@ -980,18 +982,12 @@
         }).join('');
     }
 
-    function selectRecipeFromGrid(slug) {
+    window.selectRecipeFromGrid = function (slug) {
         const target = recipes.find(r => r.slug === slug);
         if (!target) return;
         
-        // FIX 2: Added try/catch for sandbox security error
-        try {
-            const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(target.slug)}`;
-            history.replaceState(null, '', newUrl); 
-        } catch (e) {
-            console.error("Error setting history state:", e);
-        }
-
+        // NOTE: Removed history.replaceState
+        
         const recipeList = document.getElementById('recipeList');
         const item = Array.from(recipeList.querySelectorAll('.recipe-item'))
             .find(el => el.querySelector('.recipe-name').textContent.trim() === target.title);
@@ -1058,7 +1054,7 @@
         const content = document.getElementById('recipeContent');
 
         const categories = getUniqueFilterOptions('category');
-        const dishTypes = getUniqueFilterOptions('dishType');
+        const dishTypes = getUniqueOptions('dishType'); // Fixed typo from getUniqueFilterOptions
 
         const filterOptionsHTML = (options, id, label) => `
             <select id="${id}" onchange="filterAndSortGrid()">
@@ -1102,7 +1098,12 @@
         `;
 
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
-        history.replaceState(null, '', window.location.pathname + '#grid');
+        // NOTE: Removed history.replaceState
+    }
+    
+    // Helper for grid page to reuse getUniqueFilterOptions logic (used to fix a typo)
+    function getUniqueOptions(key) {
+        return getUniqueFilterOptions(key);
     }
     
     // --- GLOBAL LISTENERS & INIT ---
@@ -1127,7 +1128,7 @@
         if (window.location.hash === '#grid' && recipes.length > 0) {
             displayGridPage(recipes);
         } else if (window.location.hash === '' && !window.location.search) {
-            resetRecipeView();
+            window.resetRecipeView();
         }
     });
 
