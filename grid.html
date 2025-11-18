@@ -546,7 +546,12 @@
     });
 
     async function initAuth() {
-        await signInAnonymously(auth);
+        // Wrap in try/catch to prevent SecurityError in some sandbox environments
+        try {
+            await signInAnonymously(auth);
+        } catch (e) {
+            console.error("Anonymous sign-in failed:", e);
+        }
     }
     
     // --- REAL-TIME RECIPE LISTENER (Pulls ALL content from Firestore) ---
@@ -564,12 +569,13 @@
                 if (typeof data.ingredients === 'string' && data.ingredients.startsWith('[')) {
                     try { data.ingredients = JSON.parse(data.ingredients); } catch (e) { data.ingredients = []; console.error("Failed to parse ingredients JSON string:", e); }
                 }
+                // FIX 1: Only attempt JSON.parse if the source string starts with a brace or bracket
                 if (typeof data.source === 'string' && (data.source.startsWith('[') || data.source.startsWith('{'))) {
                     try { data.source = JSON.parse(data.source); } catch (e) { data.source = data.source; console.error("Failed to parse source JSON string:", e); }
                 } else if (data.source === null || data.source === undefined) {
                     data.source = null;
                 }
-                // If it's a simple string, it remains a string.
+                // If the source is a plain string (like a URL), it remains a plain string.
 
                 return {
                     ...data,
@@ -588,7 +594,13 @@
                 if (window.location.hash === '#grid') {
                     displayGridPage(recipes);
                 } else if (!openRecipeFromURL()) {
-                    resetRecipeView();
+                    // FIX 2: Added try/catch for sandbox security error
+                    try {
+                        resetRecipeView();
+                    } catch (e) {
+                         console.error("Error resetting recipe view:", e);
+                         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
+                    }
                 }
             }
         }, (error) => {
@@ -613,12 +625,12 @@
     function parseMarkdown(text) {
         if (!text) return text;
         
-        // Handle complex array structures returned by the migration script for ingredients/source
+        // Handle complex array/object structures (Source links, ingredients)
         if (Array.isArray(text)) {
             return text.map(item => {
                 if (typeof item === 'string') return item;
                 
-                // Handle link objects (complex array structure like source links)
+                // Handle nested arrays/objects (like complex ingredients or source links)
                 if (Array.isArray(item)) {
                     return item.map(subItem => {
                         // Check if subItem has the link structure
@@ -636,7 +648,7 @@
             }).join(' '); 
         }
         
-        // Ensure text is treated as a string before applying markdown regex
+        // Handle simple strings (Markdown links)
         text = String(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
         
         return text;
@@ -645,11 +657,16 @@
     function copyPermalink() {
         if (!currentRecipe || !currentRecipe.slug) return;
         const url = `${window.location.origin}${window.location.pathname}?slug=${encodeURIComponent(currentRecipe.slug)}`;
-        navigator.clipboard.writeText(url).then(() => {
-            console.log('Permalink copied to clipboard!');
-        }).catch(err => {
-            console.error('Could not copy text: ', err);
-        });
+        // FIX 2: Added try/catch for sandbox security error
+        try {
+            navigator.clipboard.writeText(url).then(() => {
+                console.log('Permalink copied to clipboard!');
+            }).catch(err => {
+                console.error('Could not copy text to clipboard:', err);
+            });
+        } catch (e) {
+            console.error('Clipboard access denied:', e);
+        }
     }
 
     function parseTime(timeString) {
@@ -700,7 +717,7 @@
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="images/chomp_recipes_logo.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <img src="chomp_recipes_logo.jpeg" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
@@ -771,7 +788,12 @@
         document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
-        history.replaceState(null, '', window.location.pathname);
+        // FIX 2: Added try/catch for sandbox security error
+        try {
+            history.replaceState(null, '', window.location.pathname);
+        } catch (e) {
+            console.error("Error setting history state:", e);
+        }
     }
 
     function updateStickyIndicator() {
@@ -891,8 +913,13 @@
       let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
 
       if (recipe.slug) {
-        const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
-        history.replaceState(null, '', newUrl);
+        // FIX 2: Added try/catch for sandbox security error
+        try {
+            const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
+            history.replaceState(null, '', newUrl);
+        } catch (e) {
+            console.error("Error setting history state:", e);
+        }
       }
       
       content.innerHTML = `
@@ -957,8 +984,13 @@
         const target = recipes.find(r => r.slug === slug);
         if (!target) return;
         
-        const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(target.slug)}`;
-        history.replaceState(null, '', newUrl); 
+        // FIX 2: Added try/catch for sandbox security error
+        try {
+            const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(target.slug)}`;
+            history.replaceState(null, '', newUrl); 
+        } catch (e) {
+            console.error("Error setting history state:", e);
+        }
 
         const recipeList = document.getElementById('recipeList');
         const item = Array.from(recipeList.querySelectorAll('.recipe-item'))
