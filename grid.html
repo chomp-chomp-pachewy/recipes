@@ -507,7 +507,7 @@
     import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- FIREBASE CONFIGURATION (LIVE PUBLIC KEYS INJECTION) ---
-    // This uses hardcoded values since we are not using a continuous environment to inject globals.
+    // This is the configuration for your live site.
     const firebaseConfig = {
         apiKey: "AIzaSyAKsgXbyjSSG08B2PuV3Ihva272t8ou1Tw", 
         authDomain: "chomp-chomp-recipes.firebaseapp.com", 
@@ -542,10 +542,11 @@
         }
         isAuthReady = true;
         setupRecipeListener(); 
+        initAuth(); // Ensure anonymous sign-in happens
     });
 
     async function initAuth() {
-        // Since this is the public site, we just sign in anonymously for ratings (if enabled)
+        // Since this is the public site, we just sign in anonymously 
         await signInAnonymously(auth);
     }
     
@@ -611,19 +612,30 @@
         if (!text) return text;
         
         // Handle complex array structures returned by the migration script for ingredients/source
-        if (typeof text === 'object' && Array.isArray(text)) {
+        if (Array.isArray(text)) {
             return text.map(item => {
                 if (typeof item === 'string') return item;
-                if (Array.isArray(item)) return item.map(subItem => {
-                    if (subItem && subItem.text) return `<a href="${subItem.href}" target="_blank" rel="noopener noreferrer">${subItem.text}</a>`;
-                    return subItem;
-                }).join(' ');
+                
+                // Handle link objects (complex array structure like source links)
+                if (Array.isArray(item)) {
+                    return item.map(subItem => {
+                        // Check if subItem has the link structure
+                        if (subItem && subItem.text && subItem.href) {
+                            return `<a href="${subItem.href}" target="_blank" rel="noopener noreferrer">${subItem.text}</a>`;
+                        }
+                        return subItem;
+                    }).join(' ');
+                }
+                // Handle single link object (like source)
+                if (item && item.text && item.href) {
+                    return `<a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.text}</a>`;
+                }
                 return item;
-            }).join(' '); // Join complex array items with a space for display simplicity
+            }).join(' '); 
         }
-
-        // Standard Markdown links
-        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        
+        // Handle simple Markdown links (for description and notes)
+        text = String(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
         
         return text;
     }
@@ -686,7 +698,7 @@
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <img src="chomp_recipes_logo.jpeg" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
@@ -814,7 +826,7 @@
         return true;
     }
     
-    // Renders the interactive rating UI (now disabled, but keeping container structure)
+    // Renders the interactive rating UI (now disabled)
     async function renderRatingUI(recipeSlug) {
         // NOTE: Functionality removed for stability.
         const container = document.getElementById('rating-ui-container');
@@ -866,9 +878,8 @@
       let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
       let descriptionHTML = recipe.description?`<div class="recipe-description">${parseMarkdown(recipe.description)}</div>`:'';
       
+      // Use parseMarkdown to safely handle ingredients (which should be arrays or null)
       const ingredientsHTML = (recipe.ingredients || []).map(i => {
-          if (typeof i === 'string') return `<li class="ingredient-item">${i}</li>`;
-          // Handle complex array structure (which should be strings after parsing, but safe-check)
           return `<li class="ingredient-item">${parseMarkdown(i)}</li>`;
       }).join('');
 
@@ -879,8 +890,6 @@
         const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
         history.replaceState(null, '', newUrl);
       }
-      
-      // Removed currentScore and currentCount, and their display elements
       
       content.innerHTML = `
         <div class="recipe-header">
