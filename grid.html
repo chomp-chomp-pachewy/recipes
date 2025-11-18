@@ -542,11 +542,10 @@
         }
         isAuthReady = true;
         setupRecipeListener(); 
-        initAuth(); // Ensure anonymous sign-in happens
+        initAuth(); 
     });
 
     async function initAuth() {
-        // Since this is the public site, we just sign in anonymously 
         await signInAnonymously(auth);
     }
     
@@ -562,12 +561,15 @@
                 const data = doc.data();
                 
                 // Handling serialized JSON fields created by the migration script
-                if (typeof data.ingredients === 'string') {
+                if (typeof data.ingredients === 'string' && data.ingredients.startsWith('[')) {
                     try { data.ingredients = JSON.parse(data.ingredients); } catch (e) { data.ingredients = []; console.error("Failed to parse ingredients JSON string:", e); }
                 }
-                if (typeof data.source === 'string') {
-                    try { data.source = JSON.parse(data.source); } catch (e) { data.source = null; console.error("Failed to parse source JSON string:", e); }
+                if (typeof data.source === 'string' && (data.source.startsWith('[') || data.source.startsWith('{'))) {
+                    try { data.source = JSON.parse(data.source); } catch (e) { data.source = data.source; console.error("Failed to parse source JSON string:", e); }
+                } else if (data.source === null || data.source === undefined) {
+                    data.source = null;
                 }
+                // If it's a simple string, it remains a string.
 
                 return {
                     ...data,
@@ -634,7 +636,7 @@
             }).join(' '); 
         }
         
-        // Handle simple Markdown links (for description and notes)
+        // Ensure text is treated as a string before applying markdown regex
         text = String(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
         
         return text;
@@ -879,11 +881,13 @@
       let descriptionHTML = recipe.description?`<div class="recipe-description">${parseMarkdown(recipe.description)}</div>`:'';
       
       // Use parseMarkdown to safely handle ingredients (which should be arrays or null)
-      const ingredientsHTML = (recipe.ingredients || []).map(i => {
+      const safeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+      const ingredientsHTML = safeIngredients.map(i => {
           return `<li class="ingredient-item">${parseMarkdown(i)}</li>`;
       }).join('');
 
-      const instructionsHTML = (recipe.instructions || []).map(i=>`<li class="instruction-item">${parseMarkdown(i)}</li>`).join('');
+      const safeInstructions = Array.isArray(recipe.instructions) ? recipe.instructions : [];
+      const instructionsHTML = safeInstructions.map(i=>`<li class="instruction-item">${parseMarkdown(i)}</li>`).join('');
       let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
 
       if (recipe.slug) {
