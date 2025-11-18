@@ -506,15 +506,18 @@
     import { getFirestore, doc, onSnapshot, collection, query, updateDoc, setDoc, getDoc, runTransaction, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- FIREBASE CONFIGURATION (MANDATORY GLOBALS) ---
-    // The hosting environment MUST provide these global variables:
-    // __app_id, __firebase_config, __initial_auth_token
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'chomp-chomp-recipes'; 
-    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : JSON.stringify({
-        apiKey: "YOUR_FIREBASE_API_KEY", 
-        projectId: "chomp-chomp-recipes",
-        // The hosting environment will inject the correct live keys here.
-    }));
+    // --- FIREBASE CONFIGURATION (LIVE PUBLIC KEYS INJECTION) ---
+    // This uses hardcoded values since we are not using a continuous environment to inject globals.
+    const firebaseConfig = {
+        apiKey: "AIzaSyAKsgXbyjSSG08B2PuV3Ihva272t8ou1Tw", 
+        authDomain: "chomp-chomp-recipes.firebaseapp.com", 
+        projectId: "chomp-chomp-recipes", 
+        storageBucket: "chomp-chomp-recipes.firebasestorage.app", 
+        messagingSenderId: "225432495618",
+        appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const appId = firebaseConfig.projectId; // Use projectId as a reliable App ID
     
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -531,16 +534,6 @@
     function getRecipesCollectionPath() {
         return `artifacts/${appId}/public/data/recipes`;
     }
-    function getRatingsCollectionPath() {
-        // Keeping path definition even though rating logic is commented out/removed
-        return `artifacts/${appId}/public/data/ratings`;
-    }
-    function getRatingDocPath(recipeSlug, userId) {
-        return doc(db, getRatingsCollectionPath(), `${recipeSlug}_${userId}`);
-    }
-    function getAggregateRatingDocPath(recipeSlug) {
-        return doc(db, getRatingsCollectionPath(), recipeSlug);
-    }
     
     // --- AUTHENTICATION & INITIALIZATION ---
     onAuthStateChanged(auth, async (user) => {
@@ -552,16 +545,8 @@
     });
 
     async function initAuth() {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            try {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } catch (error) {
-                console.error("Error signing in with custom token, falling back to anonymous:", error);
-                await signInAnonymously(auth);
-            }
-        } else {
-            await signInAnonymously(auth);
-        }
+        // Since this is the public site, we just sign in anonymously for ratings (if enabled)
+        await signInAnonymously(auth);
     }
     
     // --- REAL-TIME RECIPE LISTENER (Pulls ALL content from Firestore) ---
@@ -577,10 +562,10 @@
                 
                 // Handling serialized JSON fields created by the migration script
                 if (typeof data.ingredients === 'string') {
-                    try { data.ingredients = JSON.parse(data.ingredients); } catch (e) { console.error("Failed to parse ingredients JSON string:", e); }
+                    try { data.ingredients = JSON.parse(data.ingredients); } catch (e) { data.ingredients = []; console.error("Failed to parse ingredients JSON string:", e); }
                 }
                 if (typeof data.source === 'string') {
-                    try { data.source = JSON.parse(data.source); } catch (e) { console.error("Failed to parse source JSON string:", e); }
+                    try { data.source = JSON.parse(data.source); } catch (e) { data.source = null; console.error("Failed to parse source JSON string:", e); }
                 }
 
                 return {
@@ -589,9 +574,6 @@
                     slug: data.slug || generateSlug(data.title),
                     totalTimeInMinutes: parseTime(data.totalTime || data.cookTime),
                     dishType: assignDishType(data.title),
-                    // Set rating scores to 0 since we are NOT displaying them
-                    ratingScore: 0, 
-                    ratingCount: 0
                 };
             });
 
@@ -605,16 +587,13 @@
                 } else if (!openRecipeFromURL()) {
                     resetRecipeView();
                 }
-                // Removed setupRatingListener call
             }
         }, (error) => {
             console.error("Error setting up recipe listener:", error);
-            document.getElementById('recipeContent').innerHTML = `<div class="no-recipe"><p>Failed to load recipes from the database. Please ensure data has been migrated and Firebase config is correct.</p></div>`;
+            document.getElementById('recipeContent').innerHTML = `<div class="no-recipe"><p>Failed to load recipes from the database. Check your Firebase Project ID and security rules.</p></div>`;
         });
     }
 
-    // Removed all rating listener and submission functions (setupRatingListener, submitRating, renderRatingUI, formatRating)
-    
     // --- UTILITIES ---
     
     function printRecipe() { window.print(); }
@@ -712,7 +691,6 @@
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
           </h2>
-          <!-- (REST OF HOME CONTENT OMITTED FOR BREVITY) -->
           <p class="recipe-description">
           Baking. What is baking, <em>really</em>?
           It is not simply the combination of flour, sugar, butter, and eggs.
@@ -742,3 +720,377 @@
           <p class="recipe-description">
           So, as you explore these recipes, remember: you are not merely reproducing instructions.
           You are reenacting an ancient dialectic between chaos and order, solitude and <span style="color:#e73b42;">community</span>, scarcity and indulgence.
+          You are, in the truest sense, baking the <span style="color:#e73b42;">striving toward transcendence</span>.
+          </p>
+
+          <h2 class="section-title" style="font-size:1.2em;">Bake first, theorize later</h2>
+
+          <p class="recipe-description">
+          Scroll through the recipes, or search by keyword.
+          </p>
+
+          <p class="recipe-description">
+          Of course, as with all things in life, the search itself may be more revealing than the finding—the keyword is merely <span style="color:#e73b42;">the symptom of desire</span>!
+          </p>
+
+          <p class="recipe-description">
+          Because baking, like theory, thrives on exchange and variation, I'm always looking for something new.
+          If you have a recipe - your grandmother's secret torte, your own <span style="color:#e73b42;">subversive</span> take on the cookie, or something you found in a forgotten corner of the internet - please send it to me.
+          I'll add it here, with full credit, so that our <span style="color:#e73b42;">collective archive</span> of baked transcendence may continue to grow.
+          </p>
+
+          <p class="recipe-description">
+          <a href="mailto:baking@chomp.ltd" class="email-link">baking@chomp.ltd</a>
+          </p>
+  
+          <p class="recipe-description">
+          <a href="https://www.chomp.ltd" class="email-link">chomp chomp: cookies, etc.</a>
+          </p>
+   
+          <p class="recipe-description">
+          <a href="https://tools.chomp.ltd" class="email-link">chomp chomp: tools</a>
+          </p> 
+      </div>
+    `;
+
+    function resetRecipeView() {
+        document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
+        document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
+        currentRecipe = null;
+        history.replaceState(null, '', window.location.pathname);
+    }
+
+    function updateStickyIndicator() {
+        const list = document.querySelector('.recipe-list-container');
+        const indicator = document.getElementById('stickyIndicator');
+        const topShadow = document.querySelector('.top-shadow');
+        if (!list || !indicator) return;
+
+        const isScrollable = list.scrollHeight > list.clientHeight;
+        if (!isScrollable) {
+            indicator.style.display = 'none';
+            if (topShadow) topShadow.style.opacity = 0;
+            return;
+        }
+
+        indicator.style.display = 'block';
+        const isMobile = window.innerWidth < 768;
+        indicator.textContent = isMobile ?
+            "↓ scroll for more" : "↓ scroll for more recipes";
+
+        const atTop = list.scrollTop <= 1;
+        indicator.style.opacity = atTop ? 1 : 0;
+        if (topShadow) topShadow.style.opacity = atTop ? 0 : 1;
+        if (!list._hasStickyScrollHandler) {
+            list.addEventListener('scroll', () => {
+                const nowAtTop = list.scrollTop <= 1;
+                indicator.style.opacity = nowAtTop ? 1 : 0;
+                if (topShadow) {
+                    topShadow.style.opacity = nowAtTop ? 0 : 1;
+                }
+            });
+            list._hasStickyScrollHandler = true;
+        }
+    }
+
+
+    function openRecipeFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const slugParam = params.get('slug');
+
+        if (!slugParam || slugParam.trim() === '') return false;
+        let target = recipes.find(r => r.slug === slugParam.trim());
+
+        if (!target) return false;
+        const recipeList = document.getElementById('recipeList');
+        const items = recipeList.querySelectorAll('.recipe-item');
+
+        items.forEach(item => {
+            const nameEl = item.querySelector('.recipe-name');
+            if (nameEl && nameEl.textContent.trim() === target.title) {
+                selectRecipe(target, item);
+            }
+        });
+        return true;
+    }
+    
+    // Renders the interactive rating UI (now disabled, but keeping container structure)
+    async function renderRatingUI(recipeSlug) {
+        // NOTE: Functionality removed for stability.
+        const container = document.getElementById('rating-ui-container');
+        if (container) container.innerHTML = '';
+    }
+    
+    // --- DISPLAY FUNCTIONS ---
+
+    function displayRecipeList(recipesToShow) {
+        const recipeList = document.getElementById('recipeList');
+        const noResults = document.getElementById('noResults');
+        recipeList.innerHTML = '';
+        if (!recipesToShow.length) { 
+            noResults.style.display = 'block';
+            return;
+        }
+        noResults.style.display = 'none';
+        recipesToShow.forEach(recipe => {
+            const li = document.createElement('li');
+            li.className = 'recipe-item';
+            li.onclick = () => selectRecipe(recipe, li);
+            li.innerHTML = `<div class="recipe-name">${recipe.title}</div>`;
+            
+            if (currentRecipe && currentRecipe.slug === recipe.slug) {
+                li.classList.add('active');
+            }
+
+            recipeList.appendChild(li);
+        });
+    }
+
+    function selectRecipe(recipe, element) {
+      currentRecipe = recipe;
+      document.querySelectorAll('.recipe-item').forEach(item=>item.classList.remove('active'));
+      if (element && element.classList) { 
+          element.classList.add('active');
+      }
+
+      const content = document.getElementById('recipeContent');
+
+      let metaInfo = [];
+      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
+      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
+      if (recipe.source) metaInfo.push(`<span>source: ${parseMarkdown(recipe.source)}</span>`);
+      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
+
+      let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
+      let descriptionHTML = recipe.description?`<div class="recipe-description">${parseMarkdown(recipe.description)}</div>`:'';
+      
+      const ingredientsHTML = (recipe.ingredients || []).map(i => {
+          if (typeof i === 'string') return `<li class="ingredient-item">${i}</li>`;
+          // Handle complex array structure (which should be strings after parsing, but safe-check)
+          return `<li class="ingredient-item">${parseMarkdown(i)}</li>`;
+      }).join('');
+
+      const instructionsHTML = (recipe.instructions || []).map(i=>`<li class="instruction-item">${parseMarkdown(i)}</li>`).join('');
+      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
+
+      if (recipe.slug) {
+        const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(recipe.slug)}`;
+        history.replaceState(null, '', newUrl);
+      }
+      
+      // Removed currentScore and currentCount, and their display elements
+      
+      content.innerHTML = `
+        <div class="recipe-header">
+          <h1 class="recipe-title">${recipe.title}</h1>
+          <div class="recipe-meta">${metaInfo.join(' | ')}</div>
+          
+          <div id="rating-ui-container"></div>
+          
+          <div class="recipe-actions">
+            <button onclick="printRecipe()" class="recipe-action-button">Print</button>
+            <button onclick="copyPermalink()" class="recipe-action-button">Copy Link</button>
+          </div>
+        </div>
+        ${descriptionHTML}${imageHTML}
+        <div class="section-title">ingredients</div>
+        <ul class="ingredients-list">${ingredientsHTML}</ul>
+        <div class="section-title">instructions</div>
+        <ol class="instructions-list">${instructionsHTML}</ol>
+        ${notesHTML}
+      `;
+      
+      renderRatingUI(recipe.slug);
+    }
+
+    // --- GRID VIEW FUNCTIONS (SAME) ---
+    
+    function getUniqueFilterOptions(key) {
+        const options = new Set();
+        recipes.forEach(r => {
+            if (r[key]) options.add(r[key]);
+        });
+        return Array.from(options).sort();
+    }
+
+    function renderCards(recipesToRender) {
+        return recipesToRender.map(recipe => {
+            const timeText = recipe.totalTimeInMinutes === Infinity ? 'Time N/A' : `${recipe.totalTimeInMinutes} min`;
+            const imagePath = recipe.image && !recipe.image.startsWith('images/') ? `images/${recipe.image}` : recipe.image;
+            
+            const imageHTML = recipe.image 
+                ? `<img src="${imagePath}" alt="${recipe.title}" class="card-image">`
+                : `<div class="card-image-placeholder">No Image Available</div>`;
+            
+            // Removed rating display
+            const infoText = timeText;
+
+            return `
+                <div class="recipe-card" onclick="selectRecipeFromGrid('${recipe.slug}')">
+                    ${imageHTML}
+                    <div class="card-content">
+                        <div class="card-title">${recipe.title}</div>
+                        <div class="card-description">${recipe.description || 'A delicious recipe waiting to be made!'}</div>
+                        <div class="card-time">${infoText}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function selectRecipeFromGrid(slug) {
+        const target = recipes.find(r => r.slug === slug);
+        if (!target) return;
+        
+        const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(target.slug)}`;
+        history.replaceState(null, '', newUrl); 
+
+        const recipeList = document.getElementById('recipeList');
+        const item = Array.from(recipeList.querySelectorAll('.recipe-item'))
+            .find(el => el.querySelector('.recipe-name').textContent.trim() === target.title);
+            
+        selectRecipe(target, item || {}); 
+    }
+
+    function filterAndSortGrid() {
+        const sortBy = document.getElementById('grid-sort-by').value;
+        const categoryFilter = document.getElementById('filter-category').value;
+        const typeFilter = document.getElementById('filter-type').value;
+
+        let recipesToFilter = [...recipes]; 
+
+        if (categoryFilter !== 'all') {
+            recipesToFilter = recipesToFilter.filter(r => r.category === categoryFilter);
+        }
+        if (typeFilter !== 'all') {
+            recipesToFilter = recipesToFilter.filter(r => r.dishType === typeFilter);
+        }
+
+        sortRecipes(recipesToFilter, sortBy);
+
+        currentGridPage = 0;
+        const initialCards = renderCards(recipesToFilter.slice(0, RECIPES_PER_PAGE));
+        
+        const container = document.getElementById('gridCardsContainer');
+        if (container) container.innerHTML = initialCards;
+
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            if (recipesToFilter.length <= RECIPES_PER_PAGE) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'inline-block';
+                loadMoreBtn.onclick = () => loadMoreRecipes(recipesToFilter);
+            }
+        }
+    }
+
+    function loadMoreRecipes(filteredRecipes) {
+        currentGridPage++;
+        const startIndex = currentGridPage * RECIPES_PER_PAGE;
+        const endIndex = startIndex + RECIPES_PER_PAGE;
+        const nextBatch = filteredRecipes.slice(startIndex, endIndex);
+
+        const container = document.getElementById('gridCardsContainer');
+        if (container) container.insertAdjacentHTML('beforeend', renderCards(nextBatch));
+        
+        if (endIndex >= filteredRecipes.length) {
+            document.getElementById('load-more-btn').style.display = 'none';
+        }
+    }
+
+    function clearAllFilters() {
+        document.getElementById('filter-category').value = 'all';
+        document.getElementById('filter-type').value = 'all';
+        document.getElementById('grid-sort-by').value = 'alphabetical';
+        filterAndSortGrid();
+    }
+
+
+    function displayGridPage(initialRecipes) {
+        const content = document.getElementById('recipeContent');
+
+        const categories = getUniqueFilterOptions('category');
+        const dishTypes = getUniqueFilterOptions('dishType');
+
+        const filterOptionsHTML = (options, id, label) => `
+            <select id="${id}" onchange="filterAndSortGrid()">
+                <option value="all">Filter by ${label}</option>
+                ${options.map(o => `<option value="${o}">${o}</option>`).join('')}
+            </select>
+        `;
+
+        const gridControlsHTML = `
+          <div class="grid-controls">
+            ${filterOptionsHTML(categories, 'filter-category', 'Category')}
+            ${filterOptionsHTML(dishTypes, 'filter-type', 'Type')}
+            
+            <select id="grid-sort-by" onchange="filterAndSortGrid()">
+              <option value="alphabetical">Sort: A-Z</option>
+              <option value="newest">Sort: Newest</option>
+              <option value="time">Sort: Quickest Time</option>
+            </select>
+
+            <button class="clear-filters-btn" onclick="clearAllFilters()">Clear Filters</button>
+          </div>
+        `;
+
+        let recipesToDisplay = [...initialRecipes];
+        sortRecipes(recipesToDisplay, 'alphabetical');
+        currentGridPage = 0;
+        const initialCards = renderCards(recipesToDisplay.slice(0, RECIPES_PER_PAGE));
+        
+        content.innerHTML = `
+            <div class="grid-view">
+                <h1 class="recipe-title" style="text-align:center;">All Recipes</h1>
+                ${gridControlsHTML}
+                <div class="recipe-cards-container" id="gridCardsContainer">
+                    ${initialCards}
+                </div>
+                <div class="pagination-area" style="text-align:center; margin-top: 40px;">
+                  <button id="load-more-btn" class="recipe-action-button" 
+                          ${recipesToDisplay.length <= RECIPES_PER_PAGE ? 'style="display:none;"' : ''}>Load More Recipes</button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
+        history.replaceState(null, '', window.location.pathname + '#grid');
+    }
+    
+    // --- GLOBAL LISTENERS & INIT ---
+
+    document.getElementById('searchBox').addEventListener('input', e=>{
+      const searchTerm = e.target.value.toLowerCase();
+      const filtered = recipes.filter(r=>
+        r.title.toLowerCase().includes(searchTerm) ||
+        (r.description&&r.description.toLowerCase().includes(searchTerm)) ||
+        r.ingredients.some(i=>i.toLowerCase().includes(searchTerm))
+      );
+      displayRecipeList(filtered);
+      updateStickyIndicator();
+    });
+
+    document.getElementById('sidebar-sort-by').addEventListener('change', e => {
+        sortRecipes(recipes, e.target.value);
+        displayRecipeList(recipes); 
+    });
+
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash === '#grid' && recipes.length > 0) {
+            displayGridPage(recipes);
+        } else if (window.location.hash === '' && !window.location.search) {
+            resetRecipeView();
+        }
+    });
+
+    initAuth();
+    
+    window.addEventListener('resize', () => {
+      updateStickyIndicator();
+    });
+  </script>
+</body>
+</html>
