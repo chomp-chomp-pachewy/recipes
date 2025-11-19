@@ -307,6 +307,8 @@
       padding: 8px 10px;
       border: 1px solid #e0e0e0;
       border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
     }
     
     .grid-search-box {
@@ -363,6 +365,39 @@
     }
     
     .mobile-grid-button:active {
+      transform: scale(0.95);
+    }
+    
+    /* Top navigation icons */
+    .top-nav-icons {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 999;
+      pointer-events: none;
+    }
+    
+    .nav-icon {
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      opacity: 0.9;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-icon:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    
+    .nav-icon:active {
       transform: scale(0.95);
     }
 
@@ -500,7 +535,7 @@
         display: block;
         width: 100%;
         height: 180px;
-        background-image: url('images/Chomp Chomp logos.jpeg');
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipe-images%2Frecipes%20logo.jpeg?alt=media');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
@@ -526,6 +561,13 @@
         padding: 20px;
         width: 100% !important;
         max-width: 100% !important;
+      }
+      
+      /* Make grid cards and home text wider on mobile */
+      .recipe-cards-container,
+      .home-text {
+        max-width: 90%;
+        margin: 0 auto;
       }
       
       .recipe-image { max-width: 80%; }
@@ -746,14 +788,33 @@
           filter: brightness(0.9);
         }
       }
+      
+      /* Navigation icons in dark mode */
+      .nav-icon {
+        box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+      }
     }
   </style>
 
 </head>
 <body>
+  <!-- Top navigation icons -->
+  <div class="top-nav-icons">
+    <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipe-images%2Frecipes%20cookie%20icon.png?alt=media" 
+         alt="All Recipes" 
+         class="nav-icon" 
+         onclick="window.location.hash='#grid'"
+         title="All Recipes / Rituals">
+    <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipe-images%2Frecipes%20manifesto%20icon.png?alt=media" 
+         alt="Home" 
+         class="nav-icon" 
+         onclick="window.resetRecipeView()"
+         title="Home / Manifesto">
+  </div>
+  
   <div class="sidebar">
     <div class="sidebar-header" onclick="window.resetRecipeView()" style="cursor: pointer;">
-      <div class="sidebar-title">Rituals / Recipes</div>
+      <div class="sidebar-title">Recipes / Rituals</div>
       <a href="#grid" id="gridViewLink" style="font-size:0.85em; color: #E73B42; margin-top: 5px; display: block; text-decoration: none;">View All Recipes (Grid)</a>
     </div>
 
@@ -1036,7 +1097,7 @@
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipe-images%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
@@ -1447,9 +1508,6 @@
         content.innerHTML = `
             <div class="grid-view">
                 <h1 class="recipe-title" style="text-align:center;">All Recipes / Rituals</h1>
-                <div style="text-align:center; margin-bottom: 20px;">
-                  <a href="#" onclick="window.resetRecipeView(); return false;" style="color: #e73b42; text-decoration: none; font-size: 0.9em;">← Switch to Scroll View</a>
-                </div>
                 ${gridControlsHTML}
                 <div class="recipe-cards-container" id="gridCardsContainer">
                     ${initialCards}
