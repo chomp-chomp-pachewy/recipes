@@ -388,6 +388,14 @@
       margin-bottom: 8px;
       font-weight: 300;
     }
+    
+    .ingredient-item h1,
+    .ingredient-item h2,
+    .ingredient-item h3 {
+      border-left: none;
+      padding-left: 0;
+      margin-left: -16px;
+    }
 
     .instructions-list { list-style: none; counter-reset: step-counter; }
 
@@ -639,7 +647,9 @@
         // Handle complex array/object structures (Source links, ingredients)
         if (Array.isArray(text)) {
             return text.map(item => {
-                if (typeof item === 'string') return item;
+                if (typeof item === 'string') {
+                    return parseMarkdownString(item);
+                }
                 
                 // Handle nested arrays/objects (like complex ingredients or source links)
                 if (Array.isArray(item)) {
@@ -648,19 +658,36 @@
                         if (subItem && subItem.text && subItem.href) {
                             return `<a href="${subItem.href}" target="_blank" rel="noopener noreferrer">${subItem.text}</a>`;
                         }
-                        return subItem;
+                        return parseMarkdownString(String(subItem));
                     }).join(' ');
                 }
                 // Handle single link object (like source)
                 if (item && item.text && item.href) {
                     return `<a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.text}</a>`;
                 }
-                return item;
-            }).join(' '); 
+                return parseMarkdownString(String(item));
+            }).join('<br>'); 
         }
         
-        // Handle simple strings (Markdown links)
-        text = String(text).replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        return parseMarkdownString(String(text));
+    }
+    
+    function parseMarkdownString(text) {
+        if (!text) return text;
+        
+        // Convert headers (###, ##, #)
+        text = text.replace(/^### (.+)$/gm, '<h3 style="font-size: 1em; font-weight: 600; margin: 10px 0 5px 0; color: #434343;">$1</h3>');
+        text = text.replace(/^## (.+)$/gm, '<h2 style="font-size: 1.1em; font-weight: 600; margin: 12px 0 6px 0; color: #434343;">$1</h2>');
+        text = text.replace(/^# (.+)$/gm, '<h1 style="font-size: 1.2em; font-weight: 600; margin: 15px 0 8px 0; color: #434343;">$1</h1>');
+        
+        // Convert markdown links [text](url)
+        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        
+        // Convert bold **text**
+        text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert italic *text*
+        text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
         
         return text;
     }
@@ -677,9 +704,10 @@
             tempInput.select();
             document.execCommand('copy');
             document.body.removeChild(tempInput);
-            console.log('Permalink copied to clipboard via execCommand!');
+            alert('Link copied to clipboard!');
         } catch (e) {
             console.error('Could not copy text to clipboard using execCommand:', e);
+            alert('Failed to copy link. Please copy manually: ' + url);
         }
         // --- END FIX ---
     }
@@ -732,7 +760,7 @@
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="chomp_recipes_logo.jpeg" alt="Chomp Recipes Logo" class="home-image">
+          <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
