@@ -675,10 +675,10 @@
     function parseMarkdownString(text) {
         if (!text) return text;
         
-        // Convert headers (###, ##, #)
-        text = text.replace(/^### (.+)$/gm, '<h3 style="font-size: 1em; font-weight: 600; margin: 10px 0 5px 0; color: #434343;">$1</h3>');
-        text = text.replace(/^## (.+)$/gm, '<h2 style="font-size: 1.1em; font-weight: 600; margin: 12px 0 6px 0; color: #434343;">$1</h2>');
-        text = text.replace(/^# (.+)$/gm, '<h1 style="font-size: 1.2em; font-weight: 600; margin: 15px 0 8px 0; color: #434343;">$1</h1>');
+        // Convert headers (###, ##, #) - just the tags, styling added during render
+        text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+        text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+        text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
         
         // Convert markdown links [text](url)
         text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
@@ -941,7 +941,16 @@
       // Use parseMarkdown to safely handle ingredients (which should be arrays or null)
       const safeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
       const ingredientsHTML = safeIngredients.map(i => {
-          return `<li class="ingredient-item">${parseMarkdown(i)}</li>`;
+          const parsed = parseMarkdown(i);
+          // Check if this is a header (starts with <h1, <h2, or <h3)
+          if (parsed.startsWith('<h1') || parsed.startsWith('<h2') || parsed.startsWith('<h3')) {
+              // Return header without li wrapper, styled in uppercase
+              return parsed.replace('<h3', '<h3 style="font-size: 0.95em; font-weight: 600; margin: 15px 0 8px 0; color: #434343; text-transform: uppercase; letter-spacing: 0.5px;"')
+                           .replace('<h2', '<h2 style="font-size: 1.05em; font-weight: 600; margin: 18px 0 10px 0; color: #434343; text-transform: uppercase; letter-spacing: 0.5px;"')
+                           .replace('<h1', '<h1 style="font-size: 1.15em; font-weight: 600; margin: 20px 0 12px 0; color: #434343; text-transform: uppercase; letter-spacing: 0.5px;"');
+          }
+          // Regular ingredient with red bar
+          return `<li class="ingredient-item">${parsed}</li>`;
       }).join('');
 
       const safeInstructions = Array.isArray(recipe.instructions) ? recipe.instructions : [];
