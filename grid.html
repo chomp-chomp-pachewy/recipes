@@ -53,7 +53,7 @@
 
     .sidebar-title {
       font-size: 1.6em;
-      font-weight: 300;
+      font-weight: 500;
       color: #e73b42;
       flex-shrink: 0;
     }
@@ -300,12 +300,30 @@
       align-items: center;
       justify-content: flex-start;
       padding: 0 10px;
+      margin-bottom: 30px;
     }
 
     .grid-controls select {
       padding: 8px 10px;
       border: 1px solid #e0e0e0;
       border-radius: 4px;
+    }
+    
+    .grid-search-box {
+      flex: 1;
+      min-width: 200px;
+      padding: 8px 12px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      background-color: #ffffff;
+      color: #353535;
+    }
+    
+    .grid-search-box:focus {
+      outline: none;
+      border-color: #e73b42;
     }
     
     .clear-filters-btn {
@@ -453,7 +471,7 @@
     @media (max-width: 768px) {
       .recipe-list-container { max-height: calc(56px * 4); }
       
-      /* Mobile header image */
+      /* Mobile header image - clickable */
       body::before {
         content: '';
         display: block;
@@ -464,6 +482,12 @@
         background-repeat: no-repeat;
         background-position: center;
         margin-bottom: 10px;
+        cursor: pointer;
+      }
+      
+      /* Hide the home-image inside home-text on mobile */
+      .home-text .home-image {
+        display: none;
       }
       
       body { flex-direction: column; }
@@ -1080,12 +1104,25 @@
         const sortBy = document.getElementById('grid-sort-by').value;
         const categoryFilter = document.getElementById('filter-category').value;
         const typeFilter = document.getElementById('filter-type').value;
+        const searchTerm = document.getElementById('gridSearchBox')?.value.toLowerCase() || '';
 
         let recipesToFilter = [...recipes]; 
 
+        // Apply search filter
+        if (searchTerm) {
+            recipesToFilter = recipesToFilter.filter(r =>
+                r.title.toLowerCase().includes(searchTerm) ||
+                (r.description && r.description.toLowerCase().includes(searchTerm)) ||
+                r.ingredients.some(i => i.toLowerCase().includes(searchTerm))
+            );
+        }
+
+        // Apply category filter
         if (categoryFilter !== 'all') {
             recipesToFilter = recipesToFilter.filter(r => r.category === categoryFilter);
         }
+        
+        // Apply type filter
         if (typeFilter !== 'all') {
             recipesToFilter = recipesToFilter.filter(r => r.dishType === typeFilter);
         }
@@ -1127,6 +1164,9 @@
         document.getElementById('filter-category').value = 'all';
         document.getElementById('filter-type').value = 'all';
         document.getElementById('grid-sort-by').value = 'alphabetical';
+        if (document.getElementById('gridSearchBox')) {
+            document.getElementById('gridSearchBox').value = '';
+        }
         filterAndSortGrid();
     }
 
@@ -1146,6 +1186,7 @@
 
         const gridControlsHTML = `
           <div class="grid-controls">
+            <input type="text" class="grid-search-box" id="gridSearchBox" placeholder="search recipes...">
             ${filterOptionsHTML(categories, 'filter-category', 'Category')}
             ${filterOptionsHTML(dishTypes, 'filter-type', 'Type')}
             
@@ -1166,7 +1207,10 @@
         
         content.innerHTML = `
             <div class="grid-view">
-                <h1 class="recipe-title" style="text-align:center;">All Recipes</h1>
+                <h1 class="recipe-title" style="text-align:center;">All Recipes / Rituals</h1>
+                <div style="text-align:center; margin-bottom: 20px;">
+                  <a href="#" onclick="window.resetRecipeView(); return false;" style="color: #e73b42; text-decoration: none; font-size: 0.9em;">← Switch to Scroll View</a>
+                </div>
                 ${gridControlsHTML}
                 <div class="recipe-cards-container" id="gridCardsContainer">
                     ${initialCards}
@@ -1179,6 +1223,11 @@
         `;
 
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
+        
+        // Add grid search functionality
+        document.getElementById('gridSearchBox').addEventListener('input', (e) => {
+          filterAndSortGrid();
+        });
         // NOTE: Removed history.replaceState
     }
     
@@ -1224,6 +1273,13 @@
     
     window.addEventListener('resize', () => {
       updateStickyIndicator();
+    });
+    
+    // Mobile header click handler
+    document.body.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 && e.clientY < 200) {
+        window.resetRecipeView();
+      }
     });
   </script>
 
