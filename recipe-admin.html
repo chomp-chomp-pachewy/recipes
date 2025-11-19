@@ -257,7 +257,7 @@
     
     <div id="editorSection" class="editor-section hidden">
       <h2 id="editorTitle">New Recipe</h2>
-      <form id="recipeForm" onsubmit="saveRecipe(event)">
+      <form id="recipeForm">
         <div class="form-group">
           <label>Title *</label>
           <input type="text" id="title" required>
@@ -470,15 +470,18 @@
     
     window.saveRecipe = async function(event) {
       event.preventDefault();
+      console.log('Save recipe called');
       
       // If there's a new image to upload
       if (currentImageFile) {
         const filename = document.getElementById('image').value;
+        console.log('Uploading image:', filename);
         try {
           showMessage('Uploading image...', 'success');
           await uploadImage(currentImageFile, filename);
           showMessage('Image uploaded successfully!', 'success');
         } catch (error) {
+          console.error('Image upload error:', error);
           showMessage('Failed to upload image: ' + error.message, 'error');
           return;
         }
@@ -487,6 +490,8 @@
       const title = document.getElementById('title').value.trim();
       const editingSlug = document.getElementById('editingSlug').value;
       const slug = editingSlug || generateSlug(title);
+      
+      console.log('Saving recipe:', title, 'with slug:', slug);
       
       const recipe = {
         title: title,
@@ -504,13 +509,17 @@
         notes: document.getElementById('notes').value.trim() || null
       };
       
+      console.log('Recipe data:', recipe);
+      
       try {
         await setDoc(doc(db, recipesPath, slug), recipe);
+        console.log('Recipe saved successfully!');
         showMessage('Recipe saved successfully!', 'success');
         currentImageFile = null; // Reset after successful save
         cancelEdit();
         loadRecipes();
       } catch (error) {
+        console.error('Save error:', error);
         showMessage('Failed to save recipe: ' + error.message, 'error');
       }
     };
@@ -544,6 +553,9 @@
         messageDiv.style.display = 'none';
       }, 5000);
     }
+    
+    // Form submit handler
+    document.getElementById('recipeForm').addEventListener('submit', window.saveRecipe);
     
     // Image upload handlers
     const uploadArea = document.getElementById('uploadArea');
