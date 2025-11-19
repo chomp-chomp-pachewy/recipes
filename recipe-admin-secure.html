@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recipe Admin - Chomp Recipes</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -161,6 +162,11 @@
       background: #c90028;
     }
     
+    .btn-primary:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+    
     .btn-secondary {
       background: transparent;
       border: 1px solid #666;
@@ -214,118 +220,208 @@
       font-family: 'Inter', sans-serif;
       margin-left: 10px;
     }
+    
+    /* NEW: File upload styles */
+    .file-upload-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .file-upload-section h3 {
+      font-size: 1em;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: #434343;
+    }
+    
+    .file-drop-zone {
+      border: 2px dashed #d0d0d0;
+      border-radius: 6px;
+      padding: 25px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+    
+    .file-drop-zone:hover {
+      border-color: #e73b42;
+      background: #fff5f6;
+    }
+    
+    .file-drop-zone.active {
+      border-color: #e73b42;
+      background: #fff5f6;
+    }
+    
+    .file-drop-zone p {
+      color: #666;
+      font-size: 0.9em;
+      margin: 0;
+    }
+    
+    .upload-preview {
+      margin-top: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 4px;
+      display: none;
+      font-size: 0.9em;
+      color: #434343;
+    }
+    
+    .upload-preview.show {
+      display: block;
+    }
+    
+    .upload-preview img {
+      max-width: 250px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
   </style>
+
 </head>
 <body>
   <h1>Recipe Admin</h1>
-  
+
   <div id="authSection" class="auth-section">
     <h2>Admin Sign In</h2>
     <input type="email" id="emailInput" placeholder="Email" autocomplete="email">
     <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
     <button onclick="signIn()">Sign In</button>
   </div>
-  
+
   <div id="adminSection" class="hidden">
     <div class="user-info">
       Signed in as: <span id="userEmail"></span>
       <button onclick="signOut()">Sign Out</button>
     </div>
-    
-    <div id="statusMessage"></div>
-    
-    <h2 style="margin-bottom: 15px;">Your Recipes</h2>
-    <div id="recipeList" class="recipe-list"></div>
-    
-    <button class="btn-primary" onclick="showNewRecipeForm()" style="margin: 20px 0;">+ Add New Recipe</button>
-    
-    <div id="editorSection" class="editor-section hidden">
-      <h2 id="editorTitle">New Recipe</h2>
-      <form id="recipeForm">
-        <div class="form-group">
-          <label>Title *</label>
-          <input type="text" id="title" required>
-        </div>
-        
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="description"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label>Servings</label>
-          <input type="text" id="servings">
-        </div>
-        
-        <div class="form-group">
-          <label>Prep Time</label>
-          <input type="text" id="prepTime" placeholder="e.g. 15 minutes">
-        </div>
-        
-        <div class="form-group">
-          <label>Cook Time</label>
-          <input type="text" id="cookTime" placeholder="e.g. 30 minutes">
-        </div>
-        
-        <div class="form-group">
-          <label>Total Time</label>
-          <input type="text" id="totalTime" placeholder="e.g. 45 minutes">
-        </div>
-        
-        <div class="form-group">
-          <label>Source</label>
-          <input type="text" id="source" placeholder="e.g. [Recipe Site](https://example.com)">
-          <small>Supports markdown links: [text](url)</small>
-        </div>
-        
-        <div class="form-group">
-          <label>Recipe Image</label>
-          <input type="text" id="image" placeholder="e.g. chocolate-cake.jpg">
-          <small>Filename of image in your /images/ folder</small>
-        </div>
-        
-        <div class="form-group">
-          <label>Category</label>
-          <input type="text" id="category" placeholder="e.g. chomp chomp">
-        </div>
-        
-        <div class="form-group">
-          <label>Ingredients *</label>
-          <textarea id="ingredients" rows="10" required></textarea>
-          <small>One per line. Use ### for section headers (e.g. ### For the Filling)</small>
-        </div>
-        
-        <div class="form-group">
-          <label>Instructions *</label>
-          <textarea id="instructions" rows="10" required></textarea>
-          <small>One per line. Use ### for section headers. Supports markdown.</small>
-        </div>
-        
-        <div class="form-group">
-          <label>Notes</label>
-          <textarea id="notes" rows="4"></textarea>
-        </div>
-        
-        <input type="hidden" id="editingSlug">
-        
-        <div class="button-group">
-          <button type="submit" class="btn-primary">Save Recipe</button>
-          <button type="button" class="btn-secondary" onclick="cancelEdit()">Cancel</button>
-        </div>
-      </form>
+
+```
+<div id="statusMessage"></div>
+
+<h2 style="margin-bottom: 15px;">Your Recipes</h2>
+<div id="recipeList" class="recipe-list"></div>
+
+<button class="btn-primary" onclick="showNewRecipeForm()" style="margin: 20px 0;">+ Add New Recipe</button>
+
+<div id="editorSection" class="editor-section hidden">
+  <h2 id="editorTitle">New Recipe</h2>
+  
+  <!-- NEW: Markdown file upload -->
+  <div class="file-upload-section">
+    <h3>📄 Quick Add: Upload Markdown File</h3>
+    <div class="file-drop-zone" id="mdDropZone">
+      <p>Drop a .md file here or click to browse</p>
+      <input type="file" id="mdFileInput" accept=".md,.txt" style="display: none;">
     </div>
+    <div class="upload-preview" id="mdPreview">
+      <strong>✓ Markdown loaded:</strong> <span id="mdFileName"></span>
+    </div>
+  </div>
+  
+  <!-- NEW: Image file upload -->
+  <div class="file-upload-section">
+    <h3>🖼️ Upload Recipe Image</h3>
+    <div class="file-drop-zone" id="imgDropZone">
+      <p>Drop an image here or click to browse</p>
+      <input type="file" id="imgFileInput" accept="image/*" style="display: none;">
+    </div>
+    <div class="upload-preview" id="imgPreview">
+      <strong>✓ Image ready:</strong>
+      <img id="imgPreviewImg" alt="preview">
+    </div>
+  </div>
+  
+  <form id="recipeForm">
+    <div class="form-group">
+      <label>Title *</label>
+      <input type="text" id="title" required>
+    </div>
+    
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="description"></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Servings</label>
+      <input type="text" id="servings">
+    </div>
+    
+    <div class="form-group">
+      <label>Prep Time</label>
+      <input type="text" id="prepTime" placeholder="e.g. 15 minutes">
+    </div>
+    
+    <div class="form-group">
+      <label>Cook Time</label>
+      <input type="text" id="cookTime" placeholder="e.g. 30 minutes">
+    </div>
+    
+    <div class="form-group">
+      <label>Total Time</label>
+      <input type="text" id="totalTime" placeholder="e.g. 45 minutes">
+    </div>
+    
+    <div class="form-group">
+      <label>Source</label>
+      <input type="text" id="source" placeholder="e.g. [Recipe Site](https://example.com)">
+      <small>Supports markdown links: [text](url)</small>
+    </div>
+    
+    <div class="form-group">
+      <label>Recipe Image</label>
+      <input type="text" id="image" placeholder="e.g. chocolate-cake.jpg">
+      <small>Filename of image in your /images/ folder (or auto-filled from upload above)</small>
+    </div>
+    
+    <div class="form-group">
+      <label>Category</label>
+      <input type="text" id="category" placeholder="e.g. chomp chomp">
+    </div>
+    
+    <div class="form-group">
+      <label>Ingredients *</label>
+      <textarea id="ingredients" rows="10" required></textarea>
+      <small>One per line. Use ### for section headers (e.g. ### For the Filling)</small>
+    </div>
+    
+    <div class="form-group">
+      <label>Instructions *</label>
+      <textarea id="instructions" rows="10" required></textarea>
+      <small>One per line. Use ### for section headers. Supports markdown.</small>
+    </div>
+    
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="notes" rows="4"></textarea>
+    </div>
+    
+    <input type="hidden" id="editingSlug">
+    
+    <div class="button-group">
+      <button type="submit" class="btn-primary">Save Recipe</button>
+      <button type="button" class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+    </div>
+  </form>
+</div>
+```
+
   </div>
 
   <script type="module">
-    // ⚠️ IMPORTANT: Replace YOUR_API_KEY with your NEW regenerated API key
-    // DO NOT commit this file to GitHub!
-    
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyAkdEtWHZfaV3l7BvinaWj4WTP7tCuvFd0",  // ⚠️ Replace this!
+        apiKey: "AIzaSyAkdEtWHZfaV3l7BvinaWj4WTP7tCuvFd0",
         authDomain: "chomp-chomp-recipes.firebaseapp.com", 
         projectId: "chomp-chomp-recipes", 
         storageBucket: "chomp-chomp-recipes.firebasestorage.app", 
@@ -336,11 +432,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
+    const storage = getStorage(app);
     
     const appId = firebaseConfig.projectId;
     const recipesPath = `artifacts/${appId}/public/data/recipes`;
     
     let currentUser = null;
+    let currentImageFile = null;
     
     window.signIn = async function() {
       const email = document.getElementById('emailInput').value;
@@ -378,7 +476,6 @@
       }
     });
     
-    // Allow Enter key to submit login
     document.getElementById('passwordInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         window.signIn();
@@ -392,6 +489,131 @@
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .trim('-');
+    }
+    
+    // NEW: Markdown parser
+    function parseMarkdown(content) {
+      const lines = content.split('\n');
+      const recipe = {
+        title: '', description: '', servings: null, prepTime: null,
+        cookTime: null, totalTime: null, source: null, category: 'chomp chomp',
+        ingredients: [], instructions: [], notes: null
+      };
+      
+      let section = '', descLines = [], noteLines = [];
+      
+      for (const line of lines) {
+        const trim = line.trim();
+        if (!trim) continue;
+        
+        if (trim.startsWith('# ') && !recipe.title) {
+          recipe.title = trim.replace('# ', '');
+          continue;
+        }
+        
+        if (trim.startsWith('## ')) {
+          section = trim.replace('## ', '').toLowerCase();
+          continue;
+        }
+        
+        if (trim.startsWith('### ')) {
+          const sub = trim.replace('### ', '');
+          if (section === 'ingredients') recipe.ingredients.push('### ' + sub);
+          else if (section === 'instructions') recipe.instructions.push('### ' + sub);
+          continue;
+        }
+        
+        if (trim.startsWith('Source:')) {
+          const match = trim.match(/Source:\s*\[([^\]]+)\]\(([^)]+)\)/);
+          recipe.source = match ? `[${match[1]}](${match[2]})` : trim.replace('Source:', '').trim();
+          continue;
+        }
+        if (trim.startsWith('Servings:')) { recipe.servings = trim.replace('Servings:', '').trim(); continue; }
+        if (trim.startsWith('Prep:')) { recipe.prepTime = trim.replace('Prep:', '').trim(); continue; }
+        if (trim.startsWith('Cook:')) { recipe.cookTime = trim.replace('Cook:', '').trim(); continue; }
+        if (trim.startsWith('Total:')) { recipe.totalTime = trim.replace('Total:', '').trim(); continue; }
+        
+        if (!section && recipe.title && !trim.startsWith('Source:') && !trim.startsWith('Servings:') && 
+            !trim.startsWith('Prep:') && !trim.startsWith('Cook:') && !trim.startsWith('Total:')) {
+          descLines.push(trim);
+          continue;
+        }
+        
+        if (section === 'ingredients' && (trim.startsWith('- ') || trim.startsWith('* '))) {
+          recipe.ingredients.push(trim.replace(/^[-*]\s+/, ''));
+        } else if (section === 'instructions') {
+          if (trim.match(/^\d+\.\s/) || trim.startsWith('- ') || trim.startsWith('* ')) {
+            recipe.instructions.push(trim.replace(/^\d+\.\s+|^[-*]\s+/, ''));
+          }
+        } else if (section === 'notes' || section === 'nutrition') {
+          if (!trim.startsWith('#')) noteLines.push(trim);
+        }
+      }
+      
+      recipe.description = descLines.join(' ');
+      recipe.notes = noteLines.length ? noteLines.join('\n') : null;
+      return recipe;
+    }
+    
+    // NEW: Markdown upload handlers
+    const mdDrop = document.getElementById('mdDropZone');
+    const mdInput = document.getElementById('mdFileInput');
+    
+    mdDrop.onclick = () => mdInput.click();
+    mdDrop.ondragover = (e) => { e.preventDefault(); mdDrop.classList.add('active'); };
+    mdDrop.ondragleave = () => mdDrop.classList.remove('active');
+    mdDrop.ondrop = (e) => {
+      e.preventDefault();
+      mdDrop.classList.remove('active');
+      if (e.dataTransfer.files[0]) handleMdFile(e.dataTransfer.files[0]);
+    };
+    mdInput.onchange = (e) => { if (e.target.files[0]) handleMdFile(e.target.files[0]); };
+    
+    function handleMdFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const parsed = parseMarkdown(e.target.result);
+        document.getElementById('title').value = parsed.title || '';
+        document.getElementById('description').value = parsed.description || '';
+        document.getElementById('servings').value = parsed.servings || '';
+        document.getElementById('prepTime').value = parsed.prepTime || '';
+        document.getElementById('cookTime').value = parsed.cookTime || '';
+        document.getElementById('totalTime').value = parsed.totalTime || '';
+        document.getElementById('source').value = parsed.source || '';
+        document.getElementById('category').value = parsed.category || '';
+        document.getElementById('ingredients').value = parsed.ingredients.join('\n');
+        document.getElementById('instructions').value = parsed.instructions.join('\n');
+        document.getElementById('notes').value = parsed.notes || '';
+        
+        document.getElementById('mdFileName').textContent = file.name;
+        document.getElementById('mdPreview').classList.add('show');
+        showMessage('Markdown loaded! Review and save.', 'success');
+      };
+      reader.readAsText(file);
+    }
+    
+    // NEW: Image upload handlers
+    const imgDrop = document.getElementById('imgDropZone');
+    const imgInput = document.getElementById('imgFileInput');
+    
+    imgDrop.onclick = () => imgInput.click();
+    imgDrop.ondragover = (e) => { e.preventDefault(); imgDrop.classList.add('active'); };
+    imgDrop.ondragleave = () => imgDrop.classList.remove('active');
+    imgDrop.ondrop = (e) => {
+      e.preventDefault();
+      imgDrop.classList.remove('active');
+      if (e.dataTransfer.files[0]) handleImgFile(e.dataTransfer.files[0]);
+    };
+    imgInput.onchange = (e) => { if (e.target.files[0]) handleImgFile(e.target.files[0]); };
+    
+    function handleImgFile(file) {
+      currentImageFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('imgPreviewImg').src = e.target.result;
+        document.getElementById('imgPreview').classList.add('show');
+      };
+      reader.readAsDataURL(file);
     }
     
     async function loadRecipes() {
@@ -426,6 +648,9 @@
       document.getElementById('recipeForm').reset();
       document.getElementById('editingSlug').value = '';
       document.getElementById('editorSection').classList.remove('hidden');
+      document.getElementById('mdPreview').classList.remove('show');
+      document.getElementById('imgPreview').classList.remove('show');
+      currentImageFile = null;
       window.scrollTo(0, document.getElementById('editorSection').offsetTop);
     };
     
@@ -486,6 +711,16 @@
       };
       
       try {
+        // NEW: Upload image if present
+        if (currentImageFile) {
+          showMessage('Uploading image...', 'success');
+          const ext = currentImageFile.name.split('.').pop();
+          const imgRef = ref(storage, `recipes/${slug}-${Date.now()}.${ext}`);
+          await uploadBytes(imgRef, currentImageFile);
+          recipe.image = await getDownloadURL(imgRef);
+          document.getElementById('image').value = recipe.image;
+        }
+        
         await setDoc(doc(db, recipesPath, slug), recipe);
         showMessage('✅ Recipe saved successfully!', 'success');
         cancelEdit();
@@ -514,6 +749,9 @@
     window.cancelEdit = function() {
       document.getElementById('editorSection').classList.add('hidden');
       document.getElementById('recipeForm').reset();
+      document.getElementById('mdPreview').classList.remove('show');
+      document.getElementById('imgPreview').classList.remove('show');
+      currentImageFile = null;
     };
     
     function showMessage(message, type) {
@@ -527,8 +765,8 @@
       }, 5000);
     }
     
-    // Form submit handler
     document.getElementById('recipeForm').addEventListener('submit', window.saveRecipe);
   </script>
+
 </body>
 </html>
