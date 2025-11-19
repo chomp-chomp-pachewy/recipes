@@ -1,0 +1,6 @@
+# Admin files with API keys
+recipe-admin*.html
+
+# Environment files
+.env
+.env.local
