@@ -490,14 +490,21 @@
         display: none;
       }
       
-      body { flex-direction: column; }
-      .sidebar { 
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #e0e0e0;
-        max-height: 45vh;
+      body { 
+        flex-direction: column;
       }
-      .recipe-content { padding: 20px; }
+      
+      /* Hide sidebar completely on mobile */
+      .sidebar { 
+        display: none;
+      }
+      
+      .recipe-content { 
+        padding: 20px;
+        width: 100%;
+        max-width: 100%;
+      }
+      
       .recipe-image { max-width: 80%; }
       
       .recipe-cards-container { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); }
