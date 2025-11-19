@@ -452,6 +452,20 @@
 
     @media (max-width: 768px) {
       .recipe-list-container { max-height: calc(56px * 4); }
+      
+      /* Mobile header image */
+      body::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 180px;
+        background-image: url('images/Chomp Chomp logos.jpeg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        margin-bottom: 10px;
+      }
+      
       body { flex-direction: column; }
       .sidebar { 
         width: 100%;
@@ -833,6 +847,11 @@
         document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
+        
+        // Clear hash without triggering hashchange event
+        if (window.location.hash) {
+            history.replaceState(null, null, window.location.pathname);
+        }
     }
 
     function updateStickyIndicator() {
@@ -1189,10 +1208,17 @@
     window.addEventListener('hashchange', () => {
         if (window.location.hash === '#grid' && recipes.length > 0) {
             displayGridPage(recipes);
-        } else if (window.location.hash === '' && !window.location.search) {
+        } else if (window.location.hash === '' || window.location.hash === '#home') {
             window.resetRecipeView();
         }
     });
+
+    // Handle initial hash on page load
+    if (window.location.hash === '#grid' && recipes.length > 0) {
+        // Grid will be shown after recipes load
+    } else if (window.location.hash && window.location.hash !== '#home') {
+        // There's a hash but it's not grid or home, might be a recipe
+    }
 
     initAuth();
     
