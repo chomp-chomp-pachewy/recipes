@@ -784,6 +784,10 @@
         console.log('Recipe saved successfully!');
         showMessage('✅ Recipe saved successfully!', 'success');
         
+        // Re-enable button immediately
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalBtnText;
+        
         setTimeout(() => {
           cancelEdit();
           loadRecipes();
