@@ -935,7 +935,14 @@
       if (recipe.source) metaInfo.push(`<span>source: ${parseMarkdown(recipe.source)}</span>`);
       if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
 
-      let imageHTML = recipe.image?`<img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">`:'';
+      // Handle image path - support both local images and Firebase Storage URLs
+      let imageHTML = '';
+      if (recipe.image) {
+        const imagePath = recipe.image.startsWith('http') 
+          ? recipe.image 
+          : `images/${recipe.image}`;
+        imageHTML = `<img src="${imagePath}" alt="${recipe.title}" class="recipe-image">`;
+      }
       let descriptionHTML = recipe.description?`<div class="recipe-description">${parseMarkdown(recipe.description)}</div>`:'';
       
       // Use parseMarkdown to safely handle ingredients (which should be arrays or null)
@@ -997,9 +1004,13 @@
     function renderCards(recipesToRender) {
         return recipesToRender.map(recipe => {
             const timeText = recipe.totalTimeInMinutes === Infinity ? 'Time N/A' : `${recipe.totalTimeInMinutes} min`;
-            const imagePath = recipe.image && !recipe.image.startsWith('images/') ? `images/${recipe.image}` : recipe.image;
             
-            const imageHTML = recipe.image 
+            // Handle both local images and Firebase Storage URLs
+            const imagePath = recipe.image 
+              ? (recipe.image.startsWith('http') ? recipe.image : `images/${recipe.image}`)
+              : null;
+            
+            const imageHTML = imagePath 
                 ? `<img src="${imagePath}" alt="${recipe.title}" class="card-image">`
                 : `<div class="card-image-placeholder">No Image Available</div>`;
             
