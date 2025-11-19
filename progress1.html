@@ -342,6 +342,29 @@
       border-color: #E73B42;
       color: #7d7d7d;
     }
+    
+    /* Mobile-only grid view button */
+    .mobile-grid-button {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #e73b42;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(231, 59, 66, 0.4);
+      z-index: 1000;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .mobile-grid-button:active {
+      transform: scale(0.95);
+    }
 
     /* ---------------------------------------------------- */
     /* === RATING SPECIFIC STYLES (Kept for later use) === */
@@ -506,6 +529,11 @@
       }
       
       .recipe-image { max-width: 80%; }
+      
+      /* Show mobile grid button */
+      .mobile-grid-button {
+        display: block;
+      }
       
       .recipe-cards-container { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); }
       .grid-controls { flex-direction: column; align-items: stretch; }
@@ -749,6 +777,11 @@
   </div>
 
   <div class="recipe-content" id="recipeContent"></div>
+  
+  <!-- Mobile-only floating grid button -->
+  <button class="mobile-grid-button" id="mobileGridBtn" onclick="window.location.hash='#grid'" title="View All Recipes">
+    ☰
+  </button>
 
   <script type="module">
     // --- FIREBASE IMPORTS ---
@@ -1073,6 +1106,10 @@
         document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
+        
+        // Show mobile grid button on home view
+        const mobileBtn = document.getElementById('mobileGridBtn');
+        if (mobileBtn && window.innerWidth <= 768) mobileBtn.style.display = 'block';
         
         // Clear hash without triggering hashchange event
         if (window.location.hash) {
@@ -1425,6 +1462,10 @@
         `;
 
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
+        
+        // Hide mobile grid button when in grid view
+        const mobileBtn = document.getElementById('mobileGridBtn');
+        if (mobileBtn) mobileBtn.style.display = 'none';
         
         // Add grid search functionality
         document.getElementById('gridSearchBox').addEventListener('input', (e) => {
