@@ -471,6 +471,19 @@
     window.saveRecipe = async function(event) {
       event.preventDefault();
       
+      // If there's a new image to upload
+      if (currentImageFile) {
+        const filename = document.getElementById('image').value;
+        try {
+          showMessage('Uploading image...', 'success');
+          await uploadImage(currentImageFile, filename);
+          showMessage('Image uploaded successfully!', 'success');
+        } catch (error) {
+          showMessage('Failed to upload image: ' + error.message, 'error');
+          return;
+        }
+      }
+      
       const title = document.getElementById('title').value.trim();
       const editingSlug = document.getElementById('editingSlug').value;
       const slug = editingSlug || generateSlug(title);
@@ -494,6 +507,7 @@
       try {
         await setDoc(doc(db, recipesPath, slug), recipe);
         showMessage('Recipe saved successfully!', 'success');
+        currentImageFile = null; // Reset after successful save
         cancelEdit();
         loadRecipes();
       } catch (error) {
@@ -643,63 +657,13 @@
       });
     }
     
-    // Modify saveRecipe to handle image upload
-    const originalSaveRecipe = window.saveRecipe;
-    window.saveRecipe = async function(event) {
-      event.preventDefault();
-      
-      // If there's a new image to upload
-      if (currentImageFile) {
-        const filename = document.getElementById('image').value;
-        try {
-          showMessage('Uploading image...', 'success');
-          await uploadImage(currentImageFile, filename);
-          showMessage('Image uploaded successfully!', 'success');
-        } catch (error) {
-          showMessage('Failed to upload image: ' + error.message, 'error');
-          return;
-        }
-      }
-      
-      // Continue with original save logic
-      const title = document.getElementById('title').value.trim();
-      const editingSlug = document.getElementById('editingSlug').value;
-      const slug = editingSlug || generateSlug(title);
-      
-      const recipe = {
-        title: title,
-        slug: slug,
-        description: document.getElementById('description').value.trim() || null,
-        servings: document.getElementById('servings').value.trim() || null,
-        prepTime: document.getElementById('prepTime').value.trim() || null,
-        cookTime: document.getElementById('cookTime').value.trim() || null,
-        totalTime: document.getElementById('totalTime').value.trim() || null,
-        source: document.getElementById('source').value.trim() || null,
-        image: document.getElementById('image').value.trim() || null,
-        category: document.getElementById('category').value.trim() || null,
-        ingredients: document.getElementById('ingredients').value.split('\n').map(i => i.trim()).filter(i => i),
-        instructions: document.getElementById('instructions').value.split('\n').map(i => i.trim()).filter(i => i),
-        notes: document.getElementById('notes').value.trim() || null
-      };
-      
-      try {
-        await setDoc(doc(db, recipesPath, slug), recipe);
-        showMessage('Recipe saved successfully!', 'success');
-        currentImageFile = null; // Reset after successful save
-        cancelEdit();
-        loadRecipes();
-      } catch (error) {
-        showMessage('Failed to save recipe: ' + error.message, 'error');
-      }
-    };
-    
     // Reset image preview when canceling or starting new recipe
-    const originalCancelEdit = window.cancelEdit;
     window.cancelEdit = function() {
       currentImageFile = null;
       imagePreview.innerHTML = '';
       uploadPrompt.style.display = 'block';
-      originalCancelEdit();
+      document.getElementById('editorSection').classList.add('hidden');
+      document.getElementById('recipeForm').reset();
     };
     
     const originalShowNewRecipe = window.showNewRecipeForm;
