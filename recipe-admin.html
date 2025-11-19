@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Admin - Chomp Recipes</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fdfdfd;
+      color: #353535;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      color: #e73b42;
+      margin-bottom: 30px;
+      font-weight: 400;
+    }
+    
+    .auth-section {
+      background: #f5f5f5;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    
+    .auth-section button {
+      background: #e73b42;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .auth-section button:hover {
+      background: #c90028;
+    }
+    
+    .recipe-list {
+      display: grid;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .recipe-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .recipe-card h3 {
+      font-weight: 500;
+      color: #434343;
+    }
+    
+    .recipe-card button {
+      background: transparent;
+      border: 1px solid #e73b42;
+      color: #e73b42;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-left: 10px;
+    }
+    
+    .recipe-card button:hover {
+      background: #e73b42;
+      color: white;
+    }
+    
+    .editor-section {
+      background: white;
+      border: 1px solid #e0e0e0;
+      padding: 30px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #434343;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+    }
+    
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .form-group small {
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .btn-primary {
+      background: #e73b42;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .btn-primary:hover {
+      background: #c90028;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #666;
+      color: #666;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .btn-secondary:hover {
+      background: #f5f5f5;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .status-message {
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .image-upload-area {
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    
+    .image-upload-area:hover {
+      border-color: #e73b42;
+      background: #fafafa;
+    }
+    
+    .image-upload-area.dragging {
+      border-color: #e73b42;
+      background: #fff5f5;
+    }
+    
+    .image-preview {
+      margin-top: 15px;
+      max-width: 100%;
+    }
+    
+    .image-preview img {
+      max-width: 300px;
+      max-height: 300px;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .upload-instructions {
+      color: #666;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .file-input-hidden {
+      display: none;
+    }
+    
+    .upload-progress {
+      width: 100%;
+      height: 4px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .upload-progress-bar {
+      height: 100%;
+      background: #e73b42;
+      transition: width 0.3s;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Recipe Admin</h1>
+  
+  <div id="authSection" class="auth-section">
+    <p>You need to sign in to edit recipes.</p>
+    <button onclick="signIn()">Sign In Anonymously</button>
+  </div>
+  
+  <div id="adminSection" class="hidden">
+    <div id="statusMessage"></div>
+    
+    <h2 style="margin-bottom: 15px;">Your Recipes</h2>
+    <div id="recipeList" class="recipe-list"></div>
+    
+    <button class="btn-primary" onclick="showNewRecipeForm()" style="margin: 20px 0;">+ Add New Recipe</button>
+    
+    <div id="editorSection" class="editor-section hidden">
+      <h2 id="editorTitle">New Recipe</h2>
+      <form id="recipeForm" onsubmit="saveRecipe(event)">
+        <div class="form-group">
+          <label>Title *</label>
+          <input type="text" id="title" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="description"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Servings</label>
+          <input type="text" id="servings">
+        </div>
+        
+        <div class="form-group">
+          <label>Prep Time</label>
+          <input type="text" id="prepTime" placeholder="e.g. 15 minutes">
+        </div>
+        
+        <div class="form-group">
+          <label>Cook Time</label>
+          <input type="text" id="cookTime" placeholder="e.g. 30 minutes">
+        </div>
+        
+        <div class="form-group">
+          <label>Total Time</label>
+          <input type="text" id="totalTime" placeholder="e.g. 45 minutes">
+        </div>
+        
+        <div class="form-group">
+          <label>Source</label>
+          <input type="text" id="source" placeholder="e.g. [Recipe Site](https://example.com)">
+          <small>Supports markdown links: [text](url)</small>
+        </div>
+        
+        <div class="form-group">
+          <label>Recipe Image</label>
+          <input type="text" id="image" placeholder="e.g. chocolate-cake.jpg" readonly>
+          <small>Upload an image or enter a filename manually</small>
+          
+          <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            <div id="uploadPrompt">
+              <p style="font-size: 16px; margin-bottom: 10px;">📷 Click to upload or drag & drop</p>
+              <p class="upload-instructions">PNG, JPG, JPEG or WEBP (max 5MB)</p>
+            </div>
+            <div id="imagePreview" class="image-preview"></div>
+          </div>
+          
+          <div class="upload-progress" id="uploadProgress">
+            <div class="upload-progress-bar" id="uploadProgressBar"></div>
+          </div>
+          
+          <input type="file" id="fileInput" class="file-input-hidden" accept="image/png,image/jpeg,image/jpg,image/webp">
+        </div>
+        
+        <div class="form-group">
+          <label>Category</label>
+          <input type="text" id="category" placeholder="e.g. chomp chomp">
+        </div>
+        
+        <div class="form-group">
+          <label>Ingredients *</label>
+          <textarea id="ingredients" rows="10" required></textarea>
+          <small>One per line. Use ### for section headers (e.g. ### For the Filling)</small>
+        </div>
+        
+        <div class="form-group">
+          <label>Instructions *</label>
+          <textarea id="instructions" rows="10" required></textarea>
+          <small>One per line. Supports markdown.</small>
+        </div>
+        
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="notes" rows="4"></textarea>
+        </div>
+        
+        <input type="hidden" id="editingSlug">
+        
+        <div class="button-group">
+          <button type="submit" class="btn-primary">Save Recipe</button>
+          <button type="button" class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, getDocs, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAKsgXbyjSSG08B2PuV3Ihva272t8ou1Tw", 
+        authDomain: "chomp-chomp-recipes.firebaseapp.com", 
+        projectId: "chomp-chomp-recipes", 
+        storageBucket: "chomp-chomp-recipes.firebasestorage.app", 
+        messagingSenderId: "225432495618",
+        appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+    
+    const appId = firebaseConfig.projectId;
+    const recipesPath = `artifacts/${appId}/public/data/recipes`;
+    
+    let currentUser = null;
+    let currentImageFile = null;
+    
+    window.signIn = async function() {
+      try {
+        await signInAnonymously(auth);
+      } catch (error) {
+        showMessage('Sign in failed: ' + error.message, 'error');
+      }
+    };
+    
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('adminSection').classList.remove('hidden');
+        loadRecipes();
+      } else {
+        currentUser = null;
+        document.getElementById('authSection').classList.remove('hidden');
+        document.getElementById('adminSection').classList.add('hidden');
+      }
+    });
+    
+    function generateSlug(title) {
+      return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
+    }
+    
+    async function loadRecipes() {
+      try {
+        const snapshot = await getDocs(collection(db, recipesPath));
+        const recipes = snapshot.docs.map(doc => ({
+          slug: doc.id,
+          ...doc.data()
+        }));
+        
+        recipes.sort((a, b) => a.title.localeCompare(b.title));
+        
+        const listHTML = recipes.map(recipe => `
+          <div class="recipe-card">
+            <h3>${recipe.title}</h3>
+            <div>
+              <button onclick="window.editRecipe('${recipe.slug}')">Edit</button>
+              <button onclick="window.deleteRecipe('${recipe.slug}', '${recipe.title}')">Delete</button>
+            </div>
+          </div>
+        `).join('');
+        
+        document.getElementById('recipeList').innerHTML = listHTML;
+      } catch (error) {
+        showMessage('Failed to load recipes: ' + error.message, 'error');
+      }
+    }
+    
+    window.showNewRecipeForm = function() {
+      document.getElementById('editorTitle').textContent = 'New Recipe';
+      document.getElementById('recipeForm').reset();
+      document.getElementById('editingSlug').value = '';
+      document.getElementById('editorSection').classList.remove('hidden');
+      window.scrollTo(0, document.getElementById('editorSection').offsetTop);
+    };
+    
+    window.editRecipe = async function(slug) {
+      try {
+        const snapshot = await getDocs(collection(db, recipesPath));
+        const recipe = snapshot.docs.find(d => d.id === slug)?.data();
+        
+        if (!recipe) {
+          showMessage('Recipe not found', 'error');
+          return;
+        }
+        
+        document.getElementById('editorTitle').textContent = 'Edit Recipe';
+        document.getElementById('title').value = recipe.title || '';
+        document.getElementById('description').value = recipe.description || '';
+        document.getElementById('servings').value = recipe.servings || '';
+        document.getElementById('prepTime').value = recipe.prepTime || '';
+        document.getElementById('cookTime').value = recipe.cookTime || '';
+        document.getElementById('totalTime').value = recipe.totalTime || '';
+        document.getElementById('source').value = recipe.source || '';
+        document.getElementById('image').value = recipe.image || '';
+        document.getElementById('category').value = recipe.category || '';
+        document.getElementById('ingredients').value = Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : '';
+        document.getElementById('instructions').value = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
+        document.getElementById('notes').value = recipe.notes || '';
+        document.getElementById('editingSlug').value = slug;
+        
+        document.getElementById('editorSection').classList.remove('hidden');
+        window.scrollTo(0, document.getElementById('editorSection').offsetTop);
+      } catch (error) {
+        showMessage('Failed to load recipe: ' + error.message, 'error');
+      }
+    };
+    
+    window.saveRecipe = async function(event) {
+      event.preventDefault();
+      
+      const title = document.getElementById('title').value.trim();
+      const editingSlug = document.getElementById('editingSlug').value;
+      const slug = editingSlug || generateSlug(title);
+      
+      const recipe = {
+        title: title,
+        slug: slug,
+        description: document.getElementById('description').value.trim() || null,
+        servings: document.getElementById('servings').value.trim() || null,
+        prepTime: document.getElementById('prepTime').value.trim() || null,
+        cookTime: document.getElementById('cookTime').value.trim() || null,
+        totalTime: document.getElementById('totalTime').value.trim() || null,
+        source: document.getElementById('source').value.trim() || null,
+        image: document.getElementById('image').value.trim() || null,
+        category: document.getElementById('category').value.trim() || null,
+        ingredients: document.getElementById('ingredients').value.split('\n').map(i => i.trim()).filter(i => i),
+        instructions: document.getElementById('instructions').value.split('\n').map(i => i.trim()).filter(i => i),
+        notes: document.getElementById('notes').value.trim() || null
+      };
+      
+      try {
+        await setDoc(doc(db, recipesPath, slug), recipe);
+        showMessage('Recipe saved successfully!', 'success');
+        cancelEdit();
+        loadRecipes();
+      } catch (error) {
+        showMessage('Failed to save recipe: ' + error.message, 'error');
+      }
+    };
+    
+    window.deleteRecipe = async function(slug, title) {
+      if (!confirm(`Are you sure you want to delete "${title}"?`)) {
+        return;
+      }
+      
+      try {
+        await deleteDoc(doc(db, recipesPath, slug));
+        showMessage('Recipe deleted successfully!', 'success');
+        loadRecipes();
+      } catch (error) {
+        showMessage('Failed to delete recipe: ' + error.message, 'error');
+      }
+    };
+    
+    window.cancelEdit = function() {
+      document.getElementById('editorSection').classList.add('hidden');
+      document.getElementById('recipeForm').reset();
+    };
+    
+    function showMessage(message, type) {
+      const messageDiv = document.getElementById('statusMessage');
+      messageDiv.className = `status-message status-${type}`;
+      messageDiv.textContent = message;
+      messageDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        messageDiv.style.display = 'none';
+      }, 5000);
+    }
+    
+    // Image upload handlers
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadPrompt = document.getElementById('uploadPrompt');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, () => {
+        uploadArea.classList.add('dragging');
+      }, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, () => {
+        uploadArea.classList.remove('dragging');
+      }, false);
+    });
+    
+    // Handle dropped files
+    uploadArea.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    }, false);
+    
+    // Handle file input change
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+    
+    function handleFile(file) {
+      // Validate file type
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        showMessage('Please upload a PNG, JPG, JPEG, or WEBP image', 'error');
+        return;
+      }
+      
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        showMessage('Image must be less than 5MB', 'error');
+        return;
+      }
+      
+      currentImageFile = file;
+      
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadPrompt.style.display = 'none';
+        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+      
+      // Show filename in input
+      const filename = generateImageFilename(file);
+      document.getElementById('image').value = filename;
+    }
+    
+    function generateImageFilename(file) {
+      const timestamp = Date.now();
+      const extension = file.name.split('.').pop();
+      const baseName = file.name.replace(`.${extension}`, '').toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .substring(0, 30);
+      return `${baseName}-${timestamp}.${extension}`;
+    }
+    
+    async function uploadImage(file, filename) {
+      return new Promise((resolve, reject) => {
+        const storageRef = ref(storage, `recipe-images/${filename}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+        
+        uploadProgress.style.display = 'block';
+        
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            uploadProgressBar.style.width = progress + '%';
+          },
+          (error) => {
+            uploadProgress.style.display = 'none';
+            reject(error);
+          },
+          async () => {
+            uploadProgress.style.display = 'none';
+            uploadProgressBar.style.width = '0%';
+            resolve(filename);
+          }
+        );
+      });
+    }
+    
+    // Modify saveRecipe to handle image upload
+    const originalSaveRecipe = window.saveRecipe;
+    window.saveRecipe = async function(event) {
+      event.preventDefault();
+      
+      // If there's a new image to upload
+      if (currentImageFile) {
+        const filename = document.getElementById('image').value;
+        try {
+          showMessage('Uploading image...', 'success');
+          await uploadImage(currentImageFile, filename);
+          showMessage('Image uploaded successfully!', 'success');
+        } catch (error) {
+          showMessage('Failed to upload image: ' + error.message, 'error');
+          return;
+        }
+      }
+      
+      // Continue with original save logic
+      const title = document.getElementById('title').value.trim();
+      const editingSlug = document.getElementById('editingSlug').value;
+      const slug = editingSlug || generateSlug(title);
+      
+      const recipe = {
+        title: title,
+        slug: slug,
+        description: document.getElementById('description').value.trim() || null,
+        servings: document.getElementById('servings').value.trim() || null,
+        prepTime: document.getElementById('prepTime').value.trim() || null,
+        cookTime: document.getElementById('cookTime').value.trim() || null,
+        totalTime: document.getElementById('totalTime').value.trim() || null,
+        source: document.getElementById('source').value.trim() || null,
+        image: document.getElementById('image').value.trim() || null,
+        category: document.getElementById('category').value.trim() || null,
+        ingredients: document.getElementById('ingredients').value.split('\n').map(i => i.trim()).filter(i => i),
+        instructions: document.getElementById('instructions').value.split('\n').map(i => i.trim()).filter(i => i),
+        notes: document.getElementById('notes').value.trim() || null
+      };
+      
+      try {
+        await setDoc(doc(db, recipesPath, slug), recipe);
+        showMessage('Recipe saved successfully!', 'success');
+        currentImageFile = null; // Reset after successful save
+        cancelEdit();
+        loadRecipes();
+      } catch (error) {
+        showMessage('Failed to save recipe: ' + error.message, 'error');
+      }
+    };
+    
+    // Reset image preview when canceling or starting new recipe
+    const originalCancelEdit = window.cancelEdit;
+    window.cancelEdit = function() {
+      currentImageFile = null;
+      imagePreview.innerHTML = '';
+      uploadPrompt.style.display = 'block';
+      originalCancelEdit();
+    };
+    
+    const originalShowNewRecipe = window.showNewRecipeForm;
+    window.showNewRecipeForm = function() {
+      currentImageFile = null;
+      imagePreview.innerHTML = '';
+      uploadPrompt.style.display = 'block';
+      originalShowNewRecipe();
+    };
+  </script>
+</body>
+</html>
