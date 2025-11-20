@@ -162,7 +162,6 @@
       color: #9d9d9d;
       font-size: 0.90em;
       margin-bottom: 25px;
-      text-transform: capitalize;
     }
     .recipe-meta span { margin-right: 0 !important; }
 
@@ -417,7 +416,6 @@
       font-size: 1.2em;
       font-weight: 700;
       margin: 20px 0 20px 0;
-      text-transform: capitalize;
     }
 
     .ingredients-list { list-style: none; margin-bottom: 25px; }
@@ -598,11 +596,12 @@
       .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container, .mobile-floating-icon {
         display: none !important;
       }
-      /* Hide logos and recipe images in print */
+      /* Hide logos, recipe images, and back link in print */
       .grid-view > img[alt="Chomp Recipes Logo"],
       .recipe-view > img[alt="Chomp Recipes Logo"],
       .recipe-logo,
-      .recipe-image {
+      .recipe-image,
+      .back-to-grid-link {
         display: none !important;
       }
       body { display: block; min-height: auto; color: #000000; }
@@ -1306,12 +1305,12 @@ onclick="window.location.hash='#grid'">
       const content = document.getElementById('recipeContent');
 
       let metaInfo = [];
-      if (recipe.prepTime) metaInfo.push(`<span>prep: ${recipe.prepTime}</span>`);
-      if (recipe.cookTime) metaInfo.push(`<span>cook: ${recipe.cookTime}</span>`);
-      if (recipe.totalTime) metaInfo.push(`<span>total: ${recipe.totalTime}</span>`);
-      if (recipe.servings) metaInfo.push(`<span>servings: ${recipe.servings}</span>`);
-      if (recipe.source) metaInfo.push(`<span>source: ${parseMarkdown(recipe.source)}</span>`);
-      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>category: ${recipe.category}</span>`);
+      if (recipe.prepTime) metaInfo.push(`<span>Prep: ${recipe.prepTime}</span>`);
+      if (recipe.cookTime) metaInfo.push(`<span>Cook: ${recipe.cookTime}</span>`);
+      if (recipe.totalTime) metaInfo.push(`<span>Total: ${recipe.totalTime}</span>`);
+      if (recipe.servings) metaInfo.push(`<span>Servings: ${recipe.servings}</span>`);
+      if (recipe.source) metaInfo.push(`<span>Source: ${parseMarkdown(recipe.source)}</span>`);
+      if (recipe.category && recipe.category !== 'null') metaInfo.push(`<span>Category: ${recipe.category}</span>`);
 
       // Handle image path - support both local images and Firebase Storage URLs
       let imageHTML = '';
@@ -1351,7 +1350,7 @@ onclick="window.location.hash='#grid'">
           // Regular instruction with numbering
           return `<li class="instruction-item">${parsed}</li>`;
       }).join('');
-      let notesHTML = recipe.notes?`<div class="section-title">notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
+      let notesHTML = recipe.notes?`<div class="section-title">Notes</div><div class="notes-section">${parseMarkdown(recipe.notes)}</div>`:'';
 
       if (recipe.slug) {
         // NOTE: Removed history.replaceState
@@ -1360,7 +1359,7 @@ onclick="window.location.hash='#grid'">
       content.innerHTML = `
         <div class="recipe-view">
           <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="recipe-logo" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 20px auto;">
-          <p style="text-align: center; margin-bottom: 30px;">
+          <p class="back-to-grid-link" style="text-align: center; margin-bottom: 30px;">
             <a href="#grid" class="email-link" style="font-size: 0.95em; font-weight: 400;">← Back to All Recipes</a>
           </p>
           <div class="recipe-header">
@@ -1375,9 +1374,9 @@ onclick="window.location.hash='#grid'">
             </div>
           </div>
           ${descriptionHTML}${imageHTML}
-          <div class="section-title">ingredients</div>
+          <div class="section-title">Ingredients</div>
           <ul class="ingredients-list">${ingredientsHTML}</ul>
-          <div class="section-title">instructions</div>
+          <div class="section-title">Instructions</div>
           <ol class="instructions-list">${instructionsHTML}</ol>
           ${notesHTML}
         </div>
