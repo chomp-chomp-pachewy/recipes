@@ -1115,7 +1115,7 @@ onclick="window.location.hash='#grid'">
           <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="home-image">
           <h1 class="recipe-title">Recipes & Rituals</h1>
           <p class="recipe-description" style="text-align: center; margin-bottom: 30px;">
-          <a href="#grid" class="email-link" style="font-size: 1.1em;">See All Recipes →</a>
+          <a href="#grid" onclick="displayGridPage(recipes); window.scrollTo(0, 0); return false;" class="email-link" style="font-size: 1.1em; cursor: pointer;">See All Recipes →</a>
           </p>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
@@ -1180,7 +1180,7 @@ onclick="window.location.hash='#grid'">
           </p>
           
           <p class="recipe-description" style="margin-top: 40px; text-align: center;">
-          <a href="#grid" class="email-link" style="font-size: 1.1em;">See All Recipes →</a>
+          <a href="#grid" onclick="displayGridPage(recipes); window.scrollTo(0, 0); return false;" class="email-link" style="font-size: 1.1em; cursor: pointer;">See All Recipes →</a>
           </p> 
       </div>
     `;
@@ -1360,7 +1360,7 @@ onclick="window.location.hash='#grid'">
         <div class="recipe-view">
           <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="recipe-logo" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 20px auto;">
           <p class="back-to-grid-link" style="text-align: center; margin-bottom: 30px;">
-            <a href="#grid" onclick="displayGridPage(recipes); window.scrollTo(0, 0); return false;" class="email-link" style="font-size: 0.95em; font-weight: 400; cursor: pointer;">← Back to All Recipes</a>
+            <a href="#grid" onclick="window.location.hash='#grid'; return false;" class="email-link" style="font-size: 0.95em; font-weight: 400; cursor: pointer;">← Back to All Recipes</a>
           </p>
           <div class="recipe-header">
             <h1 class="recipe-title">${recipe.title}</h1>
@@ -1448,6 +1448,7 @@ onclick="window.location.hash='#grid'">
             .find(el => el.querySelector('.recipe-name').textContent.trim() === target.title);
             
         selectRecipe(target, item || {}); 
+        window.scrollTo(0, 0);
     }
 
     function filterAndSortGrid() {
@@ -1617,8 +1618,10 @@ onclick="window.location.hash='#grid'">
     window.addEventListener('hashchange', () => {
         if (window.location.hash === '#grid' && recipes.length > 0) {
             displayGridPage(recipes);
+            window.scrollTo(0, 0);
         } else if (window.location.hash === '' || window.location.hash === '#home') {
             window.resetRecipeView();
+            window.scrollTo(0, 0);
         }
     });
 
