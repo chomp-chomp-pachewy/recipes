@@ -345,84 +345,32 @@
       color: #7d7d7d;
     }
     
-    /* Mobile-only grid view button */
-    .mobile-grid-button {
-      display: none;
+    /* Floating navigation icon */
+    .mobile-floating-icon {
       position: fixed;
       bottom: 30px;
       right: 30px;
-      background: #e73b42;
-      color: white;
-      border: none;
-      border-radius: 50%;
       width: 60px;
       height: 60px;
-      font-size: 24px;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(231, 59, 66, 0.4);
       z-index: 1000;
       transition: transform 0.2s, box-shadow 0.2s;
+      border-radius: 50%;
+      background: white;
+      padding: 8px;
     }
     
-    .mobile-grid-button:active {
+    .mobile-floating-icon:active {
       transform: scale(0.95);
     }
     
-    /* Top navigation icons */
-    .top-nav-icons {
-      position: fixed;
-      top: 20px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 30px;
-      z-index: 999;
-      pointer-events: none;
-    }
-    
-    .nav-icon {
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      opacity: 0.9;
-      transition: opacity 0.2s, transform 0.2s;
-      pointer-events: auto;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .nav-icon:hover {
-      opacity: 1;
+    .mobile-floating-icon:hover {
       transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(231, 59, 66, 0.5);
     }
     
-    .nav-icon:active {
-      transform: scale(0.95);
-    }
-
-    /* ---------------------------------------------------- */
-    /* === RATING SPECIFIC STYLES (Kept for later use) === */
-    /* ---------------------------------------------------- */
-    /* NOTE: Display of these elements is currently disabled in JS */
-    .rating-container {
-        display: none; /* Temporarily hidden */
-        align-items: center;
-        gap: 10px;
-        margin-top: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
-    }
-    .stars-display {
-        font-size: 1.5em;
-        color: #ffc107;
-        letter-spacing: -2px;
-    }
-    /* ... (Rest of rating styles hidden) */
-
-
-    /* ---------------------------------------------------- */
-    /* === ACTIONS & SECTIONS (FULL RECIPE) === */
+    /* Mobile-only floating icon button */
     /* ---------------------------------------------------- */
 
     .recipe-actions {
@@ -577,8 +525,8 @@
       
       .recipe-image { max-width: 80%; }
       
-      /* Show mobile grid button */
-      .mobile-grid-button {
+      /* Show floating icon on mobile */
+      .mobile-floating-icon {
         display: block;
       }
       
@@ -795,28 +743,20 @@
       }
       
       /* Navigation icons in dark mode */
-      .nav-icon {
-        box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+      .mobile-floating-icon {
+        background: #2a2a2a;
+        box-shadow: 0 4px 12px rgba(255, 77, 90, 0.4);
+      }
+      
+      .mobile-floating-icon:hover {
+        box-shadow: 0 6px 16px rgba(255, 77, 90, 0.6);
       }
     }
   </style>
 
 </head>
 <body>
-  <!-- Top navigation icons -->
-  <div class="top-nav-icons">
-    <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media" 
-         alt="All Recipes" 
-         class="nav-icon" 
-         onclick="window.location.hash='#grid'"
-         title="All Recipes / Rituals">
-    <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media" 
-         alt="Home" 
-         class="nav-icon" 
-         onclick="window.resetRecipeView()"
-         title="Home / Manifesto">
-  </div>
-  
+
   <div class="sidebar">
     <div class="sidebar-header" onclick="window.resetRecipeView()" style="cursor: pointer;">
       <div class="sidebar-title">Recipes / Rituals</div>
@@ -843,11 +783,15 @@
   </div>
 
   <div class="recipe-content" id="recipeContent"></div>
-  
-  <!-- Mobile-only floating grid button -->
-  <button class="mobile-grid-button" id="mobileGridBtn" onclick="window.location.hash='#grid'" title="View All Recipes">
-    ☰
-  </button>
+
+  <!-- Floating navigation icon -->
+
+<img id="floatingIcon" 
+class="mobile-floating-icon" 
+src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
+alt="Navigate"
+title="View All Recipes"
+onclick="window.location.hash='#grid'">
 
   <script type="module">
     // --- FIREBASE IMPORTS ---
@@ -1164,6 +1108,10 @@
    
           <p class="recipe-description">
           <a href="https://tools.chomp.ltd" class="email-link">chomp chomp: tools</a>
+          </p>
+          
+          <p class="recipe-description" style="margin-top: 40px; text-align: center;">
+          <a href="#grid" class="email-link" style="font-size: 1.1em;">See All Recipes →</a>
           </p> 
       </div>
     `;
@@ -1173,9 +1121,13 @@
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
         
-        // Show mobile grid button on home view
-        const mobileBtn = document.getElementById('mobileGridBtn');
-        if (mobileBtn && window.innerWidth <= 768) mobileBtn.style.display = 'block';
+        // Update floating icon to show cookie (grid) icon
+        const floatingIcon = document.getElementById('floatingIcon');
+        if (floatingIcon) {
+            floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media';
+            floatingIcon.title = 'View All Recipes';
+            floatingIcon.onclick = () => window.location.hash = '#grid';
+        }
         
         // Clear hash without triggering hashchange event
         if (window.location.hash) {
@@ -1349,6 +1301,14 @@
         <ol class="instructions-list">${instructionsHTML}</ol>
         ${notesHTML}
       `;
+      
+      // Update floating icon to show heart (home) when viewing a recipe
+      const floatingIcon = document.getElementById('floatingIcon');
+      if (floatingIcon) {
+          floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media';
+          floatingIcon.title = 'Home / Manifesto';
+          floatingIcon.onclick = () => window.resetRecipeView();
+      }
       
       renderRatingUI(recipe.slug);
     }
@@ -1526,9 +1486,13 @@
 
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
         
-        // Hide mobile grid button when in grid view
-        const mobileBtn = document.getElementById('mobileGridBtn');
-        if (mobileBtn) mobileBtn.style.display = 'none';
+        // Update floating icon to show heart (home) icon
+        const floatingIcon = document.getElementById('floatingIcon');
+        if (floatingIcon) {
+            floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media';
+            floatingIcon.title = 'Home / Manifesto';
+            floatingIcon.onclick = () => window.resetRecipeView();
+        }
         
         // Add grid search functionality
         document.getElementById('gridSearchBox').addEventListener('input', (e) => {
