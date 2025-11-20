@@ -142,7 +142,7 @@
     .recipe-content {
       flex: 1;
       overflow-y: auto;
-      padding: 80px 50px;
+      padding: 40px 50px;
       max-width: 1200px; 
       margin: 0 auto;
     }
@@ -783,15 +783,14 @@
   </div>
 
   <div class="recipe-content" id="recipeContent"></div>
-
+  
   <!-- Floating navigation icon -->
-
-<img id="floatingIcon" 
-class="mobile-floating-icon" 
-src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
-alt="Navigate"
-title="View All Recipes"
-onclick="window.location.hash='#grid'">
+  <img id="floatingIcon" 
+       class="mobile-floating-icon" 
+       src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
+       alt="Navigate"
+       title="View All Recipes"
+       onclick="window.location.hash='#grid'">
 
   <script type="module">
     // --- FIREBASE IMPORTS ---
@@ -1302,12 +1301,12 @@ onclick="window.location.hash='#grid'">
         ${notesHTML}
       `;
       
-      // Update floating icon to show heart (home) when viewing a recipe
+      // Update floating icon to show cookie (grid) when viewing a recipe
       const floatingIcon = document.getElementById('floatingIcon');
       if (floatingIcon) {
-          floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media';
-          floatingIcon.title = 'Home / Manifesto';
-          floatingIcon.onclick = () => window.resetRecipeView();
+          floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media';
+          floatingIcon.title = 'View All Recipes';
+          floatingIcon.onclick = () => window.location.hash = '#grid';
       }
       
       renderRatingUI(recipe.slug);
