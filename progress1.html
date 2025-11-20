@@ -1123,9 +1123,9 @@
         // Update floating icon to show cookie (grid) icon
         const floatingIcon = document.getElementById('floatingIcon');
         if (floatingIcon) {
-            floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media';
-            floatingIcon.title = 'View All Recipes';
-            floatingIcon.onclick = () => window.location.hash = '#grid';
+            floatingIcon.setAttribute('src', 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media');
+            floatingIcon.setAttribute('title', 'View All Recipes');
+            floatingIcon.onclick = function() { window.location.hash = '#grid'; };
         }
         
         // Clear hash without triggering hashchange event
@@ -1282,31 +1282,33 @@
       }
       
       content.innerHTML = `
-        <div class="recipe-header">
-          <h1 class="recipe-title">${recipe.title}</h1>
-          <div class="recipe-meta">${metaInfo.join(' | ')}</div>
-          
-          <div id="rating-ui-container"></div>
-          
-          <div class="recipe-actions">
-            <button onclick="window.printRecipe()" class="recipe-action-button">Print</button>
-            <button onclick="window.copyPermalink()" class="recipe-action-button">Copy Link</button>
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <div class="recipe-header">
+            <h1 class="recipe-title">${recipe.title}</h1>
+            <div class="recipe-meta">${metaInfo.join(' | ')}</div>
+            
+            <div id="rating-ui-container"></div>
+            
+            <div class="recipe-actions">
+              <button onclick="window.printRecipe()" class="recipe-action-button">Print</button>
+              <button onclick="window.copyPermalink()" class="recipe-action-button">Copy Link</button>
+            </div>
           </div>
+          ${descriptionHTML}${imageHTML}
+          <div class="section-title">ingredients</div>
+          <ul class="ingredients-list">${ingredientsHTML}</ul>
+          <div class="section-title">instructions</div>
+          <ol class="instructions-list">${instructionsHTML}</ol>
+          ${notesHTML}
         </div>
-        ${descriptionHTML}${imageHTML}
-        <div class="section-title">ingredients</div>
-        <ul class="ingredients-list">${ingredientsHTML}</ul>
-        <div class="section-title">instructions</div>
-        <ol class="instructions-list">${instructionsHTML}</ol>
-        ${notesHTML}
       `;
       
       // Update floating icon to show cookie (grid) when viewing a recipe
       const floatingIcon = document.getElementById('floatingIcon');
       if (floatingIcon) {
-          floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media';
-          floatingIcon.title = 'View All Recipes';
-          floatingIcon.onclick = () => window.location.hash = '#grid';
+          floatingIcon.setAttribute('src', 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media');
+          floatingIcon.setAttribute('title', 'View All Recipes');
+          floatingIcon.onclick = function() { window.location.hash = '#grid'; };
       }
       
       renderRatingUI(recipe.slug);
@@ -1488,9 +1490,9 @@
         // Update floating icon to show heart (home) icon
         const floatingIcon = document.getElementById('floatingIcon');
         if (floatingIcon) {
-            floatingIcon.src = 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media';
-            floatingIcon.title = 'Home / Manifesto';
-            floatingIcon.onclick = () => window.resetRecipeView();
+            floatingIcon.setAttribute('src', 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media');
+            floatingIcon.setAttribute('title', 'Home / Manifesto');
+            floatingIcon.onclick = function() { window.resetRecipeView(); };
         }
         
         // Add grid search functionality
