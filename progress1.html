@@ -593,10 +593,18 @@
     }
 
     @media print {
-      .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container {
+      .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container, .mobile-floating-icon {
+        display: none !important;
+      }
+      /* Hide logos and recipe images in print */
+      .grid-view > img[alt="Chomp Recipes Logo"],
+      .recipe-view > img[alt="Chomp Recipes Logo"],
+      .recipe-logo,
+      .recipe-image {
         display: none !important;
       }
       body { display: block; min-height: auto; color: #000000; }
+      body::before { display: none !important; }
       .recipe-content { width: 100%; max-width: 100%; margin: 0; padding: 0; }
       .recipe-title { color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .recipe-meta, .recipe-description { color: #333333; }
