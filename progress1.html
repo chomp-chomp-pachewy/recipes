@@ -142,7 +142,7 @@
     .recipe-content {
       flex: 1;
       overflow-y: auto;
-      padding: 40px 50px;
+      padding: 0;
       max-width: 1200px; 
       margin: 0 auto;
     }
@@ -184,7 +184,7 @@
     /* Home/Manifesto Specific Styles */
     .home-text {
       text-align: left;
-      padding: 0;
+      padding: 40px 50px;
       max-width: 750px;
       margin: 0 auto;
       font-size: 1.05em;
@@ -221,6 +221,12 @@
     .grid-view {
       padding: 40px 50px;
       max-width: 1200px; /* Adjusted max-width */ 
+      margin: 0 auto;
+    }
+    
+    .recipe-view {
+      padding: 40px 50px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
@@ -1282,7 +1288,7 @@
       }
       
       content.innerHTML = `
-        <div style="max-width: 1200px; margin: 0 auto;">
+        <div class="recipe-view">
           <div class="recipe-header">
             <h1 class="recipe-title">${recipe.title}</h1>
             <div class="recipe-meta">${metaInfo.join(' | ')}</div>
