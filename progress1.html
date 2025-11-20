@@ -162,6 +162,7 @@
       color: #9d9d9d;
       font-size: 0.90em;
       margin-bottom: 25px;
+      text-transform: capitalize;
     }
     .recipe-meta span { margin-right: 0 !important; }
 
@@ -416,6 +417,7 @@
       font-size: 1.2em;
       font-weight: 700;
       margin: 20px 0 20px 0;
+      text-transform: capitalize;
     }
 
     .ingredients-list { list-style: none; margin-bottom: 25px; }
@@ -572,6 +574,18 @@
       .notes-section {
         padding-left: 10px;
         padding-right: 10px;
+      }
+      
+      /* Ensure recipe actions are visible and clickable on mobile */
+      .recipe-actions {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      
+      .recipe-action-button {
+        font-size: 1em;
+        padding: 10px 14px;
+        min-width: 100px;
       }
       
       /* Adjust recipe title size on mobile */
@@ -976,7 +990,12 @@ onclick="window.location.hash='#grid'">
         return (str.startsWith('{') && str.endsWith('}')) || (str.startsWith('[') && str.endsWith(']'));
     }
 
-    window.printRecipe = function () { window.print(); }
+    window.printRecipe = function () { 
+      // Timeout helps ensure the page is fully rendered before printing
+      setTimeout(function() {
+        window.print(); 
+      }, 100);
+    }
 
     function generateSlug(title) {
         return title
