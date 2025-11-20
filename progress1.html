@@ -529,6 +529,29 @@
         padding: 20px 0;
       }
       
+      /* Update recipe view to match grid styling */
+      .recipe-view {
+        padding: 20px 0;
+        max-width: 95%;
+        margin: 0 auto;
+      }
+      
+      /* Add padding to recipe sections for consistency */
+      .recipe-header,
+      .recipe-description,
+      .section-title,
+      .ingredients-list,
+      .instructions-list,
+      .notes-section {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      
+      /* Adjust recipe title size on mobile */
+      .recipe-view .recipe-title {
+        font-size: 1.5em !important;
+      }
+      
       .recipe-image { max-width: 80%; }
       
       /* Show floating icon on mobile */
@@ -789,14 +812,15 @@
   </div>
 
   <div class="recipe-content" id="recipeContent"></div>
-  
+
   <!-- Floating navigation icon -->
-  <img id="floatingIcon" 
-       class="mobile-floating-icon" 
-       src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
-       alt="Navigate"
-       title="View All Recipes"
-       onclick="window.location.hash='#grid'">
+
+<img id="floatingIcon" 
+class="mobile-floating-icon" 
+src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
+alt="Navigate"
+title="View All Recipes"
+onclick="window.location.hash='#grid'">
 
   <script type="module">
     // --- FIREBASE IMPORTS ---
