@@ -393,6 +393,13 @@
       gap: 10px;
       margin-top: 10px;
     }
+    
+    /* Hide print button on mobile */
+    @media (max-width: 768px) {
+      .recipe-actions .recipe-action-button:first-child {
+        display: none;
+      }
+    }
 
     .recipe-action-button {
       font-family: 'Inter', sans-serif !important;
