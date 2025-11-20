@@ -142,7 +142,7 @@
     .recipe-content {
       flex: 1;
       overflow-y: auto;
-      padding: 80px 50px;
+      padding: 0;
       max-width: 1200px; 
       margin: 0 auto;
     }
@@ -150,17 +150,19 @@
     .recipe-header { margin-bottom: 25px; }
 
     .recipe-title {
-      font-size: 1.9em;
-      font-weight: 450;
+      font-size: 1.6em;
+      font-weight: 600;
       color: #e73b42;
       margin-bottom: 25px;
       line-height: 1.2;
+      text-align: center;
     }
 
     .recipe-meta {
       color: #9d9d9d;
       font-size: 0.90em;
       margin-bottom: 25px;
+      text-transform: capitalize;
     }
     .recipe-meta span { margin-right: 0 !important; }
 
@@ -184,12 +186,12 @@
     /* Home/Manifesto Specific Styles */
     .home-text {
       text-align: left;
-      padding: 0;
-      max-width: 750px;
+      padding: 40px 50px;
+      max-width: 1200px;
       margin: 0 auto;
-      font-size: 1.05em;
+      font-size: 1em;
       font-family: 'Inter', sans-serif;
-      line-height: 1.85;
+      line-height: 1.8;
     }
 
     .home-text .home-image {
@@ -212,7 +214,7 @@
     .home-text .recipe-description {
       color: #353535 !important;
       font-size: 1em !important;
-      line-height: 1.9 !important;
+      line-height: 1.8 !important;
     }
 
     /* ---------------------------------------------------- */
@@ -222,6 +224,17 @@
       padding: 40px 50px;
       max-width: 1200px; /* Adjusted max-width */ 
       margin: 0 auto;
+    }
+    
+    .recipe-view {
+      padding: 40px 50px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Recipe titles should be left-aligned, not centered */
+    .recipe-view .recipe-title {
+      text-align: left;
     }
 
     .recipe-cards-container {
@@ -307,6 +320,8 @@
       padding: 8px 10px;
       border: 1px solid #e0e0e0;
       border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
     }
     
     .grid-search-box {
@@ -342,29 +357,34 @@
       border-color: #E73B42;
       color: #7d7d7d;
     }
-
-    /* ---------------------------------------------------- */
-    /* === RATING SPECIFIC STYLES (Kept for later use) === */
-    /* ---------------------------------------------------- */
-    /* NOTE: Display of these elements is currently disabled in JS */
-    .rating-container {
-        display: none; /* Temporarily hidden */
-        align-items: center;
-        gap: 10px;
-        margin-top: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+    
+    /* Floating navigation icon */
+    .mobile-floating-icon {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(231, 59, 66, 0.4);
+      z-index: 1000;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border-radius: 50%;
+      background: white;
+      padding: 8px;
+      display: block; /* Show on all devices */
     }
-    .stars-display {
-        font-size: 1.5em;
-        color: #ffc107;
-        letter-spacing: -2px;
+    
+    .mobile-floating-icon:active {
+      transform: scale(0.95);
     }
-    /* ... (Rest of rating styles hidden) */
-
-
-    /* ---------------------------------------------------- */
-    /* === ACTIONS & SECTIONS (FULL RECIPE) === */
+    
+    .mobile-floating-icon:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(231, 59, 66, 0.5);
+    }
+    
+    /* Mobile-only floating icon button */
     /* ---------------------------------------------------- */
 
     .recipe-actions {
@@ -397,6 +417,7 @@
       font-size: 1.2em;
       font-weight: 700;
       margin: 20px 0 20px 0;
+      text-transform: capitalize;
     }
 
     .ingredients-list { list-style: none; margin-bottom: 25px; }
@@ -477,7 +498,7 @@
         display: block;
         width: 100%;
         height: 180px;
-        background-image: url('images/Chomp Chomp logos.jpeg');
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
@@ -488,6 +509,12 @@
       /* Hide the home-image inside home-text on mobile */
       .home-text .home-image {
         display: none;
+      }
+      
+      /* Hide grid and recipe page logos on mobile - body::before already shows header logo */
+      .grid-view > img[alt="Chomp Recipes Logo"],
+      .recipe-view > img[alt="Chomp Recipes Logo"] {
+        display: none !important;
       }
       
       body { 
@@ -505,17 +532,81 @@
         max-width: 100% !important;
       }
       
+      /* Make grid cards wider on mobile */
+      .recipe-cards-container {
+        max-width: 95%;
+        margin: 0 auto;
+        padding: 0 10px;
+      }
+      
+      /* Match home page to grid/recipe styling on mobile */
+      .home-text {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 20px 0;
+      }
+      
+      /* Add padding only to inner content, not the container */
+      .home-text .recipe-title,
+      .home-text .section-title,
+      .home-text .recipe-description {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      
+      .grid-view {
+        padding: 20px 0;
+      }
+      
+      /* Update recipe view to match grid styling */
+      .recipe-view {
+        padding: 20px 0;
+        max-width: 95%;
+        margin: 0 auto;
+      }
+      
+      /* Add padding to recipe sections for consistency */
+      .recipe-header,
+      .recipe-description,
+      .section-title,
+      .ingredients-list,
+      .instructions-list,
+      .notes-section {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      
+      /* Adjust recipe title size on mobile */
+      .recipe-view .recipe-title {
+        font-size: 1.4em !important;
+      }
+      
       .recipe-image { max-width: 80%; }
       
       .recipe-cards-container { grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); }
       .grid-controls { flex-direction: column; align-items: stretch; }
     }
 
+    /* Desktop - ensure sidebar is visible */
+    @media (min-width: 769px) {
+      .sidebar {
+        display: flex !important;
+      }
+    }
+
     @media print {
-      .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container {
+      .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container, .mobile-floating-icon {
+        display: none !important;
+      }
+      /* Hide logos and recipe images in print */
+      .grid-view > img[alt="Chomp Recipes Logo"],
+      .recipe-view > img[alt="Chomp Recipes Logo"],
+      .recipe-logo,
+      .recipe-image {
         display: none !important;
       }
       body { display: block; min-height: auto; color: #000000; }
+      body::before { display: none !important; }
       .recipe-content { width: 100%; max-width: 100%; margin: 0; padding: 0; }
       .recipe-title { color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .recipe-meta, .recipe-description { color: #333333; }
@@ -625,6 +716,7 @@
       .home-text,
       .home-text .recipe-description {
         color: #c0c0c0 !important;
+        line-height: 1.8 !important;
       }
       
       .home-text .recipe-title {
@@ -711,14 +803,25 @@
           filter: brightness(0.9);
         }
       }
+      
+      /* Navigation icons in dark mode */
+      .mobile-floating-icon {
+        background: #2a2a2a;
+        box-shadow: 0 4px 12px rgba(255, 77, 90, 0.4);
+      }
+      
+      .mobile-floating-icon:hover {
+        box-shadow: 0 6px 16px rgba(255, 77, 90, 0.6);
+      }
     }
   </style>
 
 </head>
 <body>
+
   <div class="sidebar">
     <div class="sidebar-header" onclick="window.resetRecipeView()" style="cursor: pointer;">
-      <div class="sidebar-title">Rituals / Recipes</div>
+      <div class="sidebar-title">Recipes / Rituals</div>
       <a href="#grid" id="gridViewLink" style="font-size:0.85em; color: #E73B42; margin-top: 5px; display: block; text-decoration: none;">View All Recipes (Grid)</a>
     </div>
 
@@ -742,6 +845,15 @@
   </div>
 
   <div class="recipe-content" id="recipeContent"></div>
+
+  <!-- Floating navigation icon -->
+
+<img id="floatingIcon" 
+class="mobile-floating-icon" 
+src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
+alt="Navigate"
+title="View All Recipes"
+onclick="window.location.hash='#grid'">
 
   <script type="module">
     // --- FIREBASE IMPORTS ---
@@ -866,7 +978,12 @@
         return (str.startsWith('{') && str.endsWith('}')) || (str.startsWith('[') && str.endsWith(']'));
     }
 
-    window.printRecipe = function () { window.print(); }
+    window.printRecipe = function () { 
+      // Timeout helps ensure the page is fully rendered before printing
+      setTimeout(function() {
+        window.print(); 
+      }, 100);
+    }
 
     function generateSlug(title) {
         return title
@@ -996,8 +1113,11 @@
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="images/Chomp Chomp logos.jpeg" alt="Chomp Recipes Logo" class="home-image">
-          <h1 class="recipe-title" style="font-size:1.8em;">Recipes & Rituals</h1>
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="home-image">
+          <h1 class="recipe-title">Recipes & Rituals</h1>
+          <p class="recipe-description" style="text-align: center; margin-bottom: 30px;">
+          <a href="#grid" class="email-link" style="font-size: 1.1em;">See All Recipes →</a>
+          </p>
           <h2 class="section-title manifesto-title" style="font-size:1.2em;">
             <span class="manifesto-line-1">A Baking Manifesto</span>
           </h2>
@@ -1058,6 +1178,10 @@
    
           <p class="recipe-description">
           <a href="https://tools.chomp.ltd" class="email-link">chomp chomp: tools</a>
+          </p>
+          
+          <p class="recipe-description" style="margin-top: 40px; text-align: center;">
+          <a href="#grid" class="email-link" style="font-size: 1.1em;">See All Recipes →</a>
           </p> 
       </div>
     `;
@@ -1066,6 +1190,19 @@
         document.querySelectorAll('.recipe-item').forEach(item => item.classList.remove('active'));
         document.getElementById('recipeContent').innerHTML = HOME_CONTENT_HTML;
         currentRecipe = null;
+        
+        // Update floating icon to show cookie (grid) icon
+        const floatingIcon = document.getElementById('floatingIcon');
+        if (floatingIcon) {
+            floatingIcon.setAttribute('src', 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media');
+            floatingIcon.setAttribute('title', 'View All Recipes');
+            floatingIcon.onclick = function(e) { 
+              e.preventDefault();
+              window.location.hash = '#grid';
+              displayGridPage(recipes);
+              window.scrollTo(0, 0);
+            };
+        }
         
         // Clear hash without triggering hashchange event
         if (window.location.hash) {
@@ -1221,24 +1358,40 @@
       }
       
       content.innerHTML = `
-        <div class="recipe-header">
-          <h1 class="recipe-title">${recipe.title}</h1>
-          <div class="recipe-meta">${metaInfo.join(' | ')}</div>
-          
-          <div id="rating-ui-container"></div>
-          
-          <div class="recipe-actions">
-            <button onclick="window.printRecipe()" class="recipe-action-button">Print</button>
-            <button onclick="window.copyPermalink()" class="recipe-action-button">Copy Link</button>
+        <div class="recipe-view">
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="recipe-logo" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 30px auto;">
+          <div class="recipe-header">
+            <h1 class="recipe-title">${recipe.title}</h1>
+            <div class="recipe-meta">${metaInfo.join(' | ')}</div>
+            
+            <div id="rating-ui-container"></div>
+            
+            <div class="recipe-actions">
+              <button onclick="window.printRecipe()" class="recipe-action-button">Print</button>
+              <button onclick="window.copyPermalink()" class="recipe-action-button">Copy Link</button>
+            </div>
           </div>
+          ${descriptionHTML}${imageHTML}
+          <div class="section-title">ingredients</div>
+          <ul class="ingredients-list">${ingredientsHTML}</ul>
+          <div class="section-title">instructions</div>
+          <ol class="instructions-list">${instructionsHTML}</ol>
+          ${notesHTML}
         </div>
-        ${descriptionHTML}${imageHTML}
-        <div class="section-title">ingredients</div>
-        <ul class="ingredients-list">${ingredientsHTML}</ul>
-        <div class="section-title">instructions</div>
-        <ol class="instructions-list">${instructionsHTML}</ol>
-        ${notesHTML}
       `;
+      
+      // Update floating icon to show cookie (grid) when viewing a recipe
+      const floatingIcon = document.getElementById('floatingIcon');
+      if (floatingIcon) {
+          floatingIcon.setAttribute('src', 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media');
+          floatingIcon.setAttribute('title', 'View All Recipes');
+          floatingIcon.onclick = function(e) { 
+            e.preventDefault();
+            window.location.hash = '#grid';
+            displayGridPage(recipes);
+            window.scrollTo(0, 0);
+          };
+      }
       
       renderRatingUI(recipe.slug);
     }
@@ -1402,10 +1555,8 @@
         
         content.innerHTML = `
             <div class="grid-view">
-                <h1 class="recipe-title" style="text-align:center;">All Recipes / Rituals</h1>
-                <div style="text-align:center; margin-bottom: 20px;">
-                  <a href="#" onclick="window.resetRecipeView(); return false;" style="color: #e73b42; text-decoration: none; font-size: 0.9em;">← Switch to Scroll View</a>
-                </div>
+                <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 30px auto;">
+                <h1 class="recipe-title">All Recipes / Rituals</h1>
                 ${gridControlsHTML}
                 <div class="recipe-cards-container" id="gridCardsContainer">
                     ${initialCards}
@@ -1418,6 +1569,18 @@
         `;
 
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
+        
+        // Update floating icon to show heart (home) icon
+        const floatingIcon = document.getElementById('floatingIcon');
+        if (floatingIcon) {
+            floatingIcon.setAttribute('src', 'https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20manifesto%20icon.png?alt=media');
+            floatingIcon.setAttribute('title', 'Home / Manifesto');
+            floatingIcon.onclick = function(e) { 
+              e.preventDefault();
+              window.resetRecipeView(); 
+              window.scrollTo(0, 0);
+            };
+        }
         
         // Add grid search functionality
         document.getElementById('gridSearchBox').addEventListener('input', (e) => {
