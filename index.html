@@ -1449,7 +1449,7 @@ onclick="window.location.hash='#grid'">
         window.scrollTo(0, 0);
     }
 
-    function filterAndSortGrid() {
+    window.filterAndSortGrid = function() {
         const sortBy = document.getElementById('grid-sort-by').value;
         const categoryFilter = document.getElementById('filter-category').value;
         const typeFilter = document.getElementById('filter-type').value;
@@ -1509,7 +1509,7 @@ onclick="window.location.hash='#grid'">
         }
     }
 
-    function clearAllFilters() {
+    window.clearAllFilters = function() {
         document.getElementById('filter-category').value = 'all';
         document.getElementById('filter-type').value = 'all';
         document.getElementById('grid-sort-by').value = 'alphabetical';
