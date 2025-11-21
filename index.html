@@ -891,6 +891,14 @@ onclick="window.location.hash='#grid'">
     const RECIPES_PER_PAGE = 15;
     let isAuthReady = false;
     
+    // Store filter state to make it sticky
+    let savedGridFilters = {
+        sortBy: 'alphabetical',
+        category: 'all',
+        type: 'all',
+        search: ''
+    };
+    
     // --- FIREBASE COLLECTION PATHS ---
     function getRecipesCollectionPath() {
         return `artifacts/${appId}/public/data/recipes`;
@@ -1455,6 +1463,14 @@ onclick="window.location.hash='#grid'">
         const typeFilter = document.getElementById('filter-type').value;
         const searchTerm = document.getElementById('gridSearchBox')?.value.toLowerCase() || '';
 
+        // Save current filter state
+        savedGridFilters = {
+            sortBy: sortBy,
+            category: categoryFilter,
+            type: typeFilter,
+            search: searchTerm
+        };
+
         let recipesToFilter = [...recipes]; 
 
         // Apply search filter
@@ -1516,6 +1532,15 @@ onclick="window.location.hash='#grid'">
         if (document.getElementById('gridSearchBox')) {
             document.getElementById('gridSearchBox').value = '';
         }
+        
+        // Reset saved filter state
+        savedGridFilters = {
+            sortBy: 'alphabetical',
+            category: 'all',
+            type: 'all',
+            search: ''
+        };
+        
         filterAndSortGrid();
     }
 
@@ -1572,6 +1597,18 @@ onclick="window.location.hash='#grid'">
         `;
 
         document.getElementById('load-more-btn').onclick = () => loadMoreRecipes(recipesToDisplay);
+        
+        // Restore saved filter state
+        document.getElementById('filter-category').value = savedGridFilters.category;
+        document.getElementById('filter-type').value = savedGridFilters.type;
+        document.getElementById('grid-sort-by').value = savedGridFilters.sortBy;
+        document.getElementById('gridSearchBox').value = savedGridFilters.search;
+        
+        // Apply the saved filters to display the correct recipes
+        if (savedGridFilters.category !== 'all' || savedGridFilters.type !== 'all' || 
+            savedGridFilters.sortBy !== 'alphabetical' || savedGridFilters.search !== '') {
+            filterAndSortGrid();
+        }
         
         // Update floating icon to show heart (home) icon
         const floatingIcon = document.getElementById('floatingIcon');
