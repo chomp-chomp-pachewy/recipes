@@ -513,7 +513,7 @@
       
       /* Hide the home-image link wrapper on mobile */
       .home-text a[title="Go to All Recipes"] {
-        display: none;
+        display: none !important;
       }
       
       /* Hide grid and recipe page logo links on mobile - body::before already shows header logo */
@@ -1438,7 +1438,8 @@ onclick="window.location.hash='#grid'">
         const target = recipes.find(r => r.slug === slug);
         if (!target) return;
         
-        // NOTE: Removed history.replaceState
+        // Add recipe to history so back button works
+        window.location.hash = `recipe-${slug}`;
         
         const recipeList = document.getElementById('recipeList');
         const item = Array.from(recipeList.querySelectorAll('.recipe-item'))
@@ -1621,6 +1622,9 @@ onclick="window.location.hash='#grid'">
         } else if (window.location.hash === '' || window.location.hash === '#home') {
             window.resetRecipeView();
             window.scrollTo(0, 0);
+        } else if (window.location.hash.startsWith('#recipe-')) {
+            // Recipe hash detected, but don't do anything - recipe is already displayed
+            // This is just to register it in history
         }
     });
 
