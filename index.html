@@ -511,8 +511,8 @@
         cursor: pointer;
       }
       
-      /* Hide the home-image inside home-text on mobile */
-      .home-text .home-image {
+      /* Hide the home-image link wrapper on mobile */
+      .home-text a[title="Go to All Recipes"] {
         display: none;
       }
       
@@ -1108,7 +1108,9 @@ onclick="window.location.hash='#grid'">
 
     const HOME_CONTENT_HTML = `
       <div class="home-text">
-          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="home-image">
+          <a href="#grid" title="Go to All Recipes" style="display: block; width: fit-content; margin: 0 auto;">
+            <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="home-image" style="cursor: pointer;">
+          </a>
           <h1 class="recipe-title">Recipes & Rituals</h1>
           <p class="recipe-description" style="text-align: center; margin-bottom: 30px;">
           <a href="#grid" onclick="displayGridPage(recipes); window.scrollTo(0, 0); return false;" class="email-link" style="font-size: 1.1em; cursor: pointer;">See All Recipes →</a>
