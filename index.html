@@ -516,9 +516,9 @@
         display: none;
       }
       
-      /* Hide grid and recipe page logos on mobile - body::before already shows header logo */
-      .grid-view > img[alt="Chomp Recipes Logo"],
-      .recipe-view > img[alt="Chomp Recipes Logo"] {
+      /* Hide grid and recipe page logo links on mobile - body::before already shows header logo */
+      .grid-view > a[title="Go to Home"],
+      .recipe-view > a[title="Go to All Recipes"] {
         display: none !important;
       }
       
@@ -603,12 +603,11 @@
       .sidebar, .search-box, .print-button, .copy-link-button, .sidebar-header, .recipe-list-container, .recipe-actions, .recipe-action-button, .grid-controls, .pagination-area, .rating-container, .mobile-floating-icon {
         display: none !important;
       }
-      /* Hide logos, recipe images, and back link in print */
-      .grid-view > img[alt="Chomp Recipes Logo"],
-      .recipe-view > img[alt="Chomp Recipes Logo"],
+      /* Hide logos and recipe images in print */
+      .grid-view > a,
+      .recipe-view > a,
       .recipe-logo,
-      .recipe-image,
-      .back-to-grid-link {
+      .recipe-image {
         display: none !important;
       }
       body { display: block; min-height: auto; color: #000000; }
@@ -864,7 +863,7 @@ onclick="window.location.hash='#grid'">
   <script type="module">
     // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, onSnapshot, collection, query, updateDoc, setDoc, getDoc, runTransaction, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -904,17 +903,7 @@ onclick="window.location.hash='#grid'">
         }
         isAuthReady = true;
         setupRecipeListener(); 
-        initAuth(); 
     });
-
-    async function initAuth() {
-        // Wrap in try/catch to prevent SecurityError in some sandbox environments
-        try {
-            await signInAnonymously(auth);
-        } catch (e) {
-            console.error("Anonymous sign-in failed:", e);
-        }
-    }
     
     // --- REAL-TIME RECIPE LISTENER (Pulls ALL content from Firestore) ---
     function setupRecipeListener() {
@@ -1365,10 +1354,9 @@ onclick="window.location.hash='#grid'">
       
       content.innerHTML = `
         <div class="recipe-view">
-          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="recipe-logo" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 20px auto;">
-          <p class="back-to-grid-link" style="text-align: center; margin-bottom: 30px;">
-            <a href="#grid" class="email-link" style="font-size: 0.95em; font-weight: 400; cursor: pointer;">← Back to All Recipes</a>
-          </p>
+          <a href="#grid" title="Go to All Recipes" style="display: block; width: fit-content; margin: 0 auto 30px auto;">
+            <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" class="recipe-logo" style="width: 100%; max-width: 300px; height: auto; display: block; cursor: pointer;">
+          </a>
           <div class="recipe-header">
             <h1 class="recipe-title">${recipe.title}</h1>
             <div class="recipe-meta">${metaInfo.join(' | ')}</div>
@@ -1565,7 +1553,9 @@ onclick="window.location.hash='#grid'">
         
         content.innerHTML = `
             <div class="grid-view">
-                <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 30px auto;">
+                <a href="#home" title="Go to Home" style="display: block; width: fit-content; margin: 0 auto 30px auto;">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media" alt="Chomp Recipes Logo" style="width: 100%; max-width: 300px; height: auto; display: block; cursor: pointer;">
+                </a>
                 <h1 class="recipe-title">All Recipes / Rituals</h1>
                 ${gridControlsHTML}
                 <div class="recipe-cards-container" id="gridCardsContainer">
@@ -1638,8 +1628,6 @@ onclick="window.location.hash='#grid'">
     } else if (window.location.hash && window.location.hash !== '#home') {
         // There's a hash but it's not grid or home, might be a recipe
     }
-
-    initAuth();
     
     window.addEventListener('resize', () => {
       updateStickyIndicator();
