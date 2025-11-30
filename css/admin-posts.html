@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/chomp-recipes.css">
     <style>
         * {
             margin: 0;
@@ -436,7 +437,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>📝 Post Admin</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1 style="margin: 0;">📝 Post Admin</h1>
+            <button class="btn btn-ghost" onclick="handleLogout()">Logout</button>
+        </div>
 
 ```
     <!-- New Post Form -->
@@ -552,6 +556,89 @@ Every Sunday, I wake before the sun…”></textarea>
         </div>
     </div>
 </div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // Make Firebase available globally
+    window.auth = auth;
+    window.db = db;
+    window.storage = storage;
+    window.firebaseModules = { 
+        signInWithEmailAndPassword, 
+        signOut, 
+        addDoc, 
+        collection, 
+        getDocs, 
+        updateDoc, 
+        deleteDoc, 
+        doc, 
+        serverTimestamp,
+        ref,
+        uploadBytes,
+        getDownloadURL
+    };
+
+    // Check authentication
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('post-form').style.display = 'block';
+            loadPosts();
+        } else {
+            showLoginPrompt();
+        }
+    });
+
+    function showLoginPrompt() {
+        const container = document.querySelector('.container');
+        container.innerHTML = `
+            <div style="max-width: 400px; margin: 100px auto; text-align: center;">
+                <h1 style="margin-bottom: 30px;">Admin Login</h1>
+                <input type="email" id="login-email" placeholder="Email" style="width: 100%; margin-bottom: 15px;">
+                <input type="password" id="login-password" placeholder="Password" style="width: 100%; margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="handleLogin()" style="width: 100%;">Login</button>
+                <div id="login-error" style="color: #fe0032; margin-top: 15px;"></div>
+            </div>
+        `;
+    }
+
+    window.handleLogin = async function() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            location.reload();
+        } catch (error) {
+            document.getElementById('login-error').textContent = 'Invalid credentials';
+        }
+    };
+
+    window.handleLogout = async function() {
+        await signOut(auth);
+        location.reload();
+    };
+</script>
 
 <script>
     // State
@@ -743,7 +830,7 @@ Every Sunday, I wake before the sun…”></textarea>
         savePost();
     }
 
-    function savePost() {
+    async function savePost() {
         // Validation
         const title = document.getElementById('title').value.trim();
         const excerpt = document.getElementById('excerpt').value.trim();
@@ -754,34 +841,87 @@ Every Sunday, I wake before the sun…”></textarea>
             return;
         }
         
-        if (!featuredImageFile) {
+        if (!featuredImageFile && !currentEditingPostId) {
             showToast('Please add a featured image');
             return;
         }
 
-        // Prepare post data
-        const postData = {
-            title: title,
-            category: document.getElementById('category').value,
-            excerpt: excerpt,
-            content: content,
-            slug: document.getElementById('slug').value,
-            publishDate: document.getElementById('publish-date').value,
-            status: isPublished ? 'published' : 'draft',
-            createdAt: new Date().toISOString()
-        };
+        try {
+            showToast('Saving post...');
 
-        console.log('Saving post:', postData);
-        console.log('Featured image:', featuredImageFile);
-        console.log('Additional images:', additionalImageFiles);
+            // Upload featured image if new
+            let featuredImageUrl = null;
+            if (featuredImageFile) {
+                const featuredRef = window.firebaseModules.ref(
+                    window.storage, 
+                    `post-images/featured/${Date.now()}-${featuredImageFile.name}`
+                );
+                await window.firebaseModules.uploadBytes(featuredRef, featuredImageFile);
+                featuredImageUrl = await window.firebaseModules.getDownloadURL(featuredRef);
+            }
 
-        // TODO: Firebase upload logic here
-        // 1. Upload featured image to Firebase Storage
-        // 2. Upload additional images to Firebase Storage
-        // 3. Replace image references in content with Firebase URLs
-        // 4. Save post data to Firestore
+            // Upload additional images
+            const imageUrls = {};
+            for (let i = 0; i < additionalImageFiles.length; i++) {
+                const file = additionalImageFiles[i];
+                const imageRef = window.firebaseModules.ref(
+                    window.storage,
+                    `post-images/${Date.now()}-${i}-${file.name}`
+                );
+                await window.firebaseModules.uploadBytes(imageRef, file);
+                const url = await window.firebaseModules.getDownloadURL(imageRef);
+                imageUrls[`image-${i + 1}.jpg`] = url;
+            }
 
-        showToast(`Post ${isPublished ? 'published' : 'saved as draft'} successfully!`);
+            // Replace image references in content
+            let processedContent = content;
+            Object.keys(imageUrls).forEach(placeholder => {
+                const regex = new RegExp(`\\]\\(\\.\/${placeholder}\\)`, 'g');
+                processedContent = processedContent.replace(regex, `](${imageUrls[placeholder]})`);
+            });
+
+            // Prepare post data
+            const postData = {
+                title: title,
+                category: document.getElementById('category').value,
+                excerpt: excerpt,
+                content: processedContent,
+                slug: document.getElementById('slug').value,
+                publishDate: document.getElementById('publish-date').value,
+                status: isPublished ? 'published' : 'draft',
+                updatedAt: window.firebaseModules.serverTimestamp()
+            };
+
+            if (featuredImageUrl) {
+                postData.featuredImage = featuredImageUrl;
+            }
+
+            // Save to Firestore
+            if (currentEditingPostId) {
+                // Update existing post
+                await window.firebaseModules.updateDoc(
+                    window.firebaseModules.doc(window.db, 'posts', currentEditingPostId),
+                    postData
+                );
+                showToast('Post updated successfully!');
+            } else {
+                // Create new post
+                postData.createdAt = window.firebaseModules.serverTimestamp();
+                await window.firebaseModules.addDoc(
+                    window.firebaseModules.collection(window.db, 'posts'),
+                    postData
+                );
+                showToast(`Post ${isPublished ? 'published' : 'saved as draft'} successfully!`);
+            }
+
+            // Reload posts and reset form
+            await loadPosts();
+            resetForm();
+
+        } catch (error) {
+            console.error('Error saving post:', error);
+            showToast('Error saving post: ' + error.message);
+        }
     }
 
     function resetForm() {
@@ -800,6 +940,8 @@ Every Sunday, I wake before the sun…”></textarea>
             currentEditingPostId = null;
             document.getElementById('status-indicator').className = 'status-indicator draft';
             document.getElementById('status-indicator').innerHTML = '<span class="status-dot"></span><span>Draft</span>';
+            document.getElementById('publish-toggle-text').textContent = 'Publish';
+            document.getElementById('excerpt-count').textContent = '0 / 150 characters';
             showToast('Form cleared');
         }
     }
@@ -816,10 +958,127 @@ Every Sunday, I wake before the sun…”></textarea>
     }
 
     // Load existing posts (placeholder)
-    function loadPosts() {
-        // TODO: Load from Firestore
-        // This will populate the post list at the bottom
+    async function loadPosts() {
+        try {
+            const querySnapshot = await window.firebaseModules.getDocs(
+                window.firebaseModules.collection(window.db, 'posts')
+            );
+            
+            const posts = [];
+            querySnapshot.forEach((doc) => {
+                posts.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            // Sort by date, newest first
+            posts.sort((a, b) => {
+                const dateA = new Date(a.publishDate || a.createdAt);
+                const dateB = new Date(b.publishDate || b.createdAt);
+                return dateB - dateA;
+            });
+
+            displayPosts(posts);
+            
+        } catch (error) {
+            console.error('Error loading posts:', error);
+        }
     }
+
+    function displayPosts(posts) {
+        const container = document.getElementById('post-list-container');
+        
+        if (posts.length === 0) {
+            container.innerHTML = '<p style="color: #666;">No posts yet. Create your first one above!</p>';
+            return;
+        }
+
+        container.innerHTML = posts.map(post => `
+            <div class="post-item">
+                <div class="post-info">
+                    <h3>${post.title}</h3>
+                    <div class="post-meta">
+                        <span class="status-indicator ${post.status === 'published' ? 'published' : 'draft'}">
+                            <span class="status-dot"></span>
+                            ${post.status === 'published' ? 'Published' : 'Draft'}
+                        </span>
+                        <span style="margin-left: 15px;">${post.category || 'Uncategorized'}</span>
+                        <span style="margin-left: 15px;">${post.publishDate || 'No date'}</span>
+                    </div>
+                </div>
+                <div class="post-actions">
+                    <button class="btn btn-small btn-secondary" onclick="editPost('${post.id}')">Edit</button>
+                    <button class="btn btn-small btn-outline" onclick="deletePost('${post.id}', '${post.title}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.editPost = async function(postId) {
+        try {
+            const docRef = window.firebaseModules.doc(window.db, 'posts', postId);
+            const docSnap = await window.firebaseModules.getDocs(
+                window.firebaseModules.collection(window.db, 'posts')
+            );
+            
+            let postData = null;
+            docSnap.forEach(doc => {
+                if (doc.id === postId) {
+                    postData = { id: doc.id, ...doc.data() };
+                }
+            });
+
+            if (postData) {
+                // Populate form
+                document.getElementById('title').value = postData.title || '';
+                document.getElementById('category').value = postData.category || 'recipe-stories';
+                document.getElementById('excerpt').value = postData.excerpt || '';
+                document.getElementById('content').value = postData.content || '';
+                document.getElementById('slug').value = postData.slug || '';
+                document.getElementById('publish-date').value = postData.publishDate || '';
+                
+                updatePreview();
+
+                // Set publish status
+                isPublished = postData.status === 'published';
+                const indicator = document.getElementById('status-indicator');
+                if (isPublished) {
+                    indicator.className = 'status-indicator published';
+                    indicator.innerHTML = '<span class="status-dot"></span><span>Published</span>';
+                    document.getElementById('publish-toggle-text').textContent = 'Unpublish';
+                } else {
+                    indicator.className = 'status-indicator draft';
+                    indicator.innerHTML = '<span class="status-dot"></span><span>Draft</span>';
+                    document.getElementById('publish-toggle-text').textContent = 'Publish';
+                }
+
+                currentEditingPostId = postId;
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showToast('Editing: ' + postData.title);
+            }
+        } catch (error) {
+            console.error('Error loading post:', error);
+            showToast('Error loading post');
+        }
+    };
+
+    window.deletePost = async function(postId, postTitle) {
+        if (confirm(`Delete "${postTitle}"? This cannot be undone.`)) {
+            try {
+                await window.firebaseModules.deleteDoc(
+                    window.firebaseModules.doc(window.db, 'posts', postId)
+                );
+                showToast('Post deleted');
+                loadPosts();
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                showToast('Error deleting post');
+            }
+        }
+    };
 
     // Initialize
     loadPosts();
