@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chomp Recipes - Baking Stories & Rituals</title>
+
+  <!-- Open Graph / Social Media Preview Tags -->
+  <meta property="og:title" content="Chomp Recipes - Baking Stories & Rituals">
+  <meta property="og:description" content="Explore the philosophy of baking through stories, cultural history, and mindful practice.">
+  <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Fchomp_recipes.png?alt=media">
+  <meta property="og:url" content="https://recipes.chomp.ltd">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Shared Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Site Header / Navigation -->
+  <header class="site-header">
+    <nav class="site-nav">
+      <a href="index.html" class="site-logo">Recipes & Rituals</a>
+
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="recipes.html">Recipes</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="page-container">
+
+    <!-- Hero Section -->
+    <section class="content-wrapper text-center mb-xl">
+      <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media"
+           alt="Chomp Recipes Logo"
+           style="max-width: 300px; margin: 0 auto 30px auto; display: block;">
+
+      <h1>Baking Stories & Rituals</h1>
+
+      <p class="text-muted" style="font-size: 1.1em; max-width: 600px; margin: 20px auto;">
+        Explore the philosophy of baking through cultural history, personal stories, and mindful practice.
+        Because baking is more than a recipe—it's a ritual, a meditation, a connection to community.
+      </p>
+    </section>
+
+    <!-- Category Filter (optional) -->
+    <section class="content-wrapper mb-lg">
+      <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <button class="btn btn-outline" onclick="filterPosts('all')">All Stories</button>
+        <button class="btn btn-outline" onclick="filterPosts('stories')">Recipe Stories</button>
+        <button class="btn btn-outline" onclick="filterPosts('anthropology')">Anthropology</button>
+        <button class="btn btn-outline" onclick="filterPosts('mindfulness')">Mindful Baking</button>
+      </div>
+    </section>
+
+    <!-- Blog Post Grid -->
+    <section class="post-grid" id="postGrid">
+      <!-- Posts will be dynamically loaded here from Firestore -->
+
+      <!-- Example placeholder tile -->
+      <article class="post-tile" onclick="window.location.href='post.html?slug=sunday-morning-ritual'">
+        <div class="post-tile-placeholder">Image Coming Soon</div>
+        <div class="post-tile-content">
+          <div class="post-tile-category">Recipe Stories</div>
+          <h3 class="post-tile-title">Sunday Morning Ritual: Making Pancakes with My Daughter</h3>
+          <p class="post-tile-excerpt">
+            Every Sunday morning, we wake up early. Not because we have to, but because we want to.
+            The kitchen becomes our sanctuary, flour dusts the countertop like morning snow...
+          </p>
+          <div class="post-tile-date">November 27, 2025</div>
+        </div>
+      </article>
+
+      <article class="post-tile">
+        <div class="post-tile-placeholder">Image Coming Soon</div>
+        <div class="post-tile-content">
+          <div class="post-tile-category">Anthropology</div>
+          <h3 class="post-tile-title">The Journey of Sourdough: From Egypt to San Francisco</h3>
+          <p class="post-tile-excerpt">
+            Before instant yeast, before commercial bakeries, there was sourdough.
+            Wild fermentation that connected bakers across millennia...
+          </p>
+          <div class="post-tile-date">November 20, 2025</div>
+        </div>
+      </article>
+
+      <article class="post-tile">
+        <div class="post-tile-placeholder">Image Coming Soon</div>
+        <div class="post-tile-content">
+          <div class="post-tile-category">Mindful Baking</div>
+          <h3 class="post-tile-title">Kneading as Meditation: Finding Stillness in Motion</h3>
+          <p class="post-tile-excerpt">
+            The rhythm of kneading dough is ancient. Push, fold, turn. Push, fold, turn.
+            In this repetition, the mind quiets, and something shifts...
+          </p>
+          <div class="post-tile-date">November 15, 2025</div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Load More Button -->
+    <div class="text-center mt-xl">
+      <button class="btn btn-primary" onclick="loadMorePosts()">Load More Stories</button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>Baking is the materialization of comfort itself.</p>
+      <div class="footer-links">
+        <a href="mailto:baking@chomp.ltd">baking@chomp.ltd</a>
+        <a href="https://www.chomp.ltd" target="_blank">chomp chomp: cookies, etc.</a>
+        <a href="https://tools.chomp.ltd" target="_blank">chomp chomp: tools</a>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.85em;">&copy; 2025 Chomp Recipes</p>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, limit, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAKsgXbyjSSG08B2PuV3Ihva272t8ou1Tw",
+      authDomain: "chomp-chomp-recipes.firebaseapp.com",
+      projectId: "chomp-chomp-recipes",
+      storageBucket: "chomp-chomp-recipes.firebasestorage.app",
+      messagingSenderId: "225432495618",
+      appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const appId = firebaseConfig.projectId;
+
+    let allPosts = [];
+    let displayedPosts = 0;
+    const POSTS_PER_PAGE = 9;
+    let currentFilter = 'all';
+
+    // Load posts from Firestore
+    async function loadPosts() {
+      try {
+        const postsRef = collection(db, `artifacts/${appId}/public/data/posts`);
+        const q = query(postsRef, where('status', '==', 'published'), orderBy('date', 'desc'));
+
+        const snapshot = await getDocs(q);
+        allPosts = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        displayPosts();
+      } catch (error) {
+        console.error("Error loading posts:", error);
+        // Keep placeholder posts if Firestore fails
+      }
+    }
+
+    // Display posts in grid
+    function displayPosts() {
+      const grid = document.getElementById('postGrid');
+
+      // Filter posts
+      let filteredPosts = allPosts;
+      if (currentFilter !== 'all') {
+        filteredPosts = allPosts.filter(post => post.category === currentFilter);
+      }
+
+      // Get posts to display
+      const postsToShow = filteredPosts.slice(0, displayedPosts + POSTS_PER_PAGE);
+      displayedPosts = postsToShow.length;
+
+      // Clear grid and render posts
+      grid.innerHTML = postsToShow.map(post => `
+        <article class="post-tile" onclick="window.location.href='post.html?slug=${post.slug}'">
+          ${post.featured_image
+            ? `<img src="${post.featured_image}" alt="${post.title}" class="post-tile-image">`
+            : '<div class="post-tile-placeholder">Image Coming Soon</div>'
+          }
+          <div class="post-tile-content">
+            <div class="post-tile-category">${formatCategory(post.category)}</div>
+            <h3 class="post-tile-title">${post.title}</h3>
+            <p class="post-tile-excerpt">${post.excerpt}</p>
+            <div class="post-tile-date">${formatDate(post.date)}</div>
+          </div>
+        </article>
+      `).join('');
+
+      // Hide load more button if all posts displayed
+      const loadMoreBtn = document.querySelector('.btn-primary');
+      if (loadMoreBtn) {
+        loadMoreBtn.style.display = displayedPosts >= filteredPosts.length ? 'none' : 'inline-block';
+      }
+    }
+
+    // Format category for display
+    function formatCategory(cat) {
+      const categories = {
+        'stories': 'Recipe Stories',
+        'anthropology': 'Anthropology',
+        'mindfulness': 'Mindful Baking'
+      };
+      return categories[cat] || cat;
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Filter posts by category
+    window.filterPosts = function(category) {
+      currentFilter = category;
+      displayedPosts = 0;
+      displayPosts();
+
+      // Update active button
+      document.querySelectorAll('.btn-outline').forEach(btn => {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+      });
+      event.target.classList.remove('btn-outline');
+      event.target.classList.add('btn-primary');
+    }
+
+    // Load more posts
+    window.loadMorePosts = function() {
+      displayPosts();
+    }
+
+    // Initialize
+    // loadPosts(); // Uncomment when Firestore collection is ready
+  </script>
+
+  <!-- Navigation toggle for mobile -->
+  <script>
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('active');
+    }
+  </script>
+
+</body>
+</html>
