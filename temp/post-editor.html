@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Editor - Chomp Recipes Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .editor-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .editor-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 6px;
+    }
+
+    .preview-area {
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      border-radius: 6px;
+      min-height: 400px;
+      background: white;
+    }
+
+    @media (max-width: 768px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="editor-container">
+    <h1 style="margin-bottom: 30px; color: #e73b42;">Post Editor</h1>
+
+    <!-- Auth Status -->
+    <div id="authStatus" style="margin-bottom: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px;">
+      Checking authentication...
+    </div>
+
+    <!-- Editor Form -->
+    <form id="postForm">
+
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input type="text" id="postTitle" class="form-input" required
+               placeholder="e.g., Sunday Morning Ritual: Making Pancakes">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Slug (auto-generated from title)</label>
+        <input type="text" id="postSlug" class="form-input" readonly
+               style="background: #f0f0f0;">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select id="postCategory" class="form-select" required>
+          <option value="">Select category...</option>
+          <option value="stories">Recipe Stories</option>
+          <option value="anthropology">Anthropology</option>
+          <option value="mindfulness">Mindful Baking</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Excerpt (short preview for homepage) *</label>
+        <textarea id="postExcerpt" class="form-textarea" required
+                  placeholder="A brief 1-2 sentence summary..."
+                  style="min-height: 80px;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Featured Image URL (optional)</label>
+        <input type="text" id="postImage" class="form-input"
+               placeholder="https://firebasestorage.googleapis.com/...">
+        <small style="color: #666; font-size: 0.85em;">
+          Upload to Firebase Storage first, then paste URL here
+        </small>
+      </div>
+
+      <!-- Editor and Preview Side by Side -->
+      <div class="editor-grid">
+        <div>
+          <div class="form-group">
+            <label class="form-label">Content (Markdown) *</label>
+            <textarea id="postContent" class="form-textarea" required
+                      placeholder="Write your post content here using markdown..."
+                      style="min-height: 500px; font-family: 'Monaco', 'Menlo', monospace; font-size: 14px;"></textarea>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Live Preview</label>
+          <div class="preview-area" id="previewArea">
+            <p style="color: #999;">Start typing to see preview...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Markdown Help -->
+      <div style="background: #f0f8ff; padding: 15px; border-radius: 6px; margin: 20px 0; font-size: 0.9em;">
+        <strong>Markdown Quick Reference:</strong><br>
+        # Heading 1 &nbsp;|&nbsp; ## Heading 2 &nbsp;|&nbsp; **bold** &nbsp;|&nbsp; *italic* &nbsp;|&nbsp; [link](url) &nbsp;|&nbsp; ![image](url)
+      </div>
+
+      <!-- Status Toggle -->
+      <div class="form-group">
+        <label class="form-label">
+          <input type="checkbox" id="postPublished" style="margin-right: 8px;">
+          Publish immediately (uncheck to save as draft)
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 15px; margin-top: 30px;">
+        <button type="submit" class="btn btn-primary">Save Post</button>
+        <button type="button" class="btn btn-outline" onclick="resetForm()">Clear Form</button>
+      </div>
+
+    </form>
+
+    <!-- Status Messages -->
+    <div id="statusMessage" style="margin-top: 20px; padding: 15px; border-radius: 6px; display: none;"></div>
+
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAKsgXbyjSSG08B2PuV3Ihva272t8ou1Tw",
+      authDomain: "chomp-chomp-recipes.firebaseapp.com",
+      projectId: "chomp-chomp-recipes",
+      storageBucket: "chomp-chomp-recipes.firebasestorage.app",
+      messagingSenderId: "225432495618",
+      appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const appId = firebaseConfig.projectId;
+
+    // Check authentication
+    onAuthStateChanged(auth, (user) => {
+      const authStatus = document.getElementById('authStatus');
+      if (user) {
+        authStatus.innerHTML = `✓ Logged in as: ${user.email} | <a href="#" onclick="firebase.auth().signOut()">Logout</a>`;
+        authStatus.style.background = '#e8f5e9';
+        authStatus.style.color = '#2e7d32';
+      } else {
+        authStatus.innerHTML = '⚠ Not logged in. <a href="#" onclick="promptLogin()">Click here to login</a>';
+        authStatus.style.background = '#fff3e0';
+        authStatus.style.color = '#e65100';
+      }
+    });
+
+    // Generate slug from title
+    document.getElementById('postTitle').addEventListener('input', (e) => {
+      const slug = e.target.value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      document.getElementById('postSlug').value = slug;
+    });
+
+    // Simple markdown parser for preview
+    function parseMarkdown(text) {
+      return text
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 6px;">')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+    }
+
+    // Live preview
+    document.getElementById('postContent').addEventListener('input', (e) => {
+      const preview = document.getElementById('previewArea');
+      const markdown = e.target.value;
+
+      if (!markdown) {
+        preview.innerHTML = '<p style="color: #999;">Start typing to see preview...</p>';
+        return;
+      }
+
+      preview.innerHTML = `<div style="line-height: 1.8;">${parseMarkdown(markdown)}</div>`;
+    });
+
+    // Handle form submission
+    document.getElementById('postForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const user = auth.currentUser;
+      if (!user) {
+        showStatus('error', 'You must be logged in to save posts');
+        return;
+      }
+
+      const statusMsg = document.getElementById('statusMessage');
+      statusMsg.style.display = 'block';
+      statusMsg.textContent = 'Saving post...';
+      statusMsg.style.background = '#e3f2fd';
+      statusMsg.style.color = '#1976d2';
+
+      const post = {
+        title: document.getElementById('postTitle').value,
+        slug: document.getElementById('postSlug').value,
+        category: document.getElementById('postCategory').value,
+        excerpt: document.getElementById('postExcerpt').value,
+        content: document.getElementById('postContent').value,
+        featured_image: document.getElementById('postImage').value || '',
+        status: document.getElementById('postPublished').checked ? 'published' : 'draft',
+        date: new Date().toISOString().split('T')[0],
+        created_at: serverTimestamp(),
+        updated_at: serverTimestamp()
+      };
+
+      try {
+        const postsRef = collection(db, `artifacts/${appId}/public/data/posts`);
+        const docRef = await addDoc(postsRef, post);
+
+        showStatus('success', `Post saved successfully! ID: ${docRef.id}`);
+
+        // Optionally reset form
+        setTimeout(() => {
+          if (confirm('Post saved! Would you like to create another post?')) {
+            resetForm();
+          }
+        }, 1500);
+
+      } catch (error) {
+        console.error("Error saving post:", error);
+        showStatus('error', `Failed to save post: ${error.message}`);
+      }
+    });
+
+    function showStatus(type, message) {
+      const statusMsg = document.getElementById('statusMessage');
+      statusMsg.style.display = 'block';
+      statusMsg.textContent = message;
+
+      if (type === 'success') {
+        statusMsg.style.background = '#e8f5e9';
+        statusMsg.style.color = '#2e7d32';
+      } else {
+        statusMsg.style.background = '#ffebee';
+        statusMsg.style.color = '#c62828';
+      }
+    }
+
+    window.resetForm = function() {
+      document.getElementById('postForm').reset();
+      document.getElementById('postSlug').value = '';
+      document.getElementById('previewArea').innerHTML = '<p style="color: #999;">Start typing to see preview...</p>';
+      document.getElementById('statusMessage').style.display = 'none';
+    }
+
+    window.promptLogin = function() {
+      const email = prompt('Enter your email:');
+      const password = prompt('Enter your password:');
+
+      if (email && password) {
+        signInWithEmailAndPassword(auth, email, password)
+          .then(() => {
+            alert('Logged in successfully!');
+          })
+          .catch((error) => {
+            alert('Login failed: ' + error.message);
+          });
+      }
+    }
+
+  </script>
+
+</body>
+</html>
