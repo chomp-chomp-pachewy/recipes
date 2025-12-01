@@ -127,6 +127,40 @@
       ✓ Logged in
     </div>
 
+    <!-- Markdown Import Section -->
+    <div style="margin-bottom: 30px; padding: 20px; background: #f0f8ff; border: 2px dashed #1565c0; border-radius: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #1565c0; margin: 0;">📋 Import from Markdown</h3>
+        <button type="button" onclick="toggleMarkdownImport()" class="btn btn-outline" style="font-size: 0.9em;">
+          <span id="importToggleText">Show Import Box</span>
+        </button>
+      </div>
+
+      <div id="markdownImportBox" style="display: none;">
+        <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+          Paste your markdown-formatted recipe below. Expected format:<br>
+          <code style="background: white; padding: 2px 6px; border-radius: 3px;">
+            # Recipe Title | ## Ingredients | - ingredient | ## Instructions | 1. step
+          </code>
+        </p>
+
+        <textarea id="markdownInput" class="form-textarea"
+                  placeholder="Paste your markdown recipe here..."
+                  style="min-height: 200px; font-family: 'Monaco', 'Menlo', monospace; font-size: 13px;"></textarea>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+          <button type="button" onclick="parseMarkdownRecipe()" class="btn btn-primary">
+            Parse & Fill Form
+          </button>
+          <button type="button" onclick="clearMarkdownInput()" class="btn btn-outline">
+            Clear
+          </button>
+        </div>
+
+        <div id="parseStatus" style="margin-top: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
+      </div>
+    </div>
+
     <!-- Editor Form -->
     <form id="recipeForm" onsubmit="handleSubmit(event)">
       <input type="hidden" id="recipeId" value="">
@@ -648,6 +682,165 @@
       renderInstructions();
       removeImage();
       showStatus('info', 'Form cleared. Ready to create a new recipe!');
+    }
+
+    // Toggle markdown import box
+    window.toggleMarkdownImport = function() {
+      const box = document.getElementById('markdownImportBox');
+      const toggleText = document.getElementById('importToggleText');
+
+      if (box.style.display === 'none') {
+        box.style.display = 'block';
+        toggleText.textContent = 'Hide Import Box';
+      } else {
+        box.style.display = 'none';
+        toggleText.textContent = 'Show Import Box';
+      }
+    }
+
+    // Clear markdown input
+    window.clearMarkdownInput = function() {
+      document.getElementById('markdownInput').value = '';
+      document.getElementById('parseStatus').innerHTML = '';
+    }
+
+    // Parse markdown recipe
+    window.parseMarkdownRecipe = function() {
+      const markdown = document.getElementById('markdownInput').value.trim();
+      const statusDiv = document.getElementById('parseStatus');
+
+      if (!markdown) {
+        statusDiv.innerHTML = '<p style="color: #c62828; margin-top: 10px;">Please paste markdown text first.</p>';
+        return;
+      }
+
+      try {
+        const lines = markdown.split('\n');
+        let title = '';
+        let description = '';
+        let currentSection = 'description';
+        let ingredientsList = [];
+        let instructionsList = [];
+        let notes = '';
+        let servings = '';
+        let prepTime = '';
+        let cookTime = '';
+        let totalTime = '';
+        let source = '';
+        let category = '';
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+
+          // Extract title from # heading
+          if (line.startsWith('# ') && !title) {
+            title = line.substring(2).trim();
+            continue;
+          }
+
+          // Detect sections
+          if (line.toLowerCase().startsWith('## ingredients')) {
+            currentSection = 'ingredients';
+            continue;
+          } else if (line.toLowerCase().startsWith('## instructions') || line.toLowerCase().startsWith('## directions')) {
+            currentSection = 'instructions';
+            continue;
+          } else if (line.toLowerCase().startsWith('## notes')) {
+            currentSection = 'notes';
+            continue;
+          }
+
+          // Extract metadata (look for patterns like "Servings:", "Prep Time:", etc.)
+          if (line.toLowerCase().startsWith('servings:')) {
+            servings = line.substring(9).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('prep time:')) {
+            prepTime = line.substring(10).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('cook time:')) {
+            cookTime = line.substring(10).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('total time:')) {
+            totalTime = line.substring(11).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('source:')) {
+            source = line.substring(7).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('category:')) {
+            category = line.substring(9).trim();
+            continue;
+          }
+
+          // Parse content based on current section
+          if (!line) continue; // Skip empty lines
+
+          if (currentSection === 'description') {
+            if (!line.startsWith('#')) {
+              description += line + '\n';
+            }
+          } else if (currentSection === 'ingredients') {
+            // Lines starting with -, *, or numbers
+            if (line.startsWith('-') || line.startsWith('*')) {
+              ingredientsList.push(line.substring(1).trim());
+            } else if (/^\d+\./.test(line)) {
+              ingredientsList.push(line.replace(/^\d+\.\s*/, '').trim());
+            } else if (line && !line.startsWith('##')) {
+              ingredientsList.push(line);
+            }
+          } else if (currentSection === 'instructions') {
+            // Numbered lines or lines starting with -, *
+            if (/^\d+\./.test(line)) {
+              instructionsList.push(line.replace(/^\d+\.\s*/, '').trim());
+            } else if (line.startsWith('-') || line.startsWith('*')) {
+              instructionsList.push(line.substring(1).trim());
+            } else if (line && !line.startsWith('##')) {
+              instructionsList.push(line);
+            }
+          } else if (currentSection === 'notes') {
+            notes += line + '\n';
+          }
+        }
+
+        // Populate form fields
+        document.getElementById('title').value = title;
+        document.getElementById('description').value = description.trim();
+        document.getElementById('servings').value = servings;
+        document.getElementById('prepTime').value = prepTime;
+        document.getElementById('cookTime').value = cookTime;
+        document.getElementById('totalTime').value = totalTime;
+        document.getElementById('source').value = source;
+        document.getElementById('category').value = category;
+        document.getElementById('notes').value = notes.trim();
+
+        // Populate ingredients array
+        if (ingredientsList.length > 0) {
+          ingredients = ingredientsList;
+          renderIngredients();
+        }
+
+        // Populate instructions array
+        if (instructionsList.length > 0) {
+          instructions = instructionsList;
+          renderInstructions();
+        }
+
+        statusDiv.innerHTML = `
+          <p style="color: #2e7d32; margin-top: 10px; font-weight: 600;">
+            ✓ Parsed successfully!
+          </p>
+          <ul style="color: #1565c0; margin-top: 10px; font-size: 0.9em; text-align: left;">
+            <li>Title: ${title || 'Not found'}</li>
+            <li>Ingredients: ${ingredientsList.length} items</li>
+            <li>Instructions: ${instructionsList.length} steps</li>
+          </ul>
+        `;
+
+        showStatus('success', 'Markdown parsed and form populated! Review and save when ready.');
+
+      } catch (error) {
+        statusDiv.innerHTML = `<p style="color: #c62828; margin-top: 10px;">Error parsing markdown: ${error.message}</p>`;
+        console.error('Markdown parse error:', error);
+      }
     }
 
     // Show status message
