@@ -69,13 +69,20 @@
         </a>
       </div>
 
-      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+      <div class="menu-dropdown">
+        <button class="menu-toggle" onclick="toggleMenu()">
+          Menu
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
 
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="recipes.html">Recipes</a></li>
-        <li><a href="about.html" class="active">About</a></li>
-      </ul>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="recipes.html">Recipes</a></li>
+          <li><a href="about.html" class="active">About</a></li>
+        </ul>
+      </div>
     </nav>
   </header>
 
