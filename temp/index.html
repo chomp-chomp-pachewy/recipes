@@ -100,56 +100,10 @@
     <!-- Blog Post Grid -->
     <section class="post-grid" id="postGrid">
       <!-- Posts will be dynamically loaded here from Firestore -->
-
-      <!-- Example placeholder tiles -->
-      <article class="post-tile" onclick="window.location.href='post.html?slug=sunday-morning-ritual'">
-        <div class="post-tile-placeholder">Image Coming Soon</div>
-        <div class="post-tile-content">
-          <div class="post-tile-category">Personal Rituals</div>
-          <h3 class="post-tile-title">Sunday Morning Ritual: Making Pancakes with My Daughter</h3>
-          <p class="post-tile-excerpt">
-            Every Sunday morning, we wake up early. Not because we have to, but because we want to.
-            The kitchen becomes our sanctuary, flour dusts the countertop like morning snow...
-          </p>
-          <div class="post-tile-meta" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.8em; color: #9d9d9d;">
-            <span>by Sarah Chen</span>
-            <span>November 27, 2025</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="post-tile">
-        <div class="post-tile-placeholder">Image Coming Soon</div>
-        <div class="post-tile-content">
-          <div class="post-tile-category">Anthropologies</div>
-          <h3 class="post-tile-title">The Journey of Sourdough: From Egypt to San Francisco</h3>
-          <p class="post-tile-excerpt">
-            Before instant yeast, before commercial bakeries, there was sourdough.
-            Wild fermentation that connected bakers across millennia...
-          </p>
-          <div class="post-tile-meta" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.8em; color: #9d9d9d;">
-            <span>by Alex Martinez</span>
-            <span>November 20, 2025</span>
-          </div>
-        </div>
-      </article>
-
-      <article class="post-tile">
-        <div class="post-tile-placeholder">Image Coming Soon</div>
-        <div class="post-tile-content">
-          <div class="post-tile-category">Baking Zen</div>
-          <h3 class="post-tile-title">Kneading as Meditation: Finding Stillness in Motion</h3>
-          <p class="post-tile-excerpt">
-            The rhythm of kneading dough is ancient. Push, fold, turn. Push, fold, turn.
-            In this repetition, the mind quiets, and something shifts...
-          </p>
-          <div class="post-tile-meta" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 0.8em; color: #9d9d9d;">
-            <span>by Jamie Brooks</span>
-            <span>November 15, 2025</span>
-          </div>
-        </div>
-      </article>
-
+      <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--color-text-muted);">
+        <p>Loading posts from Firestore...</p>
+        <p style="font-size: 0.9em; margin-top: 10px;">If posts don't appear, check the browser console for errors.</p>
+      </div>
     </section>
 
     <!-- Load More Button -->

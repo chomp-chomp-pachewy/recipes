@@ -135,17 +135,6 @@
       ✓ Logged in
     </div>
 
-    <!-- Existing Posts List -->
-    <div class="form-group">
-      <label class="form-label">Edit Existing Post (optional)</label>
-      <div class="post-list" id="existingPosts">
-        <p style="color: #999; text-align: center;">Loading posts...</p>
-      </div>
-      <button onclick="clearForm()" class="btn btn-outline" style="width: 100%;">
-        + Create New Post
-      </button>
-    </div>
-
     <!-- Editor Form -->
     <form id="postForm" onsubmit="handleSubmit(event)">
       <input type="hidden" id="postId" value="">
@@ -259,6 +248,15 @@
 
     <!-- Status Messages -->
     <div id="statusMessage" style="margin-top: 20px; padding: 15px; border-radius: 6px; display: none;"></div>
+
+    <!-- Existing Posts List (at bottom for easy access when there are many posts) -->
+    <div class="form-group" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #e0e0e0;">
+      <h2 style="color: #e73b42; margin-bottom: 20px;">Edit Existing Posts</h2>
+      <p style="color: #666; margin-bottom: 20px;">Click any post below to load it into the editor above.</p>
+      <div class="post-list" id="existingPosts">
+        <p style="color: #999; text-align: center;">Loading posts...</p>
+      </div>
+    </div>
 
   </div>
 
