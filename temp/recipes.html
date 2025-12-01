@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Recipes - Chomp Recipes</title>
+  <title>Chomp Chomp: Recipes & Rituals</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Fchomp_recipes_logo.jpeg?alt=media">
 
   <!-- Open Graph / Social Media Preview Tags -->
-  <meta property="og:title" content="All Recipes - Chomp Recipes">
+  <meta property="og:title" content="Chomp Chomp: Recipes & Rituals">
   <meta property="og:description" content="Browse our complete collection of baking recipes and culinary rituals.">
   <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Fchomp_recipes.png?alt=media">
   <meta property="og:url" content="https://recipes.chomp.ltd/recipes.html">
@@ -69,7 +72,12 @@
   <!-- Site Header / Navigation -->
   <header class="site-header">
     <nav class="site-nav">
-      <a href="index.html" class="site-logo">Recipes & Rituals</a>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
+             alt="Chomp Chomp Icon"
+             style="width: 32px; height: 32px; border-radius: 50%;">
+        <a href="index.html" class="site-logo">Chomp Chomp</a>
+      </div>
 
       <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 
@@ -86,18 +94,22 @@
 
     <!-- Page Title -->
     <section class="content-wrapper text-center mb-xl">
-      <h1>All Recipes</h1>
+      <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media"
+           alt="Chomp Recipes Logo"
+           style="max-width: 300px; margin: 0 auto 30px auto; display: block;">
+
+      <h1>Chomp Chomp: Recipes & Rituals</h1>
       <p class="text-muted">Browse, search, and discover your next baking adventure</p>
     </section>
 
     <!-- Search & Filter Controls -->
     <section class="content-wrapper">
-      <input type="text"
-             class="recipe-search-box"
-             id="recipeSearch"
-             placeholder="Search recipes by name, ingredient, or keyword...">
-
       <div class="filter-controls">
+        <input type="text"
+               class="recipe-search-box"
+               id="recipeSearch"
+               placeholder="Search recipes by name, ingredient, or keyword..."
+               style="flex: 1; min-width: 200px; max-width: 500px; margin: 0;">
         <select id="categoryFilter">
           <option value="all">All Categories</option>
           <!-- Categories will be populated dynamically -->
@@ -144,7 +156,7 @@
         <a href="https://www.chomp.ltd" target="_blank">chomp chomp: cookies, etc.</a>
         <a href="https://tools.chomp.ltd" target="_blank">chomp chomp: tools</a>
       </div>
-      <p style="margin-top: 20px; font-size: 0.85em;">&copy; 2025 Chomp Recipes</p>
+      <p style="margin-top: 20px; font-size: 0.85em;">&copy; 2025 Chomp Chomp</p>
     </div>
   </footer>
 
