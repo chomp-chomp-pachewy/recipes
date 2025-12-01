@@ -4,3 +4,6 @@ recipe-admin*.html
 # Environment files
 .env
 .env.local
+
+post-editor.html
+temp/post-editor.html
