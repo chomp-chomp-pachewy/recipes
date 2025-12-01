@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe | Recipes & Rituals</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Fchomp_recipes_logo.jpeg?alt=media">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Shared Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .recipe-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .recipe-meta {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+      color: var(--color-text-muted);
+      font-size: 0.95em;
+    }
+
+    .recipe-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .recipe-image {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border-radius: 8px;
+      margin: 30px auto;
+      display: block;
+    }
+
+    .recipe-section {
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+    }
+
+    .recipe-section h2 {
+      color: var(--color-accent);
+      font-size: 1.6em;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-accent);
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    @media print {
+      .action-buttons,
+      .site-header,
+      .site-footer {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header / Navigation -->
+  <header class="site-header">
+    <nav class="site-nav">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="index.html" title="Home" style="display: flex; align-items: center;">
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764578247902_Chomp%20Chomp%20main%20logo.PNG?alt=media&token=2a72eee4-53a7-4365bceb-c77c33950133"
+               alt="Chomp Chomp"
+               style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+        </a>
+      </div>
+
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="recipes.html" class="active">Recipes</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="page-container">
+    <div id="recipeContainer">
+      <p style="text-align: center; color: var(--color-text-muted);">Loading recipe...</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>Baking is the materialization of comfort itself.</p>
+      <div class="footer-links">
+        <a href="mailto:baking@chomp.ltd">baking@chomp.ltd</a>
+        <a href="https://www.chomp.ltd" target="_blank">chomp chomp: cookies, etc.</a>
+        <a href="https://tools.chomp.ltd" target="_blank">chomp chomp: tools</a>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.85em;">&copy; 2025 Chomp Chomp</p>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCPb87ZtJbpI7YRRwKVNL-g3O-VrONwtM",
+      authDomain: "chomp-chomp-recipes.firebaseapp.com",
+      projectId: "chomp-chomp-recipes",
+      storageBucket: "chomp-chomp-recipes.firebasestorage.app",
+      messagingSenderId: "225432495618",
+      appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const appId = firebaseConfig.projectId;
+
+    // Get slug from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    if (!slug) {
+      showError('No recipe specified', 'No recipe slug provided in URL.');
+    } else {
+      loadRecipe(slug);
+    }
+
+    // Load recipe from Firestore
+    async function loadRecipe(slug) {
+      try {
+        const recipesRef = collection(db, `artifacts/${appId}/public/data/recipes`);
+        const q = query(recipesRef, where('slug', '==', slug));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          showError('Recipe not found', 'The recipe you\'re looking for doesn\'t exist or has been removed.');
+          return;
+        }
+
+        const recipe = snapshot.docs[0].data();
+        displayRecipe(recipe);
+      } catch (error) {
+        console.error("Error loading recipe:", error);
+        showError('Error loading recipe', error.message);
+      }
+    }
+
+    // Display recipe
+    function displayRecipe(recipe) {
+      document.title = `${recipe.title} | Recipes & Rituals`;
+
+      const container = document.getElementById('recipeContainer');
+      container.innerHTML = `
+        <article>
+          <!-- Recipe Header -->
+          <header class="recipe-header">
+            <h1>${recipe.title}</h1>
+
+            ${recipe.description ? `<p class="text-muted" style="font-size: 1.05em; max-width: 600px; margin: 15px auto;">${parseMarkdown(recipe.description)}</p>` : ''}
+
+            <div class="recipe-meta">
+              ${recipe.servings ? `<div class="recipe-meta-item">🍽️ ${recipe.servings}</div>` : ''}
+              ${recipe.prepTime ? `<div class="recipe-meta-item">⏱️ Prep: ${recipe.prepTime}</div>` : ''}
+              ${recipe.cookTime ? `<div class="recipe-meta-item">🔥 Cook: ${recipe.cookTime}</div>` : ''}
+              ${recipe.totalTime ? `<div class="recipe-meta-item">⏰ Total: ${recipe.totalTime}</div>` : ''}
+            </div>
+
+            <div class="action-buttons">
+              <button onclick="window.print()" class="btn btn-primary">🖨️ Print Recipe</button>
+              <button onclick="copyPermalink()" class="btn btn-outline">📋 Copy Link</button>
+              <a href="recipes.html" class="btn btn-outline">← Back to All Recipes</a>
+            </div>
+          </header>
+
+          <!-- Recipe Image -->
+          ${recipe.image ? `
+            <img src="${getImagePath(recipe.image)}" alt="${recipe.title}" class="recipe-image">
+          ` : ''}
+
+          <!-- Ingredients -->
+          <section class="recipe-section">
+            <h2>Ingredients</h2>
+            <ul class="ingredients-list">
+              ${Array.isArray(recipe.ingredients) ? recipe.ingredients.map(ingredient => `
+                <li class="ingredient-item">${parseMarkdown(ingredient)}</li>
+              `).join('') : '<li>No ingredients listed</li>'}
+            </ul>
+          </section>
+
+          <!-- Instructions -->
+          <section class="recipe-section">
+            <h2>Instructions</h2>
+            <ol class="instructions-list">
+              ${Array.isArray(recipe.instructions) ? recipe.instructions.map(instruction => `
+                <li class="instruction-item">${parseMarkdown(instruction)}</li>
+              `).join('') : '<li>No instructions listed</li>'}
+            </ol>
+          </section>
+
+          <!-- Notes -->
+          ${recipe.notes ? `
+            <section class="recipe-section">
+              <h2>Notes</h2>
+              <div class="notes-section">
+                ${parseMarkdown(recipe.notes)}
+              </div>
+            </section>
+          ` : ''}
+
+          <!-- Source -->
+          ${recipe.source ? `
+            <section class="recipe-section">
+              <p style="color: var(--color-text-muted); font-size: 0.9em;">
+                <strong>Source:</strong> ${formatSource(recipe.source)}
+              </p>
+            </section>
+          ` : ''}
+
+          <!-- Back Button -->
+          <div style="text-align: center; margin-top: 60px;">
+            <a href="recipes.html" class="btn btn-primary">← Back to All Recipes</a>
+          </div>
+        </article>
+      `;
+    }
+
+    // Show error
+    function showError(title, message) {
+      document.getElementById('recipeContainer').innerHTML = `
+        <div style="text-align: center; padding: 60px 20px;">
+          <h2 style="color: var(--color-accent);">${title}</h2>
+          <p style="color: var(--color-text-muted); margin-top: 20px;">${message}</p>
+          <a href="recipes.html" class="btn btn-primary" style="margin-top: 30px; display: inline-block;">
+            View All Recipes
+          </a>
+        </div>
+      `;
+    }
+
+    // Get image path
+    function getImagePath(image) {
+      if (!image) return '';
+      if (image.startsWith('http')) return image;
+      return `images/${image}`;
+    }
+
+    // Format source
+    function formatSource(source) {
+      if (typeof source === 'object' && source.text && source.href) {
+        return `<a href="${source.href}" target="_blank">${source.text}</a>`;
+      }
+      return source;
+    }
+
+    // Parse markdown (simple version)
+    function parseMarkdown(text) {
+      if (!text) return '';
+      let html = String(text);
+
+      // Headers
+      html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+      // Bold and italic
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+      // Links
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+      return html;
+    }
+
+    // Copy permalink
+    window.copyPermalink = function() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Recipe link copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+      });
+    }
+  </script>
+
+  <!-- Navigation toggle for mobile -->
+  <script>
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('active');
+    }
+  </script>
+
+</body>
+</html>
