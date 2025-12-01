@@ -339,13 +339,20 @@
     async function loadExistingPosts() {
       try {
         const postsRef = collection(db, `artifacts/${appId}/public/data/posts`);
-        const q = query(postsRef, orderBy('created_at', 'desc'));
-        const snapshot = await getDocs(q);
+        // Get all posts without requiring created_at field
+        const snapshot = await getDocs(postsRef);
 
         allPosts = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
+
+        // Sort by created_at if available, otherwise by date, then title
+        allPosts.sort((a, b) => {
+          const aTime = a.created_at?.toMillis?.() || new Date(a.date).getTime() || 0;
+          const bTime = b.created_at?.toMillis?.() || new Date(b.date).getTime() || 0;
+          return bTime - aTime;
+        });
 
         const container = document.getElementById('existingPosts');
         if (allPosts.length === 0) {

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post | Stories & Practice</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Fchomp_recipes_logo.jpeg?alt=media">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Shared Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Site Header / Navigation -->
+  <header class="site-header">
+    <nav class="site-nav">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
+             alt="Chomp Chomp Icon"
+             style="width: 32px; height: 32px; border-radius: 50%;">
+      </div>
+
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="recipes.html">Recipes</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="page-container">
+    <div id="postContainer" class="content-wrapper">
+      <p style="text-align: center; color: var(--color-text-muted);">Loading post...</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p>Baking is the materialization of comfort itself.</p>
+      <div class="footer-links">
+        <a href="mailto:baking@chomp.ltd">baking@chomp.ltd</a>
+        <a href="https://www.chomp.ltd" target="_blank">chomp chomp: cookies, etc.</a>
+        <a href="https://tools.chomp.ltd" target="_blank">chomp chomp: tools</a>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.85em;">&copy; 2025 Chomp Chomp</p>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCPb87ZtJbpI7YRRwKVNL-g3O-VrONwtM",
+      authDomain: "chomp-chomp-recipes.firebaseapp.com",
+      projectId: "chomp-chomp-recipes",
+      storageBucket: "chomp-chomp-recipes.firebasestorage.app",
+      messagingSenderId: "225432495618",
+      appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const appId = firebaseConfig.projectId;
+
+    // Get slug from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
+
+    if (!slug) {
+      document.getElementById('postContainer').innerHTML = `
+        <div style="text-align: center; padding: 60px 20px;">
+          <h2 style="color: var(--color-accent);">Post not found</h2>
+          <p style="color: var(--color-text-muted); margin-top: 20px;">
+            No post slug provided in URL.
+          </p>
+          <a href="index.html" class="btn btn-primary" style="margin-top: 30px; display: inline-block;">
+            Return to Home
+          </a>
+        </div>
+      `;
+    } else {
+      loadPost(slug);
+    }
+
+    // Load post from Firestore
+    async function loadPost(slug) {
+      try {
+        const postsRef = collection(db, `artifacts/${appId}/public/data/posts`);
+        const q = query(postsRef, where('slug', '==', slug));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          document.getElementById('postContainer').innerHTML = `
+            <div style="text-align: center; padding: 60px 20px;">
+              <h2 style="color: var(--color-accent);">Post not found</h2>
+              <p style="color: var(--color-text-muted); margin-top: 20px;">
+                The post you're looking for doesn't exist or has been removed.
+              </p>
+              <a href="index.html" class="btn btn-primary" style="margin-top: 30px; display: inline-block;">
+                Return to Home
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        const post = snapshot.docs[0].data();
+        displayPost(post);
+      } catch (error) {
+        console.error("Error loading post:", error);
+        document.getElementById('postContainer').innerHTML = `
+          <div style="text-align: center; padding: 60px 20px;">
+            <h2 style="color: var(--color-accent);">Error loading post</h2>
+            <p style="color: var(--color-text-muted); margin-top: 20px;">
+              ${error.message}
+            </p>
+            <a href="index.html" class="btn btn-primary" style="margin-top: 30px; display: inline-block;">
+              Return to Home
+            </a>
+          </div>
+        `;
+      }
+    }
+
+    // Display post
+    function displayPost(post) {
+      document.title = `${post.title} | Stories & Practice`;
+
+      const container = document.getElementById('postContainer');
+      container.innerHTML = `
+        <article>
+          <!-- Post Header -->
+          <header class="post-header">
+            <div class="post-tile-category" style="margin-bottom: 15px;">
+              ${formatCategory(post.category)}
+            </div>
+            <h1>${post.title}</h1>
+            <div class="post-meta">
+              <span>by ${post.author || 'Anonymous'}</span>
+              <span style="margin: 0 10px;">•</span>
+              <span>${formatDate(post.date)}</span>
+            </div>
+          </header>
+
+          <!-- Featured Image -->
+          ${post.featured_image
+            ? `<img src="${post.featured_image}" alt="${post.title}" class="post-featured-image">`
+            : ''
+          }
+
+          <!-- Post Content -->
+          <div class="post-content">
+            ${parseMarkdown(post.content)}
+          </div>
+
+          <!-- Back Button -->
+          <div style="text-align: center; margin-top: 60px;">
+            <a href="index.html" class="btn btn-outline">← Back to Stories</a>
+          </div>
+        </article>
+      `;
+    }
+
+    // Format category for display
+    function formatCategory(cat) {
+      const categories = {
+        'rituals': 'Personal Rituals',
+        'anthropologies': 'Anthropologies',
+        'zen': 'Baking Zen'
+      };
+      return categories[cat] || cat;
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Parse markdown
+    function parseMarkdown(text) {
+      if (!text) return '';
+      let html = text;
+
+      // Escape HTML
+      html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      // Headers
+      html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+      // Bold and italic
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+      // Links
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+      // Images
+      html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 6px;">');
+
+      // Paragraphs (split by double newlines)
+      html = html.split('\n\n').map(para => {
+        // Don't wrap if it's already a tag
+        if (para.trim().startsWith('<')) {
+          return para;
+        }
+        return `<p>${para.replace(/\n/g, '<br>')}</p>`;
+      }).join('\n');
+
+      return html;
+    }
+  </script>
+
+  <!-- Navigation toggle for mobile -->
+  <script>
+    function toggleMenu() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('active');
+    }
+  </script>
+
+</body>
+</html>
