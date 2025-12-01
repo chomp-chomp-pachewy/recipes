@@ -158,6 +158,14 @@
       </div>
 
       <div class="form-group">
+        <label class="form-label">Publish Date *</label>
+        <input type="date" id="postDate" class="form-input" required>
+        <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+          The date this post was/will be published
+        </p>
+      </div>
+
+      <div class="form-group">
         <label class="form-label">Category *</label>
         <select id="postCategory" class="form-select" required>
           <option value="">Select category...</option>
@@ -328,6 +336,10 @@
         currentUser = user;
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('editorScreen').style.display = 'block';
+
+        // Set default date to today for new posts
+        document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
+
         loadExistingPosts();
       } else {
         currentUser = null;
@@ -417,6 +429,7 @@
       document.getElementById('postTitle').value = post.title || '';
       document.getElementById('postSlug').value = post.slug || '';
       document.getElementById('postAuthor').value = post.author || '';
+      document.getElementById('postDate').value = post.date || new Date().toISOString().split('T')[0];
       document.getElementById('postCategory').value = post.category || '';
       document.getElementById('postExcerpt').value = post.excerpt || '';
       document.getElementById('postContent').value = post.content || '';
@@ -445,6 +458,7 @@
       document.getElementById('postForm').reset();
       document.getElementById('postId').value = '';
       document.getElementById('postSlug').value = '';
+      document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
       document.getElementById('previewArea').innerHTML = '<p style="color: #999;">Start typing to see preview...</p>';
       document.getElementById('imagePreviewContainer').style.display = 'none';
       document.getElementById('saveButtonText').textContent = 'Save Post';
@@ -707,12 +721,12 @@
         title: document.getElementById('postTitle').value,
         slug: document.getElementById('postSlug').value,
         author: document.getElementById('postAuthor').value,
+        date: document.getElementById('postDate').value,
         category: document.getElementById('postCategory').value,
         excerpt: document.getElementById('postExcerpt').value,
         content: document.getElementById('postContent').value,
         featured_image: finalImageUrl,
         status: document.getElementById('postPublished').checked ? 'published' : 'draft',
-        date: new Date().toISOString().split('T')[0],
         updated_at: serverTimestamp()
       };
 
