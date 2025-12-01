@@ -27,9 +27,11 @@
   <header class="site-header">
     <nav class="site-nav">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20cookie%20icon.png?alt=media"
-             alt="Chomp Chomp Icon"
-             style="width: 32px; height: 32px; border-radius: 50%;">
+        <a href="index.html" title="Home" style="display: flex; align-items: center;">
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764578247902_Chomp%20Chomp%20main%20logo.PNG?alt=media&token=2a72eee4-53a7-4365bceb-c77c33950133"
+               alt="Chomp Chomp"
+               style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+        </a>
       </div>
 
       <button class="menu-toggle" onclick="toggleMenu()">☰</button>
@@ -155,7 +157,8 @@
     async function loadPosts() {
       try {
         const postsRef = collection(db, `artifacts/${appId}/public/data/posts`);
-        const q = query(postsRef, where('status', '==', 'published'), orderBy('date', 'desc'));
+        // Removed orderBy to avoid needing composite index - sort in JS instead
+        const q = query(postsRef, where('status', '==', 'published'));
 
         const snapshot = await getDocs(q);
         allPosts = snapshot.docs.map(doc => ({
@@ -163,11 +166,25 @@
           ...doc.data()
         }));
 
+        // Sort by date in JavaScript
+        allPosts.sort((a, b) => {
+          const dateA = new Date(a.date || 0).getTime();
+          const dateB = new Date(b.date || 0).getTime();
+          return dateB - dateA; // Newest first
+        });
+
         displayPosts();
       } catch (error) {
         console.error("Error loading posts:", error);
-        console.log("Note: Posts collection may not be set up yet. See FIRESTORE-SETUP-GUIDE.md");
-        // Keep placeholder posts if Firestore fails
+        console.log("Note: Posts collection may not be set up yet or check Firestore security rules");
+        // Show error message to user
+        document.getElementById('postGrid').innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+            <p style="color: #c62828; font-weight: 600;">Error loading posts</p>
+            <p style="color: #666; margin-top: 10px; font-size: 0.9em;">${error.message}</p>
+            <p style="color: #666; margin-top: 20px; font-size: 0.85em;">Check browser console for details</p>
+          </div>
+        `;
       }
     }
 
