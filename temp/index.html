@@ -34,9 +34,10 @@
         </a>
       </div>
 
-      <div class="menu-dropdown">
-        <button class="menu-toggle" onclick="toggleMenu()">Menu</button>
-        <ul class="nav-links" id="navLinks">
+      <div class="nav-tools-dropdown">
+        <button class="menu-toggle" onclick="toggleToolsDropdown()">☰</button>
+        <button class="tools-dropdown-btn" onclick="toggleToolsDropdown()">Philosophy ▼</button>
+        <ul class="tools-dropdown-menu" id="toolsDropdown">
           <li><a href="index.html" class="active">Home</a></li>
           <li><a href="recipes.html">Recipes</a></li>
           <li><a href="about.html">About</a></li>
@@ -64,23 +65,14 @@
         Explore the philosophy of baking through cultural history, personal stories, and mindful practice.
         Because baking is more than a recipe—it's a ritual, a meditation, a connection to community.
       </p>
-    </section>
 
-    <!-- Navigation Links -->
-    <section class="content-wrapper text-center" style="margin-bottom: 20px;">
-      <div style="display: flex; justify-content: center; align-items: center; gap: 15px; font-size: 0.95em;">
-        <a href="recipes.html" style="color: var(--color-accent, #e73b42); text-decoration: none; transition: opacity 0.2s;"
-           onmouseover="this.style.opacity='0.7'"
-           onmouseout="this.style.opacity='1'">
-          View Recipes & Rituals
-        </a>
-        <span style="color: var(--color-text-muted, #7d7d7d);">|</span>
-        <a href="about.html" style="color: var(--color-accent, #e73b42); text-decoration: none; transition: opacity 0.2s;"
-           onmouseover="this.style.opacity='0.7'"
-           onmouseout="this.style.opacity='1'">
-          About Chomp Chomp
-        </a>
-      </div>
+      <hr style="width: 60px; margin: 30px auto; border: none; border-top: 1px solid var(--color-border, #e0e0e0);">
+
+      <a href="recipes.html" style="color: var(--color-accent, #e73b42); text-decoration: none; font-size: 0.95em; transition: opacity 0.2s; display: inline-block;"
+         onmouseover="this.style.opacity='0.7'"
+         onmouseout="this.style.opacity='1'">
+        Go to Recipes & Rituals →
+      </a>
     </section>
 
     <!-- Search Bar -->
@@ -296,11 +288,11 @@
     loadPosts();
   </script>
 
-  <!-- Navigation toggle for mobile -->
+  <!-- Navigation toggle -->
   <script>
-    function toggleMenu() {
-      const navLinks = document.getElementById('navLinks');
-      navLinks.classList.toggle('active');
+    function toggleToolsDropdown() {
+      const dropdown = document.getElementById('toolsDropdown');
+      dropdown.classList.toggle('active');
     }
   </script>
 

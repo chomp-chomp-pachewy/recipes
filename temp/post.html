@@ -27,9 +27,10 @@
         </a>
       </div>
 
-      <div class="menu-dropdown">
-        <button class="menu-toggle" onclick="toggleMenu()">Menu</button>
-        <ul class="nav-links" id="navLinks">
+      <div class="nav-tools-dropdown">
+        <button class="menu-toggle" onclick="toggleToolsDropdown()">☰</button>
+        <button class="tools-dropdown-btn" onclick="toggleToolsDropdown()">Philosophy ▼</button>
+        <ul class="tools-dropdown-menu" id="toolsDropdown">
           <li><a href="index.html">Home</a></li>
           <li><a href="recipes.html">Recipes</a></li>
           <li><a href="about.html">About</a></li>
@@ -228,11 +229,11 @@
     }
   </script>
 
-  <!-- Navigation toggle for mobile -->
+  <!-- Navigation toggle -->
   <script>
-    function toggleMenu() {
-      const navLinks = document.getElementById('navLinks');
-      navLinks.classList.toggle('active');
+    function toggleToolsDropdown() {
+      const dropdown = document.getElementById('toolsDropdown');
+      dropdown.classList.toggle('active');
     }
   </script>
 
