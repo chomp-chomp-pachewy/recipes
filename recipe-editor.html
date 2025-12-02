@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Editor - Chomp Chomp Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    .editor-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .login-box {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .recipe-list {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .recipe-list-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .recipe-list-item:hover {
+      border-color: #e73b42;
+    }
+
+    .image-upload-area {
+      border: 2px dashed #e0e0e0;
+      padding: 20px;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 15px;
+    }
+
+    .image-upload-area:hover {
+      border-color: #e73b42;
+      background: #fafafa;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    .array-input-group {
+      margin-bottom: 10px;
+      display: flex;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .array-input-group input,
+    .array-input-group textarea {
+      flex: 1;
+    }
+
+    .array-input-group button {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="loginScreen" class="login-box">
+    <h1 style="color: #e73b42; margin-bottom: 20px;">Recipe Editor Login</h1>
+    <p style="margin-bottom: 20px; color: #666;">Sign in to manage recipes</p>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" id="loginEmail" class="form-input" placeholder="your@email.com">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+    </div>
+
+    <button onclick="handleLogin()" class="btn btn-primary" style="width: 100%;">
+      Sign In
+    </button>
+
+    <div id="loginError" style="margin-top: 15px; color: #c62828; font-size: 0.9em; display: none;"></div>
+  </div>
+
+  <!-- Editor Screen -->
+  <div id="editorScreen" class="editor-container" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <h1 style="color: #e73b42; margin: 0;">Recipe Editor</h1>
+      <div style="display: flex; gap: 15px;">
+        <a href="recipes.html" class="btn btn-outline" target="_blank">View Recipes Page</a>
+        <button onclick="handleLogout()" class="btn btn-outline">Logout</button>
+      </div>
+    </div>
+
+    <!-- Auth Status -->
+    <div id="authStatus" style="margin-bottom: 20px; padding: 10px; background: #e8f5e9; border-radius: 4px; color: #2e7d32;">
+      ✓ Logged in
+    </div>
+
+    <!-- Markdown Import Section -->
+    <div style="margin-bottom: 30px; padding: 20px; background: #f0f8ff; border: 2px dashed #1565c0; border-radius: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #1565c0; margin: 0;">📋 Import from Markdown</h3>
+        <button type="button" onclick="toggleMarkdownImport()" class="btn btn-outline" style="font-size: 0.9em;">
+          <span id="importToggleText">Show Import Box</span>
+        </button>
+      </div>
+
+      <div id="markdownImportBox" style="display: none;">
+        <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+          Paste your markdown-formatted recipe below. Expected format:<br>
+          <code style="background: white; padding: 2px 6px; border-radius: 3px;">
+            # Recipe Title | ## Ingredients | - ingredient | ## Instructions | 1. step
+          </code>
+        </p>
+
+        <textarea id="markdownInput" class="form-textarea"
+                  placeholder="Paste your markdown recipe here..."
+                  style="min-height: 200px; font-family: 'Monaco', 'Menlo', monospace; font-size: 13px;"></textarea>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+          <button type="button" onclick="parseMarkdownRecipe()" class="btn btn-primary">
+            Parse & Fill Form
+          </button>
+          <button type="button" onclick="clearMarkdownInput()" class="btn btn-outline">
+            Clear
+          </button>
+        </div>
+
+        <div id="parseStatus" style="margin-top: 15px; padding: 10px; border-radius: 6px; display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Editor Form -->
+    <form id="recipeForm" onsubmit="handleSubmit(event)">
+      <input type="hidden" id="recipeId" value="">
+
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input type="text" id="recipeTitle" class="form-input" required
+               placeholder="e.g., Chocolate Chip Cookies">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Slug (auto-generated from title)</label>
+        <input type="text" id="recipeSlug" class="form-input" readonly
+               style="background: #f0f0f0;">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="recipeDescription" class="form-textarea"
+                  placeholder="A brief description of this recipe..."
+                  style="min-height: 100px;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Recipe Image</label>
+
+        <!-- Image Upload Area -->
+        <div class="image-upload-area" onclick="document.getElementById('imageUpload').click()">
+          <p>📁 Click to upload image</p>
+          <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+            Recommended: 800x800px, max 2MB
+          </p>
+        </div>
+        <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+
+        <div id="imagePreviewContainer" style="display: none;">
+          <img id="imagePreview" class="image-preview" alt="Preview">
+          <button type="button" onclick="removeImage()" class="btn btn-outline" style="margin-top: 10px; width: 100%;">
+            Remove Image
+          </button>
+        </div>
+
+        <!-- Or Manual URL -->
+        <div style="margin-top: 10px;">
+          <label class="form-label">Or paste image URL:</label>
+          <input type="text" id="recipeImage" class="form-input"
+                 placeholder="https://firebasestorage.googleapis.com/... or images/filename.jpg">
+        </div>
+      </div>
+
+      <!-- Recipe Metadata -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div class="form-group">
+          <label class="form-label">Servings</label>
+          <input type="text" id="recipeServings" class="form-input"
+                 placeholder="e.g., 12 cookies">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Prep Time</label>
+          <input type="text" id="recipePrepTime" class="form-input"
+                 placeholder="e.g., 20min">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Cook Time</label>
+          <input type="text" id="recipeCookTime" class="form-input"
+                 placeholder="e.g., 12min">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Total Time</label>
+          <input type="text" id="recipeTotalTime" class="form-input"
+                 placeholder="e.g., 32min">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select id="recipeCategory" class="form-select">
+          <option value="">Select category...</option>
+          <option value="chomp chomp">Chomp Chomp</option>
+          <option value="cookies">Cookies</option>
+          <option value="cakes">Cakes</option>
+          <option value="breads">Breads</option>
+          <option value="pastries">Pastries</option>
+          <option value="desserts">Desserts</option>
+          <option value="savory">Savory</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <!-- Ingredients Array -->
+      <div class="form-group">
+        <label class="form-label">Ingredients *</label>
+        <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+          Add ingredients one at a time. Markdown supported (e.g., **2 cups** flour)
+        </p>
+        <div id="ingredientsList"></div>
+        <button type="button" onclick="addIngredient()" class="btn btn-outline" style="width: 100%;">
+          + Add Ingredient
+        </button>
+      </div>
+
+      <!-- Instructions Array -->
+      <div class="form-group">
+        <label class="form-label">Instructions *</label>
+        <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+          Add steps one at a time. They will be numbered automatically.
+        </p>
+        <div id="instructionsList"></div>
+        <button type="button" onclick="addInstruction()" class="btn btn-outline" style="width: 100%;">
+          + Add Instruction
+        </button>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="recipeNotes" class="form-textarea"
+                  placeholder="Optional notes, tips, or variations..."
+                  style="min-height: 100px;"></textarea>
+      </div>
+
+      <!-- Source -->
+      <div class="form-group">
+        <label class="form-label">Source</label>
+        <input type="text" id="recipeSource" class="form-input"
+               placeholder="e.g., Grandma's recipe book, or URL">
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 15px; margin-top: 30px;">
+        <button type="submit" class="btn btn-primary">
+          <span id="saveButtonText">Save Recipe</span>
+        </button>
+        <button type="button" class="btn btn-outline" onclick="clearForm()">
+          Clear Form
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Status Messages -->
+    <div id="statusMessage" style="margin-top: 20px; padding: 15px; border-radius: 6px; display: none;"></div>
+
+    <!-- Existing Recipes List -->
+    <div class="form-group" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #e0e0e0;">
+      <h2 style="color: #e73b42; margin-bottom: 20px;">Edit Existing Recipes</h2>
+      <p style="color: #666; margin-bottom: 20px;">Click any recipe below to load it into the editor above.</p>
+      <div class="recipe-list" id="existingRecipes">
+        <p style="color: #999; text-align: center;">Loading recipes...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCCPb87ZtJbpI7YRRwKVNL-g3O-VrONwtM",
+      authDomain: "chomp-chomp-recipes.firebaseapp.com",
+      projectId: "chomp-chomp-recipes",
+      storageBucket: "chomp-chomp-recipes.firebasestorage.app",
+      messagingSenderId: "225432495618",
+      appId: "1:225432495618:web:459eb1c0b7228dfc24e91b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+    const appId = firebaseConfig.projectId;
+
+    let currentUser = null;
+    let uploadedImageUrl = null;
+    let allRecipes = [];
+    let ingredients = [];
+    let instructions = [];
+
+    // Check authentication state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('editorScreen').style.display = 'block';
+        loadExistingRecipes();
+        initializeArrays();
+      } else {
+        currentUser = null;
+        document.getElementById('loginScreen').style.display = 'block';
+        document.getElementById('editorScreen').style.display = 'none';
+      }
+    });
+
+    // Handle login
+    window.handleLogin = async function() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorDiv = document.getElementById('loginError');
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        errorDiv.style.display = 'none';
+      } catch (error) {
+        console.error("Login error:", error);
+        errorDiv.style.display = 'block';
+
+        if (error.code === 'auth/user-not-found') {
+          errorDiv.textContent = 'No user found with this email.';
+        } else if (error.code === 'auth/wrong-password') {
+          errorDiv.textContent = 'Incorrect password.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorDiv.textContent = 'Invalid email address.';
+        } else {
+          errorDiv.textContent = 'Login failed: ' + error.message;
+        }
+      }
+    }
+
+    // Handle logout
+    window.handleLogout = async function() {
+      if (confirm('Are you sure you want to logout?')) {
+        await signOut(auth);
+        clearForm();
+      }
+    }
+
+    // Load existing recipes
+    async function loadExistingRecipes() {
+      try {
+        const recipesRef = collection(db, `artifacts/${appId}/public/data/recipes`);
+        const snapshot = await getDocs(recipesRef);
+
+        allRecipes = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Sort by title
+        allRecipes.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
+        const container = document.getElementById('existingRecipes');
+        if (allRecipes.length === 0) {
+          container.innerHTML = '<p style="color: #999; text-align: center;">No recipes yet. Create your first one!</p>';
+          return;
+        }
+
+        container.innerHTML = allRecipes.map(recipe => `
+          <div class="recipe-list-item" onclick="loadRecipeForEditing('${recipe.id}')">
+            <div style="font-weight: 600; color: #353535;">${recipe.title}</div>
+            <div style="font-size: 0.85em; color: #666; margin-top: 4px;">
+              ${recipe.category || 'No category'} ${recipe.totalTime ? `• ${recipe.totalTime}` : ''}
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error("Error loading recipes:", error);
+      }
+    }
+
+    // Load a recipe for editing
+    window.loadRecipeForEditing = function(recipeId) {
+      const recipe = allRecipes.find(r => r.id === recipeId);
+      if (!recipe) return;
+
+      document.getElementById('recipeId').value = recipeId;
+      document.getElementById('recipeTitle').value = recipe.title || '';
+      document.getElementById('recipeSlug').value = recipe.slug || '';
+      document.getElementById('recipeDescription').value = recipe.description || '';
+      document.getElementById('recipeImage').value = recipe.image || '';
+      document.getElementById('recipeServings').value = recipe.servings || '';
+      document.getElementById('recipePrepTime').value = recipe.prepTime || '';
+      document.getElementById('recipeCookTime').value = recipe.cookTime || '';
+      document.getElementById('recipeTotalTime').value = recipe.totalTime || '';
+      document.getElementById('recipeCategory').value = recipe.category || '';
+      document.getElementById('recipeNotes').value = recipe.notes || '';
+      document.getElementById('recipeSource').value = recipe.source || '';
+
+      // Load ingredients
+      ingredients = Array.isArray(recipe.ingredients) ? [...recipe.ingredients] : [];
+      renderIngredients();
+
+      // Load instructions
+      instructions = Array.isArray(recipe.instructions) ? [...recipe.instructions] : [];
+      renderInstructions();
+
+      // Show image if exists
+      if (recipe.image) {
+        showImagePreview(recipe.image.startsWith('http') ? recipe.image : `images/${recipe.image}`);
+      }
+
+      // Update button text
+      document.getElementById('saveButtonText').textContent = 'Update Recipe';
+
+      // Scroll to top
+      window.scrollTo(0, 0);
+
+      showStatus('info', `Editing: ${recipe.title}`);
+    }
+
+    // Auto-generate slug from title
+    document.getElementById('recipeTitle').addEventListener('input', function() {
+      const slug = this.value
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+      document.getElementById('recipeSlug').value = slug;
+    });
+
+    // Handle image upload
+    window.handleImageUpload = async function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        showStatus('error', 'Image too large. Please use an image under 2MB.');
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        showStatus('error', 'Please upload an image file.');
+        return;
+      }
+
+      showStatus('info', 'Uploading image...');
+
+      try {
+        const timestamp = Date.now();
+        const filename = `${timestamp}_${file.name}`;
+        const storageRef = ref(storage, `recipes/images/${filename}`);
+
+        await uploadBytes(storageRef, file);
+        uploadedImageUrl = await getDownloadURL(storageRef);
+
+        showImagePreview(uploadedImageUrl);
+        document.getElementById('recipeImage').value = uploadedImageUrl;
+
+        showStatus('success', 'Image uploaded successfully!');
+      } catch (error) {
+        console.error("Upload error:", error);
+        showStatus('error', 'Failed to upload image: ' + error.message);
+      }
+    }
+
+    // Show image preview
+    function showImagePreview(url) {
+      document.getElementById('imagePreview').src = url;
+      document.getElementById('imagePreviewContainer').style.display = 'block';
+    }
+
+    // Remove image
+    window.removeImage = function() {
+      document.getElementById('imagePreviewContainer').style.display = 'none';
+      document.getElementById('imageUpload').value = '';
+      document.getElementById('recipeImage').value = '';
+      uploadedImageUrl = null;
+    }
+
+    // Initialize arrays
+    function initializeArrays() {
+      if (ingredients.length === 0) {
+        ingredients = [''];
+      }
+      if (instructions.length === 0) {
+        instructions = [''];
+      }
+      renderIngredients();
+      renderInstructions();
+    }
+
+    // Add ingredient
+    window.addIngredient = function() {
+      ingredients.push('');
+      renderIngredients();
+    }
+
+    // Remove ingredient
+    window.removeIngredient = function(index) {
+      ingredients.splice(index, 1);
+      if (ingredients.length === 0) {
+        ingredients = [''];
+      }
+      renderIngredients();
+    }
+
+    // Render ingredients
+    function renderIngredients() {
+      const container = document.getElementById('ingredientsList');
+      container.innerHTML = ingredients.map((ingredient, index) => `
+        <div class="array-input-group">
+          <input type="text" class="form-input" value="${ingredient}"
+                 onchange="updateIngredient(${index}, this.value)"
+                 placeholder="e.g., 2 cups all-purpose flour">
+          <button type="button" class="btn btn-outline" onclick="removeIngredient(${index})">×</button>
+        </div>
+      `).join('');
+    }
+
+    // Update ingredient
+    window.updateIngredient = function(index, value) {
+      ingredients[index] = value;
+    }
+
+    // Add instruction
+    window.addInstruction = function() {
+      instructions.push('');
+      renderInstructions();
+    }
+
+    // Remove instruction
+    window.removeInstruction = function(index) {
+      instructions.splice(index, 1);
+      if (instructions.length === 0) {
+        instructions = [''];
+      }
+      renderInstructions();
+    }
+
+    // Render instructions
+    function renderInstructions() {
+      const container = document.getElementById('instructionsList');
+      container.innerHTML = instructions.map((instruction, index) => `
+        <div class="array-input-group">
+          <textarea class="form-input" onchange="updateInstruction(${index}, this.value)"
+                    placeholder="Step ${index + 1}..."
+                    style="min-height: 60px; resize: vertical;">${instruction}</textarea>
+          <button type="button" class="btn btn-outline" onclick="removeInstruction(${index})">×</button>
+        </div>
+      `).join('');
+    }
+
+    // Update instruction
+    window.updateInstruction = function(index, value) {
+      instructions[index] = value;
+    }
+
+    // Handle form submission
+    window.handleSubmit = async function(event) {
+      event.preventDefault();
+
+      if (!currentUser) {
+        showStatus('error', 'You must be logged in to save recipes.');
+        return;
+      }
+
+      // Validate ingredients and instructions
+      const validIngredients = ingredients.filter(i => i.trim());
+      const validInstructions = instructions.filter(i => i.trim());
+
+      if (validIngredients.length === 0) {
+        showStatus('error', 'Please add at least one ingredient.');
+        return;
+      }
+
+      if (validInstructions.length === 0) {
+        showStatus('error', 'Please add at least one instruction.');
+        return;
+      }
+
+      const recipeData = {
+        title: document.getElementById('recipeTitle').value.trim(),
+        slug: document.getElementById('recipeSlug').value.trim(),
+        description: document.getElementById('recipeDescription').value.trim(),
+        image: document.getElementById('recipeImage').value.trim() || uploadedImageUrl || '',
+        servings: document.getElementById('recipeServings').value.trim(),
+        prepTime: document.getElementById('recipePrepTime').value.trim(),
+        cookTime: document.getElementById('recipeCookTime').value.trim(),
+        totalTime: document.getElementById('recipeTotalTime').value.trim(),
+        category: document.getElementById('recipeCategory').value,
+        ingredients: validIngredients,
+        instructions: validInstructions,
+        notes: document.getElementById('recipeNotes').value.trim(),
+        source: document.getElementById('recipeSource').value.trim(),
+        updated_at: serverTimestamp()
+      };
+
+      try {
+        const recipeId = document.getElementById('recipeId').value;
+
+        if (recipeId) {
+          // Update existing recipe
+          const recipeRef = doc(db, `artifacts/${appId}/public/data/recipes`, recipeId);
+          await updateDoc(recipeRef, recipeData);
+          showStatus('success', 'Recipe updated successfully!');
+        } else {
+          // Create new recipe
+          recipeData.created_at = serverTimestamp();
+          await addDoc(collection(db, `artifacts/${appId}/public/data/recipes`), recipeData);
+          showStatus('success', 'Recipe created successfully!');
+          clearForm();
+        }
+
+        // Reload recipes list
+        loadExistingRecipes();
+
+      } catch (error) {
+        console.error("Error saving recipe:", error);
+        showStatus('error', 'Failed to save recipe: ' + error.message);
+      }
+    }
+
+    // Clear form
+    window.clearForm = function() {
+      document.getElementById('recipeForm').reset();
+      document.getElementById('recipeId').value = '';
+      document.getElementById('saveButtonText').textContent = 'Save Recipe';
+      ingredients = [''];
+      instructions = [''];
+      renderIngredients();
+      renderInstructions();
+      removeImage();
+      showStatus('info', 'Form cleared. Ready to create a new recipe!');
+    }
+
+    // Toggle markdown import box
+    window.toggleMarkdownImport = function() {
+      const box = document.getElementById('markdownImportBox');
+      const toggleText = document.getElementById('importToggleText');
+
+      if (box.style.display === 'none') {
+        box.style.display = 'block';
+        toggleText.textContent = 'Hide Import Box';
+      } else {
+        box.style.display = 'none';
+        toggleText.textContent = 'Show Import Box';
+      }
+    }
+
+    // Clear markdown input
+    window.clearMarkdownInput = function() {
+      document.getElementById('markdownInput').value = '';
+      document.getElementById('parseStatus').innerHTML = '';
+    }
+
+    // Parse markdown recipe
+    window.parseMarkdownRecipe = function() {
+      const markdown = document.getElementById('markdownInput').value.trim();
+      const statusDiv = document.getElementById('parseStatus');
+
+      if (!markdown) {
+        statusDiv.innerHTML = '<p style="color: #c62828; margin-top: 10px;">Please paste markdown text first.</p>';
+        return;
+      }
+
+      try {
+        const lines = markdown.split('\n');
+        let title = '';
+        let description = '';
+        let currentSection = 'description';
+        let ingredientsList = [];
+        let instructionsList = [];
+        let notes = '';
+        let servings = '';
+        let prepTime = '';
+        let cookTime = '';
+        let totalTime = '';
+        let source = '';
+        let category = '';
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+
+          // Extract title from # heading
+          if (line.startsWith('# ') && !title) {
+            title = line.substring(2).trim();
+            continue;
+          }
+
+          // Detect sections
+          if (line.toLowerCase().startsWith('## ingredients')) {
+            currentSection = 'ingredients';
+            continue;
+          } else if (line.toLowerCase().startsWith('## instructions') || line.toLowerCase().startsWith('## directions')) {
+            currentSection = 'instructions';
+            continue;
+          } else if (line.toLowerCase().startsWith('## notes')) {
+            currentSection = 'notes';
+            continue;
+          }
+
+          // Extract metadata (look for patterns like "Servings:", "Prep Time:", etc.)
+          if (line.toLowerCase().startsWith('servings:')) {
+            servings = line.substring(9).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('prep time:')) {
+            prepTime = line.substring(10).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('cook time:')) {
+            cookTime = line.substring(10).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('total time:')) {
+            totalTime = line.substring(11).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('source:')) {
+            source = line.substring(7).trim();
+            continue;
+          } else if (line.toLowerCase().startsWith('category:')) {
+            category = line.substring(9).trim();
+            continue;
+          }
+
+          // Parse content based on current section
+          if (!line) continue; // Skip empty lines
+
+          if (currentSection === 'description') {
+            if (!line.startsWith('#')) {
+              description += line + '\n';
+            }
+          } else if (currentSection === 'ingredients') {
+            // Lines starting with -, *, or numbers
+            if (line.startsWith('-') || line.startsWith('*')) {
+              ingredientsList.push(line.substring(1).trim());
+            } else if (/^\d+\./.test(line)) {
+              ingredientsList.push(line.replace(/^\d+\.\s*/, '').trim());
+            } else if (line && !line.startsWith('##')) {
+              ingredientsList.push(line);
+            }
+          } else if (currentSection === 'instructions') {
+            // Numbered lines or lines starting with -, *
+            if (/^\d+\./.test(line)) {
+              instructionsList.push(line.replace(/^\d+\.\s*/, '').trim());
+            } else if (line.startsWith('-') || line.startsWith('*')) {
+              instructionsList.push(line.substring(1).trim());
+            } else if (line && !line.startsWith('##')) {
+              instructionsList.push(line);
+            }
+          } else if (currentSection === 'notes') {
+            notes += line + '\n';
+          }
+        }
+
+        // Populate form fields
+        document.getElementById('title').value = title;
+        document.getElementById('description').value = description.trim();
+        document.getElementById('servings').value = servings;
+        document.getElementById('prepTime').value = prepTime;
+        document.getElementById('cookTime').value = cookTime;
+        document.getElementById('totalTime').value = totalTime;
+        document.getElementById('source').value = source;
+        document.getElementById('category').value = category;
+        document.getElementById('notes').value = notes.trim();
+
+        // Populate ingredients array
+        if (ingredientsList.length > 0) {
+          ingredients = ingredientsList;
+          renderIngredients();
+        }
+
+        // Populate instructions array
+        if (instructionsList.length > 0) {
+          instructions = instructionsList;
+          renderInstructions();
+        }
+
+        statusDiv.innerHTML = `
+          <p style="color: #2e7d32; margin-top: 10px; font-weight: 600;">
+            ✓ Parsed successfully!
+          </p>
+          <ul style="color: #1565c0; margin-top: 10px; font-size: 0.9em; text-align: left;">
+            <li>Title: ${title || 'Not found'}</li>
+            <li>Ingredients: ${ingredientsList.length} items</li>
+            <li>Instructions: ${instructionsList.length} steps</li>
+          </ul>
+        `;
+
+        showStatus('success', 'Markdown parsed and form populated! Review and save when ready.');
+
+      } catch (error) {
+        statusDiv.innerHTML = `<p style="color: #c62828; margin-top: 10px;">Error parsing markdown: ${error.message}</p>`;
+        console.error('Markdown parse error:', error);
+      }
+    }
+
+    // Show status message
+    function showStatus(type, message) {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.style.display = 'block';
+      statusDiv.textContent = message;
+
+      const colors = {
+        success: { bg: '#e8f5e9', text: '#2e7d32' },
+        error: { bg: '#ffebee', text: '#c62828' },
+        info: { bg: '#e3f2fd', text: '#1565c0' }
+      };
+
+      statusDiv.style.backgroundColor = colors[type].bg;
+      statusDiv.style.color = colors[type].text;
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>
