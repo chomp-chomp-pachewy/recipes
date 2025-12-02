@@ -106,8 +106,18 @@ img {
 .header-banner {
   display: block;
   max-width: 600px;
+  max-height: 150px;
   height: auto;
   margin: 0 auto;
+}
+
+.header-left a img {
+  box-shadow: 0 0 8px rgba(231, 59, 66, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+
+.header-left a img:hover {
+  box-shadow: 0 0 12px rgba(231, 59, 66, 0.6);
 }
 
 .header-left {
@@ -201,6 +211,12 @@ img {
   font-size: 1.5em;
   color: var(--color-text);
   cursor: pointer;
+  text-shadow: 0 0 8px rgba(231, 59, 66, 0.4);
+  transition: text-shadow 0.3s ease;
+}
+
+.menu-toggle:hover {
+  text-shadow: 0 0 12px rgba(231, 59, 66, 0.6);
 }
 
 /* ---------------------------------------------------- */
@@ -748,6 +764,12 @@ p {
 
   .tools-dropdown-btn {
     color: #353535;
+  }
+
+  /* Gray banner in dark mode */
+  .header-banner {
+    filter: grayscale(0.5);
+    opacity: 0.85;
   }
 }
 
