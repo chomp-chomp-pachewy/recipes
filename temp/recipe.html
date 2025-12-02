@@ -159,13 +159,44 @@
 
       const container = document.getElementById('recipeContainer');
 
-      // Build metadata string
+      // Build metadata string (including source)
       const metaParts = [];
-      if (recipe.servings) metaParts.push(`Servings: ${recipe.servings}`);
       if (recipe.prepTime) metaParts.push(`Prep: ${recipe.prepTime}`);
       if (recipe.cookTime) metaParts.push(`Cook: ${recipe.cookTime}`);
       if (recipe.totalTime) metaParts.push(`Total: ${recipe.totalTime}`);
-      const metaString = metaParts.join(' • ');
+      if (recipe.servings) metaParts.push(`Servings: ${recipe.servings}`);
+      if (recipe.source) metaParts.push(`Source: ${formatSource(recipe.source)}`);
+      const metaString = metaParts.join(' | ');
+
+      // Handle ingredients with markdown headers
+      const safeIngredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+      const ingredientsHTML = safeIngredients.map(i => {
+        const parsed = parseMarkdown(i);
+        // Check if this is a header (starts with <h1, <h2, or <h3)
+        if (parsed.startsWith('<h1') || parsed.startsWith('<h2') || parsed.startsWith('<h3')) {
+          // Return header without li wrapper, with inline styling
+          return parsed.replace('<h3', '<h3 style="font-size: 0.95em; font-weight: 600; margin: 15px 0 8px 0; color: #434343; letter-spacing: 0.5px;"')
+                       .replace('<h2', '<h2 style="font-size: 1.05em; font-weight: 600; margin: 18px 0 10px 0; color: #434343; letter-spacing: 0.5px;"')
+                       .replace('<h1', '<h1 style="font-size: 1.15em; font-weight: 600; margin: 20px 0 12px 0; color: #434343; letter-spacing: 0.5px;"');
+        }
+        // Regular ingredient with red bar
+        return `<li class="ingredient-item">${parsed}</li>`;
+      }).join('');
+
+      // Handle instructions with markdown headers
+      const safeInstructions = Array.isArray(recipe.instructions) ? recipe.instructions : [];
+      const instructionsHTML = safeInstructions.map(i => {
+        const parsed = parseMarkdown(i);
+        // Check if this is a header (starts with <h1, <h2, or <h3)
+        if (parsed.startsWith('<h1') || parsed.startsWith('<h2') || parsed.startsWith('<h3')) {
+          // Return header without li wrapper, with inline styling
+          return parsed.replace('<h3', '<h3 style="font-size: 0.95em; font-weight: 600; margin: 15px 0 8px 0; color: #434343; letter-spacing: 0.5px;"')
+                       .replace('<h2', '<h2 style="font-size: 1.05em; font-weight: 600; margin: 18px 0 10px 0; color: #434343; letter-spacing: 0.5px;"')
+                       .replace('<h1', '<h1 style="font-size: 1.15em; font-weight: 600; margin: 20px 0 12px 0; color: #434343; letter-spacing: 0.5px;"');
+        }
+        // Regular instruction with numbering
+        return `<li class="instruction-item">${parsed}</li>`;
+      }).join('');
 
       container.innerHTML = `
         <article class="content-wrapper">
@@ -185,9 +216,7 @@
           <section class="recipe-section">
             <h2>Ingredients</h2>
             <ul class="ingredients-list">
-              ${Array.isArray(recipe.ingredients) ? recipe.ingredients.map(ingredient => `
-                <li class="ingredient-item">${parseMarkdown(ingredient)}</li>
-              `).join('') : '<li>No ingredients listed</li>'}
+              ${ingredientsHTML}
             </ul>
           </section>
 
@@ -195,9 +224,7 @@
           <section class="recipe-section">
             <h2>Instructions</h2>
             <ol class="instructions-list">
-              ${Array.isArray(recipe.instructions) ? recipe.instructions.map(instruction => `
-                <li class="instruction-item">${parseMarkdown(instruction)}</li>
-              `).join('') : '<li>No instructions listed</li>'}
+              ${instructionsHTML}
             </ol>
           </section>
 
@@ -208,15 +235,6 @@
               <div class="notes-section">
                 ${parseMarkdown(recipe.notes)}
               </div>
-            </section>
-          ` : ''}
-
-          <!-- Source -->
-          ${recipe.source ? `
-            <section class="recipe-section">
-              <p style="color: var(--color-text-muted); font-size: 0.9em;">
-                <strong>Source:</strong> ${formatSource(recipe.source)}
-              </p>
             </section>
           ` : ''}
         </article>
@@ -245,10 +263,25 @@
 
     // Format source
     function formatSource(source) {
+      if (!source) return '';
+
+      // Handle object format {text, href}
       if (typeof source === 'object' && source.text && source.href) {
-        return `<a href="${source.href}" target="_blank">${source.text}</a>`;
+        return `<a href="${source.href}" target="_blank" rel="noopener noreferrer">${source.text}</a>`;
       }
-      return source;
+
+      // Handle array of objects
+      if (Array.isArray(source)) {
+        return source.map(item => {
+          if (item && item.text && item.href) {
+            return `<a href="${item.href}" target="_blank" rel="noopener noreferrer">${item.text}</a>`;
+          }
+          return parseMarkdown(String(item));
+        }).join(' ');
+      }
+
+      // Handle string (may contain markdown)
+      return parseMarkdown(String(source));
     }
 
     // Parse markdown (simple version)
