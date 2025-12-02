@@ -49,8 +49,8 @@
   <!-- Main Content -->
   <main class="page-container">
 
-    <!-- Hero Section -->
-    <section class="content-wrapper text-center mb-xl">
+    <!-- Centered Logo -->
+    <section class="text-center mb-xl">
       <a href="recipes.html" title="View All Recipes" style="text-decoration: none; display: block;">
         <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media"
              alt="Chomp Recipes Logo"
@@ -58,45 +58,57 @@
              onmouseover="this.style.opacity='0.8'"
              onmouseout="this.style.opacity='1'">
       </a>
-
-      <h1>Stories & Practice</h1>
-
-      <p class="text-muted" style="max-width: 600px; margin: 20px auto;">
-        Explore the philosophy of baking through cultural history, personal stories, and mindful practice.
-        Because baking is more than a recipe—it's a ritual, a meditation, a connection to community.
-      </p>
-
-      <hr style="width: 60px; margin: 30px auto; border: none; border-top: 1px solid var(--color-border, #e0e0e0);">
-
-      <a href="recipes.html" style="color: var(--color-accent, #e73b42); text-decoration: none; font-size: 0.95em; transition: opacity 0.2s; display: inline-block;"
-         onmouseover="this.style.opacity='0.7'"
-         onmouseout="this.style.opacity='1'">
-        Go to Recipes & Rituals →
-      </a>
     </section>
 
-    <!-- Search Bar -->
-    <section class="content-wrapper mb-lg">
-      <div style="max-width: 600px; margin: 0 auto;">
-        <input type="text"
-               id="postSearch"
-               placeholder="Search posts by title, content, or author..."
-               oninput="searchPosts()"
-               style="width: 100%; padding: 12px 20px; font-size: 1em; border: 1px solid var(--color-border, #e0e0e0); border-radius: 8px; font-family: inherit; transition: border-color 0.2s;"
-               onfocus="this.style.borderColor='var(--color-accent, #e73b42)'"
-               onblur="this.style.borderColor='var(--color-border, #e0e0e0)'">
+    <!-- Two Column Layout (Desktop Only) -->
+    <div class="index-two-column">
+
+      <!-- Left Column: Hero Text, Search, Filters -->
+      <div class="index-left-column">
+        <div class="text-center mb-xl">
+          <h1>Stories & Practice</h1>
+          <p class="text-muted" style="max-width: 600px; margin: 20px auto;">
+            Explore the philosophy of baking through cultural history, personal stories, and mindful practice.
+            Because baking is more than a recipe—it's a ritual, a meditation, a connection to community.
+          </p>
+          <hr style="width: 60px; margin: 30px auto; border: none; border-top: 1px solid var(--color-border, #e0e0e0);">
+          <a href="recipes.html" style="color: var(--color-accent, #e73b42); text-decoration: none; font-size: 0.95em; transition: opacity 0.2s; display: inline-block;"
+             onmouseover="this.style.opacity='0.7'"
+             onmouseout="this.style.opacity='1'">
+            Go to Recipes & Rituals →
+          </a>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-lg">
+          <input type="text"
+                 id="postSearch"
+                 placeholder="Search posts by title, content, or author..."
+                 oninput="searchPosts()"
+                 style="width: 100%; padding: 12px 20px; font-size: 1em; border: 1px solid var(--color-border, #e0e0e0); border-radius: 8px; font-family: inherit; transition: border-color 0.2s;"
+                 onfocus="this.style.borderColor='var(--color-accent, #e73b42)'"
+                 onblur="this.style.borderColor='var(--color-border, #e0e0e0)'">
+        </div>
+
+        <!-- Category Filter -->
+        <div class="mb-lg">
+          <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="filterPosts('all')">All Stories</button>
+            <button class="btn btn-outline" onclick="filterPosts('rituals')">Stories & Practice</button>
+            <button class="btn btn-outline" onclick="filterPosts('anthropologies')">Histories & Meditations</button>
+            <button class="btn btn-outline" onclick="filterPosts('zen')">Zen of Baking</button>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <!-- Category Filter -->
-    <section class="content-wrapper mb-lg">
-      <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-        <button class="btn btn-primary" onclick="filterPosts('all')">All Stories</button>
-        <button class="btn btn-outline" onclick="filterPosts('rituals')">Stories & Practice</button>
-        <button class="btn btn-outline" onclick="filterPosts('anthropologies')">Histories & Meditations</button>
-        <button class="btn btn-outline" onclick="filterPosts('zen')">Zen of Baking</button>
+      <!-- Right Column: Featured Post -->
+      <div class="index-right-column">
+        <div id="featuredPost" class="featured-post-card">
+          <p style="text-align: center; color: var(--color-text-muted); padding: 40px 20px;">Loading featured post...</p>
+        </div>
       </div>
-    </section>
+
+    </div>
 
     <!-- Blog Post Grid -->
     <section class="post-grid" id="postGrid">
@@ -172,6 +184,7 @@
           return dateB - dateA; // Newest first
         });
 
+        displayFeaturedPost();
         displayPosts();
       } catch (error) {
         console.error("Error loading posts:", error);
@@ -185,6 +198,36 @@
           </div>
         `;
       }
+    }
+
+    // Display featured post (most recent)
+    function displayFeaturedPost() {
+      const container = document.getElementById('featuredPost');
+
+      if (allPosts.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--color-text-muted); padding: 40px 20px;">No posts available yet.</p>';
+        return;
+      }
+
+      const featured = allPosts[0]; // Most recent post
+
+      container.innerHTML = `
+        <a href="post.html?slug=${featured.slug}">
+          ${featured.featured_image
+            ? `<img src="${featured.featured_image}" alt="${featured.title}">`
+            : '<div style="height: 280px; background-color: var(--color-sidebar-bg); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); border-bottom: 1px solid var(--color-border);">Image Coming Soon</div>'
+          }
+          <div class="featured-post-card-content">
+            <div class="featured-post-tag">Featured · ${formatCategory(featured.category)}</div>
+            <h3>${featured.title}</h3>
+            <p>${featured.excerpt}</p>
+            <div class="featured-post-meta">
+              <span>by ${featured.author || 'Anonymous'}</span>
+              <span>${formatDate(featured.date)}</span>
+            </div>
+          </div>
+        </a>
+      `;
     }
 
     // Display posts in grid
@@ -209,6 +252,12 @@
             (post.category && post.category.toLowerCase().includes(query))
           );
         });
+      }
+
+      // Exclude the featured post (first post) from the grid
+      // Only exclude if no filters are active
+      if (currentFilter === 'all' && !searchQuery && allPosts.length > 0) {
+        filteredPosts = filteredPosts.slice(1); // Skip the first (featured) post
       }
 
       // Get posts to display
@@ -244,9 +293,9 @@
     // Format category for display
     function formatCategory(cat) {
       const categories = {
-        'rituals': 'Personal Rituals',
-        'anthropologies': 'Anthropologies',
-        'zen': 'Baking Zen'
+        'rituals': 'Stories & Practice',
+        'anthropologies': 'Histories & Meditations',
+        'zen': 'Zen of Baking'
       };
       return categories[cat] || cat;
     }

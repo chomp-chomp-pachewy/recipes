@@ -237,6 +237,90 @@ p {
 }
 
 /* ---------------------------------------------------- */
+/* === INDEX TWO-COLUMN LAYOUT === */
+/* ---------------------------------------------------- */
+.index-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.index-left-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.index-right-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-post-card {
+  background-color: var(--color-sidebar-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+}
+
+.featured-post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.featured-post-card a {
+  text-decoration: none;
+  display: block;
+  height: 100%;
+  color: inherit;
+}
+
+.featured-post-card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.featured-post-card-content {
+  padding: var(--spacing-md);
+}
+
+.featured-post-tag {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-accent);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.featured-post-card h3 {
+  font-size: 1.4em;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.3;
+}
+
+.featured-post-card p {
+  font-size: 0.95em;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-sm);
+}
+
+.featured-post-meta {
+  font-size: 0.8em;
+  color: var(--color-text-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---------------------------------------------------- */
 /* === BLOG/POST STYLES === */
 /* ---------------------------------------------------- */
 .post-grid {
@@ -615,6 +699,16 @@ p {
   .recipe-search-box::placeholder {
     color: #7d7d7d;
   }
+
+  /* Featured post card in dark mode */
+  .featured-post-card {
+    background-color: var(--color-sidebar-bg);
+    border-color: var(--color-border);
+  }
+
+  .featured-post-card:hover {
+    box-shadow: 0 4px 12px rgba(255, 107, 122, 0.2);
+  }
 }
 
 /* ---------------------------------------------------- */
@@ -639,6 +733,11 @@ p {
 
   .post-grid,
   .recipe-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stack two-column layout on mobile */
+  .index-two-column {
     grid-template-columns: 1fr;
   }
 
