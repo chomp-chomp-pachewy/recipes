@@ -86,7 +86,7 @@ img {
 /* === NAVIGATION === */
 /* ---------------------------------------------------- */
 .site-header {
-  background-color: var(--color-sidebar-bg);
+  background-color: #ffffff;
   border-bottom: 1px solid var(--color-border);
   padding: var(--spacing-md) var(--spacing-xl);
   position: sticky;
@@ -101,6 +101,30 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-lg);
+}
+
+.header-banner {
+  display: block;
+  max-width: 600px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
 .site-logo {
@@ -709,6 +733,22 @@ p {
   .featured-post-card:hover {
     box-shadow: 0 4px 12px rgba(255, 107, 122, 0.2);
   }
+
+  /* Keep header white in dark mode */
+  .site-header {
+    background-color: #ffffff;
+  }
+
+  .site-nav,
+  .header-left,
+  .header-center,
+  .header-right {
+    color: #353535;
+  }
+
+  .tools-dropdown-btn {
+    color: #353535;
+  }
 }
 
 /* ---------------------------------------------------- */
@@ -717,6 +757,10 @@ p {
 @media (max-width: 768px) {
   .site-header {
     padding: var(--spacing-md);
+  }
+
+  .header-banner {
+    display: none;
   }
 
   .menu-toggle {

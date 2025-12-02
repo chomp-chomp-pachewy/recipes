@@ -72,22 +72,32 @@
   <!-- Site Header / Navigation -->
   <header class="site-header">
     <nav class="site-nav">
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="header-left">
         <a href="index.html" title="Home" style="display: flex; align-items: center;">
-          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764578247902_Chomp%20Chomp%20main%20logo.PNG?alt=media&token=2a72eee4-53a7-4365bceb-c77c33950133"
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764654504157_Chomp%20Chomp%20logos.png?alt=media&token=9b7d69d1-3ec8-4c4c-adbf-da4f37caf92e"
                alt="Chomp Chomp"
                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
         </a>
       </div>
 
-      <div class="nav-tools-dropdown">
-        <button class="menu-toggle" onclick="toggleToolsDropdown()">☰</button>
-        <button class="tools-dropdown-btn" onclick="toggleToolsDropdown()">Menu ▼</button>
-        <ul class="tools-dropdown-menu" id="toolsDropdown">
-          <li><a href="index.html">Stories</a></li>
-          <li><a href="recipes.html" class="active">Recipes</a></li>
-          <li><a href="about.html">About</a></li>
-        </ul>
+      <div class="header-center">
+        <a href="index.html" title="Home">
+          <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764654504737_Chomp%20Chomp%20logos.jpeg?alt=media&token=3220b2a1-47c9-42e7-b389-ef84f236bee6"
+               alt="Chomp Chomp Recipes"
+               class="header-banner">
+        </a>
+      </div>
+
+      <div class="header-right">
+        <div class="nav-tools-dropdown">
+          <button class="menu-toggle" onclick="toggleToolsDropdown()">☰</button>
+          <button class="tools-dropdown-btn" onclick="toggleToolsDropdown()">Menu ▼</button>
+          <ul class="tools-dropdown-menu" id="toolsDropdown">
+            <li><a href="index.html">Stories</a></li>
+            <li><a href="recipes.html" class="active">Recipes</a></li>
+            <li><a href="about.html">About</a></li>
+          </ul>
+        </div>
       </div>
     </nav>
   </header>
@@ -97,14 +107,6 @@
 
     <!-- Page Title -->
     <section class="content-wrapper text-center mb-xl">
-      <a href="index.html" title="Back to Home" style="text-decoration: none; display: block;">
-        <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Frecipes%20logo.jpeg?alt=media"
-             alt="Chomp Recipes Logo"
-             style="max-width: 300px; margin: 0 auto 30px auto; display: block; border-radius: 8px; cursor: pointer; transition: opacity 0.2s;"
-             onmouseover="this.style.opacity='0.8'"
-             onmouseout="this.style.opacity='1'">
-      </a>
-
       <h1>Recipes & Rituals</h1>
       <p class="text-muted">Browse, search, and discover your next baking adventure</p>
 
