@@ -103,12 +103,13 @@ img {
 .header-banner {
   display: block;
   max-width: 600px;
-  max-height: 120px;
+  max-height: 90px;
   height: auto;
   margin: 0 auto;
 }
 
 .header-left a img {
+  max-height: 90px;
   box-shadow: 0 0 8px rgba(231, 59, 66, 0.4);
   transition: box-shadow 0.3s ease;
 }
