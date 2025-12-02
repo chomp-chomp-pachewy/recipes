@@ -103,7 +103,7 @@ img {
 .header-banner {
   display: block;
   max-width: 600px;
-  max-height: 150px;
+  max-height: 120px;
   height: auto;
   margin: 0 auto;
 }
@@ -776,10 +776,6 @@ p {
 @media (max-width: 768px) {
   .site-header {
     padding: var(--spacing-md);
-  }
-
-  .header-banner {
-    display: none;
   }
 
   .menu-toggle {
