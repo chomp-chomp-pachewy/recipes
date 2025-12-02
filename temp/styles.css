@@ -109,14 +109,13 @@ img {
 }
 
 .header-left a img {
-  width: 40px;
-  height: 40px;
-  box-shadow: 0 0 8px rgba(231, 59, 66, 0.4);
-  transition: box-shadow 0.3s ease;
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.3s ease;
 }
 
 .header-left a img:hover {
-  box-shadow: 0 0 12px rgba(231, 59, 66, 0.6);
+  opacity: 0.8;
 }
 
 .header-left {
@@ -210,12 +209,11 @@ img {
   font-size: 1.5em;
   color: var(--color-text);
   cursor: pointer;
-  text-shadow: 0 0 8px rgba(231, 59, 66, 0.4);
-  transition: text-shadow 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .menu-toggle:hover {
-  text-shadow: 0 0 12px rgba(231, 59, 66, 0.6);
+  opacity: 0.7;
 }
 
 /* ---------------------------------------------------- */
@@ -828,13 +826,30 @@ p {
 
   .hero-subtitle,
   .text-muted {
-    font-size: 0.95em !important;
+    font-size: 0.9em !important;
   }
 
   .content-wrapper p,
-  .manifesto-text {
-    font-size: 1em !important;
-    line-height: 1.6 !important;
+  .manifesto-text,
+  .post-content,
+  .post-content p,
+  .recipe-section p,
+  .ingredient-item,
+  .instruction-item {
+    font-size: 0.9em !important;
+    line-height: 1.5 !important;
+  }
+
+  h1 {
+    font-size: 1.5em !important;
+  }
+
+  h2 {
+    font-size: 1.3em !important;
+  }
+
+  h3 {
+    font-size: 1.1em !important;
   }
 }
 
