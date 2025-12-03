@@ -226,32 +226,35 @@
       if (!text) return '';
       let html = text;
 
-      // Escape HTML
-      html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      // Images (process BEFORE links since they start with !)
+      html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 8px; margin: 20px 0;">');
+
+      // Links
+      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 
       // Headers
       html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-      html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^## (.+)$/gm, '<h2>$2</h2>');
       html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
 
       // Bold and italic
       html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 
-      // Links
-      html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-
-      // Images
-      html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 6px;">');
+      // Line breaks: two spaces at end of line or two newlines
+      html = html.replace(/  \n/g, '<br>\n');
 
       // Paragraphs (split by double newlines)
       html = html.split('\n\n').map(para => {
-        // Don't wrap if it's already a tag
-        if (para.trim().startsWith('<')) {
+        para = para.trim();
+        if (!para) return '';
+        // Don't wrap if it's already a block element
+        if (para.startsWith('<h') || para.startsWith('<img') || para.startsWith('<ul') || para.startsWith('<ol')) {
           return para;
         }
+        // Convert single newlines to <br> within paragraphs
         return `<p>${para.replace(/\n/g, '<br>')}</p>`;
-      }).join('\n');
+      }).filter(p => p).join('\n');
 
       return html;
     }
