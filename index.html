@@ -56,10 +56,32 @@
     </nav>
   </header>
 
-  <!-- Main Content -->
-  <main class="page-container">
+  <!-- Main Content Wrapper with Sidebar -->
+  <div class="index-with-sidebar">
 
-    <!-- Two Column Layout (Desktop Only) -->
+    <!-- Recipe Sidebar (Desktop Only) -->
+    <aside class="recipe-sidebar">
+      <div class="sidebar-header" onclick="window.location.href='recipes.html'">
+        <div class="sidebar-title">Recipes</div>
+      </div>
+
+      <input type="text"
+             class="sidebar-search-box"
+             id="sidebarRecipeSearch"
+             placeholder="Search recipes..."
+             oninput="searchSidebarRecipes()">
+
+      <div class="recipe-list-container">
+        <ul class="recipe-list" id="sidebarRecipeList">
+          <li style="padding: 20px; text-align: center; color: #9d9d9d;">Loading recipes...</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="page-container">
+
+      <!-- Two Column Layout (Desktop Only) -->
     <div class="index-two-column">
 
       <!-- Left Column: Hero Text, Search, Filters -->
@@ -124,6 +146,8 @@
     </div>
 
   </main>
+
+  </div><!-- End index-with-sidebar -->
 
   <!-- Footer -->
   <footer class="site-footer">
@@ -332,8 +356,69 @@
       displayPosts();
     }
 
-    // Initialize - uncomment when Firestore collection is ready
+    // === SIDEBAR RECIPE FUNCTIONALITY ===
+    let sidebarRecipes = [];
+    let sidebarSearchQuery = '';
+
+    // Load recipes for sidebar
+    async function loadSidebarRecipes() {
+      try {
+        const recipesRef = collection(db, `artifacts/${appId}/public/data/recipes`);
+        const snapshot = await getDocs(recipesRef);
+
+        sidebarRecipes = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Sort alphabetically by title
+        sidebarRecipes.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+
+        displaySidebarRecipes();
+      } catch (error) {
+        console.error("Error loading sidebar recipes:", error);
+        document.getElementById('sidebarRecipeList').innerHTML =
+          '<li style="padding: 20px; text-align: center; color: #c62828;">Error loading recipes</li>';
+      }
+    }
+
+    // Display sidebar recipes
+    function displaySidebarRecipes() {
+      const listEl = document.getElementById('sidebarRecipeList');
+
+      let filtered = sidebarRecipes;
+
+      // Filter by search query
+      if (sidebarSearchQuery) {
+        const query = sidebarSearchQuery.toLowerCase();
+        filtered = sidebarRecipes.filter(recipe => {
+          return (recipe.title && recipe.title.toLowerCase().includes(query)) ||
+                 (recipe.category && recipe.category.toLowerCase().includes(query));
+        });
+      }
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<li style="padding: 20px; text-align: center; color: #9d9d9d;">No recipes found</li>';
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(recipe => `
+        <li onclick="window.location.href='recipe.html?slug=${recipe.slug || recipe.id}'">
+          <div class="recipe-name">${recipe.title}</div>
+          ${recipe.totalTime ? `<div class="recipe-time">${recipe.totalTime}</div>` : ''}
+        </li>
+      `).join('');
+    }
+
+    // Search sidebar recipes
+    window.searchSidebarRecipes = function() {
+      sidebarSearchQuery = document.getElementById('sidebarRecipeSearch').value;
+      displaySidebarRecipes();
+    }
+
+    // Initialize
     loadPosts();
+    loadSidebarRecipes();
   </script>
 
   <!-- Navigation toggle -->
