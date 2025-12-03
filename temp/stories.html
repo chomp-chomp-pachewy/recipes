@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stories & Practice - Chomp Chomp Recipes</title>
+  <title>Stories & Meditations - Chomp Chomp Recipes</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/recipes%2Fchomp_recipes_logo.jpeg?alt=media">
@@ -38,7 +38,7 @@
   <header class="site-header">
     <nav class="site-nav">
       <div class="header-left">
-        <a href="index.html" title="Home" class="header-icon-link">
+        <a href="recipes.html" title="Recipes" class="header-icon-link">
           <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764687494472_MagicEraser_251202_001040.png?alt=media&token=97b7e1ec-632a-4dea-8037-e54789b4e2fd"
                alt="Chomp Chomp"
                class="header-icon header-icon-default">
@@ -79,7 +79,7 @@
       <!-- Left Column: Hero Text, Search, Filters -->
       <div class="index-left-column">
         <div class="text-center mb-xl">
-          <h1>Stories & Practice</h1>
+          <h1>Stories & Meditations</h1>
           <p class="text-muted" style="max-width: 600px; margin: 20px auto;">
             Explore the philosophy of baking through cultural history, personal stories, and mindful practice.
             Because baking is more than a recipe—it's a ritual, a meditation, a connection to community.
@@ -107,7 +107,7 @@
         <div class="mb-lg">
           <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
             <button class="btn btn-primary" onclick="filterPosts('all')">All Stories</button>
-            <button class="btn btn-outline" onclick="filterPosts('rituals')">Stories & Practice</button>
+            <button class="btn btn-outline" onclick="filterPosts('rituals')">Stories & Meditations</button>
             <button class="btn btn-outline" onclick="filterPosts('anthropologies')">Histories & Meditations</button>
             <button class="btn btn-outline" onclick="filterPosts('zen')">Zen of Baking</button>
           </div>
@@ -306,7 +306,7 @@
     // Format category for display
     function formatCategory(cat) {
       const categories = {
-        'rituals': 'Stories & Practice',
+        'rituals': 'Stories & Meditations',
         'anthropologies': 'Histories & Meditations',
         'zen': 'Zen of Baking'
       };
