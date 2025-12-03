@@ -103,7 +103,7 @@ img {
 .header-banner {
   display: block;
   max-width: 600px;
-  max-height: 135px;
+  max-height: 225px;
   height: auto;
   margin: 0 auto;
 }
@@ -485,7 +485,7 @@ p {
 .landing-page-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-xxl);
+  gap: 60px;
   margin: var(--spacing-xxl) 0;
 }
 
@@ -502,7 +502,7 @@ p {
 .landing-section-header h1 {
   font-size: 2em;
   font-weight: 600;
-  color: var(--color-text);
+  color: #e73b42;
   margin-bottom: var(--spacing-md);
 }
 
@@ -514,12 +514,12 @@ p {
 }
 
 .featured-card {
-  background-color: white;
+  background-color: var(--color-sidebar-bg);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .featured-card:hover {
@@ -1000,7 +1000,7 @@ p {
   }
 
   .header-banner {
-    max-height: 90px;
+    max-height: 135px;
   }
 
   .header-icon-link {
