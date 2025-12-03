@@ -108,15 +108,39 @@ img {
   margin: 0 auto;
 }
 
-.header-left a img {
-  width: auto;
-  height: auto;
-  max-height: 40px;
+.header-icon-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+.header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
   transition: opacity 0.3s ease;
 }
 
-.header-left a img:hover {
-  opacity: 0.8;
+.header-icon-default {
+  opacity: 1;
+}
+
+.header-icon-hover {
+  opacity: 0;
+}
+
+.header-icon-link:hover .header-icon-default {
+  opacity: 0;
+}
+
+.header-icon-link:hover .header-icon-hover {
+  opacity: 1;
 }
 
 .header-left {
@@ -903,8 +927,14 @@ p {
     max-height: 90px;
   }
 
-  .header-left a img {
-    max-height: 25px;
+  .header-icon-link {
+    width: 25px;
+    height: 25px;
+  }
+
+  .header-icon {
+    width: 25px;
+    height: 25px;
   }
 
   .menu-toggle {
