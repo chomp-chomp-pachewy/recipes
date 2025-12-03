@@ -1,5 +1,6 @@
 # Admin files with API keys
 recipe-admin*.html
+admin/recipe-editor.html
 
 # Environment files
 .env

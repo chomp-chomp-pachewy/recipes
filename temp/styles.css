@@ -670,10 +670,9 @@ p {
 }
 
 .post-featured-image {
-  max-width: 800px;
-  max-height: 500px;
+  max-width: 100%;
+  width: 100%;
   height: auto;
-  width: auto;
   border-radius: 8px;
   margin: var(--spacing-xl) auto;
   display: block;
@@ -687,8 +686,11 @@ p {
 }
 
 .post-content img {
+  max-width: 100%;
+  height: auto;
   border-radius: 8px;
   margin: var(--spacing-lg) 0;
+  display: block;
 }
 
 /* ---------------------------------------------------- */
