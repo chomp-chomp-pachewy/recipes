@@ -241,8 +241,8 @@
       html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 
-      // Line breaks: two spaces at end of line or two newlines
-      html = html.replace(/  \n/g, '<br>\n');
+      // Line breaks: two spaces at end of line (consume the newline so it's not processed again)
+      html = html.replace(/  \n/g, '<br>');
 
       // Paragraphs (split by double newlines)
       html = html.split('\n\n').map(para => {
