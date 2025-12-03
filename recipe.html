@@ -83,7 +83,7 @@
   <header class="site-header">
     <nav class="site-nav">
       <div class="header-left">
-        <a href="index.html" title="Home" class="header-icon-link">
+        <a href="recipes.html" title="Recipes" class="header-icon-link">
           <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764687494472_MagicEraser_251202_001040.png?alt=media&token=97b7e1ec-632a-4dea-8037-e54789b4e2fd"
                alt="Chomp Chomp"
                class="header-icon header-icon-default">
@@ -190,8 +190,10 @@
 
       const container = document.getElementById('recipeContainer');
 
-      // Build metadata string (including source)
+      // Build metadata string (including source and dish type)
       const metaParts = [];
+      const dishType = assignDishType(recipe);
+      if (dishType) metaParts.push(`Type: ${dishType}`);
       if (recipe.prepTime) metaParts.push(`Prep: ${recipe.prepTime}`);
       if (recipe.cookTime) metaParts.push(`Cook: ${recipe.cookTime}`);
       if (recipe.totalTime) metaParts.push(`Total: ${recipe.totalTime}`);
@@ -313,6 +315,29 @@
 
       // Handle string (may contain markdown)
       return parseMarkdown(String(source));
+    }
+
+    // Assign dish type based on title
+    function assignDishType(recipe) {
+      const title = (recipe.title || '').toLowerCase();
+
+      if (title.includes('cake') || title.includes('torte') || title.includes('pie') || title.includes('brûlée')) {
+        return 'Dessert/Pastry';
+      } else if (title.includes('cookie') || title.includes('cookies')) {
+        return 'Cookie/Bar';
+      } else if (title.includes('custard')) {
+        return 'Frozen Dessert';
+      } else if (title.includes('pudding')) {
+        return 'Pudding/Cream';
+      } else if (title.includes('taco') || title.includes('main dish')) {
+        return 'Main Dish';
+      } else if (title.includes('soup')) {
+        return 'Soup';
+      } else if (title.includes('bread')) {
+        return 'Bread';
+      } else {
+        return 'Other Baked Goods';
+      }
     }
 
     // Parse markdown (simple version)

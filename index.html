@@ -38,7 +38,7 @@
   <header class="site-header">
     <nav class="site-nav">
       <div class="header-left">
-        <a href="index.html" title="Home" class="header-icon-link">
+        <a href="recipes.html" title="Recipes" class="header-icon-link">
           <img src="https://firebasestorage.googleapis.com/v0/b/chomp-chomp-recipes.firebasestorage.app/o/posts%2Fimages%2F1764687494472_MagicEraser_251202_001040.png?alt=media&token=97b7e1ec-632a-4dea-8037-e54789b4e2fd"
                alt="Chomp Chomp"
                class="header-icon header-icon-default">
@@ -76,10 +76,10 @@
     <!-- Two Column Landing Page Layout -->
     <div class="landing-page-grid">
 
-      <!-- Left Column: Stories & Practice -->
+      <!-- Left Column: Stories & Meditations -->
       <div class="landing-column">
         <div class="landing-section-header">
-          <h1>Stories & Practice</h1>
+          <h1><a href="stories.html" style="text-decoration: none; color: inherit;">Stories & Meditations</a></h1>
           <p class="text-muted">
             Explore the philosophy of baking through cultural history, personal stories, and mindful practice.
             Because baking is more than a recipe—it's a ritual, a meditation, a connection to community.
@@ -99,7 +99,7 @@
       <!-- Right Column: Recipes & Rituals -->
       <div class="landing-column">
         <div class="landing-section-header">
-          <h1>Recipes & Rituals</h1>
+          <h1><a href="recipes.html" style="text-decoration: none; color: inherit;">Recipes & Rituals</a></h1>
           <p class="text-muted">
             Browse, search, and discover your next baking adventure through our collection of recipes and culinary rituals.
           </p>
@@ -168,7 +168,7 @@
             : '<div style="height: 280px; background-color: var(--color-sidebar-bg); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);">Image Coming Soon</div>'
           }
           <div class="featured-card-content">
-            <div class="featured-card-tag">${formatCategory(post.category)}</div>
+            <div class="featured-card-tag">Featured · ${formatCategory(post.category)}</div>
             <h3>${post.title}</h3>
             <p>${post.excerpt || ''}</p>
             <div class="featured-card-meta">
@@ -198,7 +198,7 @@
             : '<div style="height: 280px; background-color: var(--color-sidebar-bg); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);">Image Coming Soon</div>'
           }
           <div class="featured-card-content">
-            <div class="featured-card-tag">${dishType}</div>
+            <div class="featured-card-tag">Featured · ${dishType}</div>
             <h3>${recipe.title}</h3>
             <p>${recipe.description || ''}</p>
             <div class="featured-card-meta">
@@ -236,7 +236,7 @@
     // Format category for display
     function formatCategory(cat) {
       const categories = {
-        'rituals': 'Stories & Practice',
+        'rituals': 'Stories & Meditations',
         'anthropologies': 'Histories & Meditations',
         'zen': 'Zen of Baking'
       };

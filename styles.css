@@ -112,13 +112,13 @@ img {
   position: relative;
   display: flex;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
 }
 
 .header-icon {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   position: absolute;
@@ -270,7 +270,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 2em;
+  font-size: 1.75em;
   color: var(--color-accent);
 }
 
@@ -500,7 +500,7 @@ p {
 }
 
 .landing-section-header h1 {
-  font-size: 2em;
+  font-size: 1.75em;
   font-weight: 600;
   color: #e73b42;
   margin-bottom: var(--spacing-md);
@@ -1004,13 +1004,13 @@ p {
   }
 
   .header-icon-link {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
   }
 
   .header-icon {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
   }
 
   .menu-toggle {
@@ -1051,7 +1051,7 @@ p {
   }
 
   .landing-section-header h1 {
-    font-size: 1.6em;
+    font-size: 1.75em;
   }
 
   /* Fix search and filter heights on mobile */
@@ -1064,7 +1064,7 @@ p {
   }
 
   h1 {
-    font-size: 1.8em;
+    font-size: 1.75em;
   }
 
   h2 {
