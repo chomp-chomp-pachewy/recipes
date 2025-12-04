@@ -67,40 +67,55 @@
     
     .recipe-list {
       display: grid;
-      gap: 15px;
-      margin-bottom: 30px;
+      gap: 10px;
     }
-    
+
     .recipe-card {
       background: white;
-      border: 1px solid #e0e0e0;
-      padding: 20px;
-      border-radius: 8px;
+      border: 2px solid transparent;
+      padding: 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 10px;
     }
-    
+
+    .recipe-card:hover {
+      border-color: #e73b42;
+      background: #fff5f5;
+    }
+
     .recipe-card h3 {
       font-weight: 500;
       color: #434343;
+      font-size: 1em;
       flex: 1;
-      min-width: 200px;
+      margin: 0;
     }
-    
+
+    .recipe-card-meta {
+      font-size: 0.85em;
+      color: #999;
+      display: flex;
+      gap: 15px;
+      flex-shrink: 0;
+    }
+
     .recipe-card button {
       background: transparent;
       border: 1px solid #e73b42;
       color: #e73b42;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: 4px;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      margin-left: 10px;
+      font-size: 0.85em;
+      transition: all 0.2s;
     }
-    
+
     .recipe-card button:hover {
       background: #e73b42;
       color: white;
@@ -342,23 +357,25 @@
     <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
     <button onclick="signIn()">Sign In</button>
   </div>
-  
+
   <div id="adminSection" class="hidden">
-    <div class="user-info">
-      Signed in as: <span id="userEmail"></span>
-      <button onclick="signOut()">Sign Out</button>
+    <!-- Header with title and logout -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <h1 style="color: #e73b42; margin: 0;">Recipe Editor</h1>
+      <button onclick="signOut()" class="btn-secondary">Sign Out</button>
     </div>
-    
+
+    <!-- Auth Status -->
+    <div style="margin-bottom: 20px; padding: 10px; background: #e8f5e9; border-radius: 4px; color: #2e7d32;">
+      ✓ Signed in as: <span id="userEmail"></span>
+    </div>
+
     <div id="statusMessage"></div>
-    
-    <h2 style="margin-bottom: 15px;">Your Recipes</h2>
-    <div id="recipeList" class="recipe-list"></div>
-    
-    <button class="btn-primary" onclick="showNewRecipeForm()" style="margin: 20px 0;">+ Add New Recipe</button>
-    
-    <div id="editorSection" class="editor-section hidden">
-      <h2 id="editorTitle">New Recipe</h2>
-      
+
+    <!-- Editor Form (Always visible at top) -->
+    <div id="editorSection" class="editor-section">
+      <h2 id="editorTitle" style="color: #e73b42; margin-bottom: 20px;">New Recipe</h2>
+
       <div class="file-upload-section">
         <h3>📄 Quick Add: Upload Markdown File</h3>
         <div class="file-drop-zone" id="mdDropZone">
@@ -369,7 +386,7 @@
           <strong>✓ Markdown loaded:</strong> <span id="mdFileName"></span>
         </div>
       </div>
-      
+
       <div class="file-upload-section">
         <h3>🖼️ Upload Recipe Image (Optional)</h3>
         <p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">Note: Image upload requires Firebase Storage permissions. If you don't have storage set up, you can skip this and add image filename manually below.</p>
@@ -382,79 +399,86 @@
           <img id="imgPreviewImg" alt="preview">
         </div>
       </div>
-      
+
       <form id="recipeForm">
         <div class="form-group">
           <label>Title *</label>
           <input type="text" id="title" required>
         </div>
-        
+
         <div class="form-group">
           <label>Description</label>
           <textarea id="description"></textarea>
         </div>
-        
+
         <div class="form-group">
           <label>Servings</label>
           <input type="text" id="servings">
         </div>
-        
+
         <div class="form-group">
           <label>Prep Time</label>
           <input type="text" id="prepTime" placeholder="e.g. 15 minutes">
         </div>
-        
+
         <div class="form-group">
           <label>Cook Time</label>
           <input type="text" id="cookTime" placeholder="e.g. 30 minutes">
         </div>
-        
+
         <div class="form-group">
           <label>Total Time</label>
           <input type="text" id="totalTime" placeholder="e.g. 45 minutes">
         </div>
-        
+
         <div class="form-group">
           <label>Source</label>
           <input type="text" id="source" placeholder="e.g. [Recipe Site](https://example.com)">
           <small>Supports markdown links: [text](url)</small>
         </div>
-        
+
         <div class="form-group">
           <label>Recipe Image</label>
           <input type="text" id="image" placeholder="e.g. images/chocolate-cake.jpg">
           <small>Filename of image in your /images/ folder (or auto-filled from upload above)</small>
         </div>
-        
+
         <div class="form-group">
           <label>Category</label>
           <input type="text" id="category" placeholder="e.g. chomp chomp">
         </div>
-        
+
         <div class="form-group">
           <label>Ingredients *</label>
           <textarea id="ingredients" rows="10" required></textarea>
           <small>One per line. Use ### for section headers (e.g. ### For the Filling)</small>
         </div>
-        
+
         <div class="form-group">
           <label>Instructions *</label>
           <textarea id="instructions" rows="10" required></textarea>
           <small>One per line. Use ### for section headers. Supports markdown.</small>
         </div>
-        
+
         <div class="form-group">
           <label>Notes</label>
           <textarea id="notes" rows="4"></textarea>
         </div>
-        
+
         <input type="hidden" id="editingSlug">
-        
+
         <div class="button-group">
           <button type="submit" class="btn-primary">Save Recipe</button>
-          <button type="button" class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+          <button type="button" class="btn-secondary" onclick="clearForm()">Clear Form</button>
         </div>
       </form>
+    </div>
+
+    <!-- Existing Recipes List (at bottom, similar to post editor) -->
+    <div style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #e0e0e0;">
+      <h2 style="color: #e73b42; margin-bottom: 20px;">Edit Existing Recipes</h2>
+      <p style="color: #666; margin-bottom: 20px;">Click any recipe below to load it into the editor above.</p>
+      <div id="recipeList" class="recipe-list" style="max-height: 400px; overflow-y: auto; background: #f9f9f9; padding: 20px; border-radius: 6px;"></div>
     </div>
   </div>
 
@@ -666,33 +690,35 @@
         }));
         
         recipes.sort((a, b) => a.title.localeCompare(b.title));
-        
-        const listHTML = recipes.map(recipe => `
-          <div class="recipe-card">
+
+        const listHTML = recipes.length > 0 ? recipes.map(recipe => `
+          <div class="recipe-card" onclick="window.editRecipe('${recipe.slug}')">
             <h3>${recipe.title}</h3>
-            <div>
-              <button onclick="window.editRecipe('${recipe.slug}')">Edit</button>
-              <button onclick="window.deleteRecipe('${recipe.slug}', '${recipe.title.replace(/'/g, "\\'")}')">Delete</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div class="recipe-card-meta">
+                ${recipe.category ? `<span>${recipe.category}</span>` : ''}
+                ${recipe.totalTime ? `<span>${recipe.totalTime}</span>` : ''}
+              </div>
+              <button onclick="event.stopPropagation(); window.deleteRecipe('${recipe.slug}', '${recipe.title.replace(/'/g, "\\'")}')">🗑️ Delete</button>
             </div>
           </div>
-        `).join('');
-        
-        document.getElementById('recipeList').innerHTML = listHTML || '<p>No recipes yet. Add your first one!</p>';
+        `).join('') : '<p style="color: #999; text-align: center; padding: 20px;">No recipes yet. Create your first recipe above!</p>';
+
+        document.getElementById('recipeList').innerHTML = listHTML;
       } catch (error) {
         console.error('Load recipes error:', error);
         showMessage('Failed to load recipes: ' + error.message, 'error');
       }
     }
     
-    window.showNewRecipeForm = function() {
+    window.clearForm = function() {
       document.getElementById('editorTitle').textContent = 'New Recipe';
       document.getElementById('recipeForm').reset();
       document.getElementById('editingSlug').value = '';
-      document.getElementById('editorSection').classList.remove('hidden');
       document.getElementById('mdPreview').classList.remove('show');
       document.getElementById('imgPreview').classList.remove('show');
       currentImageFile = null;
-      window.scrollTo(0, document.getElementById('editorSection').offsetTop);
+      window.scrollTo(0, 0);
     };
     
     window.editRecipe = async function(slug) {
@@ -719,9 +745,8 @@
         document.getElementById('instructions').value = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
         document.getElementById('notes').value = recipe.notes || '';
         document.getElementById('editingSlug').value = slug;
-        
-        document.getElementById('editorSection').classList.remove('hidden');
-        window.scrollTo(0, document.getElementById('editorSection').offsetTop);
+
+        window.scrollTo(0, 0);
       } catch (error) {
         console.error('Load recipe error:', error);
         showMessage('Failed to load recipe: ' + error.message, 'error');
@@ -821,15 +846,7 @@
         showMessage('Failed to delete recipe: ' + error.message, 'error');
       }
     };
-    
-    window.cancelEdit = function() {
-      document.getElementById('editorSection').classList.add('hidden');
-      document.getElementById('recipeForm').reset();
-      document.getElementById('mdPreview').classList.remove('show');
-      document.getElementById('imgPreview').classList.remove('show');
-      currentImageFile = null;
-    };
-    
+
     function showMessage(message, type) {
       const messageDiv = document.getElementById('statusMessage');
       messageDiv.className = `status-message status-${type}`;
