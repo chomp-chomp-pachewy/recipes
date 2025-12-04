@@ -305,9 +305,15 @@
       </div>
 
       <div class="storage-path">
-        📁 Storage Path: <strong>images/</strong>
+        📁 Current Folder: <strong id="currentFolder">recipe-images</strong>
+        <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;" onclick="switchFolder('recipe-images')">Recipe Images</button>
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;" onclick="switchFolder('posts/images')">Post Images</button>
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;" onclick="switchFolder('posts')">Posts Folder</button>
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85em;" onclick="switchFolder('recipes')">Recipes Folder</button>
+        </div>
         <br>
-        <small>All images uploaded here will be accessible at: https://firebasestorage.googleapis.com/...</small>
+        <small>All images will be uploaded to the current folder shown above</small>
       </div>
 
       <!-- Upload Section -->
@@ -357,6 +363,7 @@
     const storage = getStorage(app);
 
     let currentUser = null;
+    let currentFolder = 'recipe-images'; // Default folder
 
     // Auth state observer
     onAuthStateChanged(auth, (user) => {
@@ -391,13 +398,20 @@
       await signOut(auth);
     };
 
+    // Switch folder function
+    window.switchFolder = function(folder) {
+      currentFolder = folder;
+      document.getElementById('currentFolder').textContent = folder;
+      loadImages();
+    };
+
     // Load images from storage
     async function loadImages() {
       const container = document.getElementById('imagesContainer');
       container.innerHTML = '<div class="loading">Loading images...</div>';
 
       try {
-        const imagesRef = ref(storage, 'images');
+        const imagesRef = ref(storage, currentFolder);
         const result = await listAll(imagesRef);
 
         if (result.items.length === 0) {
@@ -519,9 +533,9 @@
         }
 
         try {
-          const storageRef = ref(storage, `images/${file.name}`);
+          const storageRef = ref(storage, `${currentFolder}/${file.name}`);
           await uploadBytes(storageRef, file);
-          showToast(`Uploaded ${file.name} successfully`, 'success');
+          showToast(`Uploaded ${file.name} successfully to ${currentFolder}`, 'success');
         } catch (error) {
           console.error('Upload error:', error);
           showToast(`Failed to upload ${file.name}`, 'error');
