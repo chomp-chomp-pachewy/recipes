@@ -494,6 +494,11 @@ p {
   flex-direction: column;
 }
 
+.intro-section {
+  /* Desktop: reduce top padding */
+  padding-top: 15px !important;
+}
+
 .landing-section-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
