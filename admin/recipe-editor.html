@@ -449,6 +449,12 @@
         </div>
 
         <div class="form-group">
+          <label>Dish Type</label>
+          <input type="text" id="dishType" placeholder="e.g. Dessert/Pastry, Cookie/Bar, Bread">
+          <small>Examples: Dessert/Pastry, Cookie/Bar, Bread, Soup, Main Dish, Tart/Galette</small>
+        </div>
+
+        <div class="form-group">
           <label>Ingredients *</label>
           <textarea id="ingredients" rows="10" required></textarea>
           <small>One per line. Use ### for section headers (e.g. ### For the Filling)</small>
@@ -647,6 +653,7 @@
         document.getElementById('totalTime').value = parsed.totalTime || '';
         document.getElementById('source').value = parsed.source || '';
         document.getElementById('category').value = parsed.category || '';
+        document.getElementById('dishType').value = parsed.dishType || '';
         document.getElementById('ingredients').value = parsed.ingredients.join('\n');
         document.getElementById('instructions').value = parsed.instructions.join('\n');
         document.getElementById('notes').value = parsed.notes || '';
@@ -741,6 +748,7 @@
         document.getElementById('source').value = recipe.source || '';
         document.getElementById('image').value = recipe.image || '';
         document.getElementById('category').value = recipe.category || '';
+        document.getElementById('dishType').value = recipe.dishType || '';
         document.getElementById('ingredients').value = Array.isArray(recipe.ingredients) ? recipe.ingredients.join('\n') : '';
         document.getElementById('instructions').value = Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : '';
         document.getElementById('notes').value = recipe.notes || '';
@@ -780,6 +788,7 @@
           source: document.getElementById('source').value.trim() || null,
           image: document.getElementById('image').value.trim() || null,
           category: document.getElementById('category').value.trim() || null,
+          dishType: document.getElementById('dishType').value.trim() || null,
           ingredients: document.getElementById('ingredients').value.split('\n').map(i => i.trim()).filter(i => i),
           instructions: document.getElementById('instructions').value.split('\n').map(i => i.trim()).filter(i => i),
           notes: document.getElementById('notes').value.trim() || null
