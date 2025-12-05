@@ -203,8 +203,6 @@
         return;
       }
 
-      const dishType = assignDishType(recipe);
-
       container.innerHTML = `
         <a href="recipe.html?slug=${recipe.slug || recipe.id}">
           ${recipe.image
@@ -212,7 +210,7 @@
             : '<div style="height: 280px; background-color: var(--color-sidebar-bg); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);">Image Coming Soon</div>'
           }
           <div class="featured-card-content">
-            <div class="featured-card-tag">Featured · ${dishType}</div>
+            <div class="featured-card-tag">Featured · ${recipe.dishType || 'Recipe'}</div>
             <h3>${recipe.title}</h3>
             <p>${recipe.description || ''}</p>
             <div class="featured-card-meta">
@@ -222,29 +220,6 @@
           </div>
         </a>
       `;
-    }
-
-    // Assign dish type based on title
-    function assignDishType(recipe) {
-      const title = (recipe.title || '').toLowerCase();
-
-      if (title.includes('cake') || title.includes('torte') || title.includes('pie') || title.includes('brûlée')) {
-        return 'Dessert/Pastry';
-      } else if (title.includes('cookie') || title.includes('cookies')) {
-        return 'Cookie/Bar';
-      } else if (title.includes('custard')) {
-        return 'Frozen Dessert';
-      } else if (title.includes('pudding')) {
-        return 'Pudding/Cream';
-      } else if (title.includes('taco') || title.includes('main dish')) {
-        return 'Main Dish';
-      } else if (title.includes('soup')) {
-        return 'Soup';
-      } else if (title.includes('bread')) {
-        return 'Bread';
-      } else {
-        return 'Other Baked Goods';
-      }
     }
 
     // Format category for display

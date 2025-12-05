@@ -192,7 +192,7 @@
 
       // Build metadata string (including source and dish type)
       const metaParts = [];
-      const dishType = assignDishType(recipe);
+      const dishType = recipe.dishType;
       if (dishType) metaParts.push(`Type: ${dishType}`);
       if (recipe.prepTime) metaParts.push(`Prep: ${recipe.prepTime}`);
       if (recipe.cookTime) metaParts.push(`Cook: ${recipe.cookTime}`);
@@ -315,29 +315,6 @@
 
       // Handle string (may contain markdown)
       return parseMarkdown(String(source));
-    }
-
-    // Assign dish type based on title
-    function assignDishType(recipe) {
-      const title = (recipe.title || '').toLowerCase();
-
-      if (title.includes('cake') || title.includes('torte') || title.includes('pie') || title.includes('brûlée')) {
-        return 'Dessert/Pastry';
-      } else if (title.includes('cookie') || title.includes('cookies')) {
-        return 'Cookie/Bar';
-      } else if (title.includes('custard')) {
-        return 'Frozen Dessert';
-      } else if (title.includes('pudding')) {
-        return 'Pudding/Cream';
-      } else if (title.includes('taco') || title.includes('main dish')) {
-        return 'Main Dish';
-      } else if (title.includes('soup')) {
-        return 'Soup';
-      } else if (title.includes('bread')) {
-        return 'Bread';
-      } else {
-        return 'Other Baked Goods';
-      }
     }
 
     // Parse markdown (simple version)
