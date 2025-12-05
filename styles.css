@@ -1007,10 +1007,21 @@ p {
   }
 }
 
+/* Mobile divider - hidden by default, shown on mobile */
+.mobile-divider {
+  display: none;
+}
+
 /* ---------------------------------------------------- */
 /* === MOBILE RESPONSIVE === */
 /* ---------------------------------------------------- */
 @media (max-width: 768px) {
+  .mobile-divider {
+    display: block;
+    margin: 50px 0;
+    border: none;
+    border-top: 1px solid var(--color-border);
+  }
   .site-header {
     padding: var(--spacing-md);
   }
